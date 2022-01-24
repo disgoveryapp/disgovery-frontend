@@ -1258,6 +1258,11 @@
     lodash.pick "^4.4.0"
     lodash.template "^4.5.0"
 
+"@googlemaps/polyline-codec@^1.0.17":
+  version "1.0.17"
+  resolved "https://registry.yarnpkg.com/@googlemaps/polyline-codec/-/polyline-codec-1.0.17.tgz#2120127e194ddafe8b201906e9f805cf880b5666"
+  integrity sha512-yiIhmcXdFGuEJaHYcMZqgAW3KFQSOmrJ3lYp0yxQ/rOQhAIEsQwbP1Y8Sd2JvoMI139AuZ9+xnsAz4AVrl7KpA==
+
 "@hapi/hoek@^9.0.0":
   version "9.2.1"
   resolved "https://registry.yarnpkg.com/@hapi/hoek/-/hoek-9.2.1.tgz#9551142a1980503752536b5050fd99f4a7f13b17"
