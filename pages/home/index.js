@@ -1,12 +1,27 @@
-import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { SafeAreaView, StyleSheet, Text, View } from "react-native";
 import ThemedText from "../../components/themed-text";
 import { useTheme } from "@react-navigation/native";
 import MapView, { Polyline } from "react-native-maps";
 import { decode } from "@googlemaps/polyline-codec";
+import { googleMapsStyling } from "../../maps/google-maps-styling";
+import * as Location from "expo-location";
+import RecenterButton from "../../components/recenter-button";
+
+const INITIAL_MAP_REGION = {
+    latitude: 13.764889,
+    longitude: 100.538266,
+    latitudeDelta: 0.035,
+    longitudeDelta: 0.035,
+};
 
 export default function Home() {
     const { colors } = useTheme();
+    const mapRef = useRef();
+    const [mapsIsRecentered, setMapsIsRecentered] = useState(false);
+    const [location, setLocation] = useState(null);
+    const [mapCurrentLocationRegion, setMapCurrentLocationRegion] = useState({});
+    const [locationErrorMessage, setLocationErrorMessage] = useState(null);
 
     const styles = StyleSheet.create({
         container: {
@@ -28,6 +43,45 @@ export default function Home() {
         },
     });
 
+    useEffect(() => {
+        (async () => {
+            recenter();
+        })().catch(() => {});
+    }, []);
+
+    async function fetchNewLocation() {
+        let { status } = await Location.requestForegroundPermissionsAsync().catch(() => {});
+        if (status !== "granted") {
+            setLocationErrorMessage("Location permission is denied");
+            return;
+        }
+
+        let location = await Location.getCurrentPositionAsync({
+            accuracy: Location.Accuracy.BestForNavigation,
+        }).catch(() => {});
+        setLocation(location);
+        setMapCurrentLocationRegion({
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
+            latitudeDelta: 0.005,
+            longitudeDelta: 0.005,
+        });
+
+        return {
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
+            latitudeDelta: 0.005,
+            longitudeDelta: 0.005,
+        };
+    }
+
+    async function recenter() {
+        mapRef.current.animateToRegion(
+            (await fetchNewLocation().catch(() => {})) || INITIAL_MAP_REGION,
+        );
+        setMapsIsRecentered(true);
+    }
+
     function decodePolyline() {
         const decoded = decode(polyline, 5);
         console.log(decoded);
@@ -42,8 +96,17 @@ export default function Home() {
 
     return (
         <View style={styles.container}>
-            {/* <MapView style={styles.maps}></MapView> */}
-            <ThemedText style={styles.text}>Hello</ThemedText>
+            <SafeAreaView />
+            <MapView
+                ref={mapRef}
+                style={styles.maps}
+                initialRegion={INITIAL_MAP_REGION}
+                provider="google"
+                customMapStyle={googleMapsStyling}
+                onTouchStart={() => setMapsIsRecentered(false)}
+                showsUserLocation
+            ></MapView>
+            <RecenterButton recentered={mapsIsRecentered} onPress={recenter} />
         </View>
     );
 }

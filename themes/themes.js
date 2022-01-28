@@ -7,11 +7,12 @@ export const darkTheme = {
         subtitle: "#acacac",
         red: "#EE2929",
         yellow: "#FFBF1C",
+        primary: "#7EC13A",
     },
 };
 
 export const lightTheme = {
-    dark: true,
+    dark: false,
     colors: {
         background: "#fff",
         upper_background: "#fff",
@@ -19,5 +20,6 @@ export const lightTheme = {
         subtitle: "#444",
         red: "#EE2929",
         yellow: "#FFBF1C",
+        primary: "#7EC13A",
     },
 };
