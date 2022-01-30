@@ -4,6 +4,9 @@ import ThemedText from "../../components/themed-text";
 import { useTheme } from "@react-navigation/native";
 import MapView, { Polyline } from "react-native-maps";
 import { decode } from "@googlemaps/polyline-codec";
+import AccountModal from "../../components/account-modal";
+import AccountMenu from "../../components/account-modal-mui";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Home() {
     const { colors } = useTheme();
@@ -13,7 +16,7 @@ export default function Home() {
             backgroundColor: colors.background,
             flex: 1,
             justifyContent: "center",
-            alignItems: "center",
+            alignItems: "flex-end",
         },
         text: {
             fontSize: 32,
@@ -25,6 +28,13 @@ export default function Home() {
             left: 0,
             width: "100%",
             height: "100%",
+        },
+        searchbox: {
+            flex: 1,
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "flex-end",
+            paddingHorizontal: 20,
         },
     });
 
@@ -42,8 +52,12 @@ export default function Home() {
 
     return (
         <View style={styles.container}>
-            {/* <MapView style={styles.maps}></MapView> */}
-            <ThemedText style={styles.text}>Hello</ThemedText>
+            {<MapView style={styles.maps}></MapView>}
+            <SafeAreaView>
+                <View style={styles.searchbox}>
+                    <AccountMenu />
+                </View>
+            </SafeAreaView>
         </View>
     );
 }
