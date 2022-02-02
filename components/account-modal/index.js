@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { MenuProvider } from "react-native-popup-menu";
 import { useTheme } from "@react-navigation/native";
+import { useDimensions } from "@react-native-community/hooks";
 import {
     View,
     Modal,
@@ -10,24 +11,28 @@ import {
     TouchableOpacity,
     Text,
     TouchableHighlight,
+    TouchableWithoutFeedback,
 } from "react-native";
 import { Button, Menu, Divider, Provider } from "react-native-paper";
 import ThemedText from "../themed-text";
+import Person from "../../svg/person";
 
-export default function AccountModal() {
+export default function AccountModal(props) {
     const ref = useRef();
     const { colors } = useTheme();
+    const { width, height } = useDimensions().window;
     const [modalVisible, setModalVisible] = useState(false);
-    const openModal = () => setModalVisible(true);
 
-    const closeModal = () => setModalVisible(false);
+    const menuItem = [
+        { name: "Account Information", path: "" },
+        { name: "Settings", path: "" },
+        { name: "Log out", path: "" },
+    ];
     const styles = StyleSheet.create({
         image: {
             width: 36,
             height: 36,
             borderRadius: 18,
-            //borderWidth: 1,
-            //borderColor: colors.background,
             backgroundColor: "white",
         },
         box: {
@@ -40,7 +45,7 @@ export default function AccountModal() {
         },
         menubox: {
             width: 180,
-            height: 102,
+            height: "auto",
             backgroundColor: colors.background,
             borderRadius: 12,
             alignSelf: "flex-end",
@@ -57,31 +62,61 @@ export default function AccountModal() {
             height: 34,
             alignContent: "center",
             justifyContent: "center",
+            marginLeft: 10,
+            marginVertical: 3,
+        },
+        test: {
+            flex: 1,
+            width: width,
+            height: height,
         },
     });
     return (
-        <View style={styles.container}>
-            {modalVisible ? (
-                <View style={styles.menubox}>
-                    <View style={styles.submenu}>
-                        <ThemedText>Account</ThemedText>
+        <View>
+            <TouchableOpacity
+                style={styles.test}
+                onPress={() => setModalVisible(false)}
+            ></TouchableOpacity>
+            <View style={props.accountmodalstyle}>
+                {modalVisible ? (
+                    <>
+                        <TouchableOpacity style={styles.menubox}>
+                            {Object.keys(menuItem).map((key, index) => (
+                                <TouchableOpacity
+                                    key={key}
+                                    style={styles.submenu}
+                                    onPress={() => setModalVisible(false)}
+                                >
+                                    <ThemedText>{menuItem[key].name}</ThemedText>
+                                </TouchableOpacity>
+                            ))}
+                        </TouchableOpacity>
+                    </>
+                ) : (
+                    <></>
+                )}
+
+                <TouchableOpacity
+                    onPress={() => setModalVisible(!modalVisible)}
+                    styles={styles.box}
+                >
+                    <View style={styles.box}>
+                        <View style={styles.image}>
+                            {props.image ? (
+                                <>
+                                    <Image style={styles.image} />
+                                </>
+                            ) : (
+                                <Person
+                                    width={styles.image.width}
+                                    height={styles.image.height}
+                                    borderRadius={styles.borderRadius}
+                                />
+                            )}
+                        </View>
                     </View>
-
-                    <ThemedText>Settings</ThemedText>
-                    <ThemedText>Log out</ThemedText>
-                </View>
-            ) : (
-                <></>
-            )}
-
-            <Pressable onPress={() => setModalVisible(!modalVisible)} styles={styles.box}>
-                <View style={styles.box}>
-                    <Image
-                        style={styles.image}
-                        source={require("../../assets/baseline_person_black_48dp.png")}
-                    />
-                </View>
-            </Pressable>
+                </TouchableOpacity>
+            </View>
         </View>
     );
 }

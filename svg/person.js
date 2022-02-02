@@ -5,9 +5,9 @@ import Svg, { Path } from "react-native-svg";
 const Person = (props) => (
     <Svg
         xmlns="http://www.w3.org/2000/svg"
-        height="48px"
+        height={props.height}
         viewBox="0 0 24 24"
-        width="48px"
+        width={props.width}
         fill="#000000"
     >
         <Path d="M0 0h24v24H0z" fill="none" />

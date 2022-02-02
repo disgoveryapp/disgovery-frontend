@@ -36,6 +36,13 @@ export default function Home() {
             alignItems: "flex-end",
             paddingHorizontal: 20,
         },
+        accountbox: {
+            position: "absolute",
+            right: 0,
+            bottom: 25,
+            alignItems: "flex-end",
+            paddingHorizontal: 12,
+        },
     });
 
     function decodePolyline() {
@@ -53,11 +60,7 @@ export default function Home() {
     return (
         <View style={styles.container}>
             {<MapView style={styles.maps}></MapView>}
-            <SafeAreaView>
-                <View style={styles.searchbox}>
-                    <AccountMenu />
-                </View>
-            </SafeAreaView>
+            <AccountModal accountmodalstyle={styles.accountbox} />
         </View>
     );
 }
