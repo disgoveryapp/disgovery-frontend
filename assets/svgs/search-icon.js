@@ -1,15 +1,17 @@
-import * as React from "react";
-import Svg, { Path } from "react-native-svg";
+import * as React from "react"
+import Svg, { Path } from "react-native-svg"
+import { useTheme } from "@react-navigation/native";
 
-const SearchIcon = () => {
-
+const SearchIcon = (props) => {
+    const { colors } = useTheme();
+  
     return (
-        <Svg width="17" height="17" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <Svg width={17} height={17} fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
             <Path
-                fill-rule="evenodd"
-                clip-rule="evenodd"
-                d="M10.6002 10.0973H11.1598L14.6944 13.639L13.639 14.6944L10.0973 11.1598V10.6002L9.90603 10.4019C9.09854 11.0961 8.0502 11.514 6.90979 11.514C4.36687 11.514 2.30562 9.45272 2.30562 6.9098C2.30562 4.36688 4.36687 2.30563 6.90979 2.30563C9.4527 2.30563 11.514 4.36688 11.514 6.9098C11.514 8.05022 11.096 9.09855 10.4019 9.90605L10.6002 10.0973ZM3.72229 6.9098C3.72229 8.67355 5.14603 10.0973 6.90978 10.0973C8.67353 10.0973 10.0973 8.67355 10.0973 6.9098C10.0973 5.14605 8.67353 3.7223 6.90978 3.7223C5.14603 3.7223 3.72229 5.14605 3.72229 6.9098Z"
-                fill="white"
+                fillRule="evenodd"
+                clipRule="evenodd"
+                d="M10.6 10.097h.56l3.534 3.542-1.055 1.055-3.542-3.534v-.56l-.191-.198a4.584 4.584 0 0 1-2.996 1.112 4.604 4.604 0 1 1 4.604-4.604c0 1.14-.418 2.189-1.112 2.996l.198.191ZM3.722 6.91a3.183 3.183 0 0 0 3.188 3.187 3.183 3.183 0 0 0 3.187-3.187A3.183 3.183 0 0 0 6.91 3.722 3.183 3.183 0 0 0 3.722 6.91Z"
+                fill={colors.text}
             />
         </Svg>
     );

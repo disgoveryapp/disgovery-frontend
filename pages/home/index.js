@@ -4,7 +4,7 @@ import ThemedText from "../../components/themed-text";
 import { useTheme } from "@react-navigation/native";
 import MapView, { Polyline } from "react-native-maps";
 import { decode } from "@googlemaps/polyline-codec";
-import App from "../../components/search-box"
+import SearchBox from "../../components/search-box"
 
 export default function Home() {
     const { colors } = useTheme();
@@ -44,7 +44,7 @@ export default function Home() {
     return (
         <View style={styles.container}>
             {/* <MapView style={styles.maps}></MapView> */}
-            <App/>
+            <SearchBox/>
         </View>
     );
 }

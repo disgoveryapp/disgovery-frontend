@@ -3,65 +3,44 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import ThemedText from "../../components/themed-text";
 import SearchIcon from "../../assets/svgs/search-icon";
 import StarBorderIcon from "../../assets/svgs/star-border-icon";
+import { useTheme } from "@react-navigation/native";
 
-const App = () => {
+const SearchBox = () => {
+  const { colors } = useTheme();
+
+  const styles = StyleSheet.create({
+    container: {
+      width: "100%",
+      height: 44,
+      backgroundColor: colors.upper_background,
+      borderRadius: 12,
+      display: "flex",
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      padding: 10
+    },
+    placeholderContainer: {
+      display: "flex",
+      flexDirection: "row",
+      alignItems: "center"
+    },
+    placeholder: {
+      fontWeight: "500",
+      color: colors.text
+    }
+  });
 
   return (
-    <TouchableOpacity style={styles.theTest}>
-      <View style={styles.searchTest}>
-        <SearchIcon/>
+    <TouchableOpacity style={styles.container}>
+      <View style={styles.placeholderContainer}>
+        <SearchIcon style={{ marginRight: 5}}/>
+        <ThemedText style={styles.placeholder}>Search destination</ThemedText>
       </View>
-      <ThemedText style={styles.textTest}>Search destination</ThemedText>
-      <View style={styles.starTest}>
-        <StarBorderIcon/>
-      </View>
+      
+      <StarBorderIcon/>
     </TouchableOpacity>
   );
 };
 
-const styles = StyleSheet.create({
-  theTest: {
-    position: "absolute",
-    width: 309,
-    height: 44,
-    right: 66,
-    bottom: 32,
-    backgroundColor: "#444444",
-    borderRadius: 12
-  },
-  textTest: {
-    position: "absolute",
-    width: 121.62,
-    height: 17,
-    right: 155.38,
-    bottom: 14,
-    fontWeight: "500",
-    fontSize: 14,
-    lineHeight: 17,
-    color: "#ffffff"
-  },
-  searchTest: {
-    top: 13,
-    left: 10
-  },
-  starTest: {
-    left: 273,
-    bottom: 8
-  },
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    paddingHorizontal: 10
-  },
-  button: {
-    alignItems: "center",
-    backgroundColor: "#444444",
-    padding: 10
-  },
-  countContainer: {
-    alignItems: "center",
-    padding: 10
-  }
-});
-
-export default App;
+export default SearchBox;
