@@ -4,12 +4,10 @@ import ThemedText from "../../components/themed-text";
 import { useTheme } from "@react-navigation/native";
 import MapView, { Polyline } from "react-native-maps";
 import { decode } from "@googlemaps/polyline-codec";
-<<<<<<< HEAD
 import { googleMapsStyling } from "../../maps/google-maps-styling";
 import * as Location from "expo-location";
 import RecenterButton from "../../components/recenter-button";
 import AccountModal from "../../components/account-modal";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 const INITIAL_MAP_REGION = {
     latitude: 13.764889,
@@ -17,9 +15,6 @@ const INITIAL_MAP_REGION = {
     latitudeDelta: 0.035,
     longitudeDelta: 0.035,
 };
-=======
-import SearchBox from "../../components/search-box";
->>>>>>> feat/search-box
 
 export default function Home() {
     const { colors } = useTheme();
