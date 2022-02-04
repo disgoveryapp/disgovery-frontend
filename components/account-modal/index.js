@@ -72,7 +72,7 @@ export default function AccountModal(props) {
         },
     });
     return (
-        <View style={styles.clickoutside}>
+        <View>
             {modalVisible ? (
                 <TouchableOpacity
                     style={styles.clickoutside}
@@ -81,7 +81,6 @@ export default function AccountModal(props) {
             ) : (
                 <></>
             )}
-
             <Pressable style={props.accountmodalstyle} onPress={() => setModalVisible(false)}>
                 {modalVisible ? (
                     <>

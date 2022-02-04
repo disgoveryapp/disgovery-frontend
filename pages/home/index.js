@@ -34,14 +34,13 @@ export default function Home() {
             flexDirection: "row",
             justifyContent: "space-between",
             alignItems: "flex-end",
-            paddingHorizontal: 20,
+            paddingHorizontal: 12,
         },
         accountbox: {
             position: "absolute",
             right: 0,
             bottom: 25,
             alignItems: "flex-end",
-            paddingHorizontal: 12,
         },
     });
 
@@ -60,7 +59,9 @@ export default function Home() {
     return (
         <View style={styles.container}>
             {<MapView style={styles.maps}></MapView>}
-            <AccountModal accountmodalstyle={styles.accountbox} />
+            <View style={styles.searchbox}>
+                <AccountModal accountmodalstyle={styles.accountbox} />
+            </View>
         </View>
     );
 }
