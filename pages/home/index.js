@@ -7,6 +7,8 @@ import { decode } from "@googlemaps/polyline-codec";
 import { googleMapsStyling } from "../../maps/google-maps-styling";
 import * as Location from "expo-location";
 import RecenterButton from "../../components/recenter-button";
+import AccountModal from "../../components/account-modal";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const INITIAL_MAP_REGION = {
     latitude: 13.764889,
@@ -28,7 +30,7 @@ export default function Home() {
             backgroundColor: colors.background,
             flex: 1,
             justifyContent: "center",
-            alignItems: "center",
+            alignItems: "flex-end",
         },
         text: {
             fontSize: 32,
@@ -40,6 +42,19 @@ export default function Home() {
             left: 0,
             width: "100%",
             height: "100%",
+        },
+        searchbox: {
+            flex: 1,
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "flex-end",
+            paddingHorizontal: 12,
+        },
+        accountbox: {
+            position: "absolute",
+            right: 0,
+            bottom: 25,
+            alignItems: "flex-end",
         },
     });
 
