@@ -1,6 +1,6 @@
-import { useTheme } from "@react-navigation/native";
 import * as React from "react";
 import Svg, { Path } from "react-native-svg";
+import { useTheme } from "@react-navigation/native";
 
 const SearchIcon = (props) => {
     const { colors } = useTheme();

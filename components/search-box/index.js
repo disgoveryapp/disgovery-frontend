@@ -5,52 +5,44 @@ import SearchIcon from "../../assets/svgs/search-icon";
 import StarBorderIcon from "../../assets/svgs/star-border-icon";
 import { useTheme } from "@react-navigation/native";
 
-function SearchBox(props) {
+const SearchBox = () => {
     const { colors } = useTheme();
 
     const styles = StyleSheet.create({
         container: {
-            position: "absolute",
             width: "100%",
             height: 44,
-            borderRadius: 12,
             backgroundColor: colors.upper_background,
-            paddingHorizontal: 10,
+            borderRadius: 12,
             display: "flex",
             flexDirection: "row",
             justifyContent: "space-between",
             alignItems: "center",
+            padding: 10,
         },
-        placeholderText: {
-            fontWeight: "500",
-            fontSize: 16,
-            color: colors.text,
-            marginLeft: 5,
-        },
-        searchIconAndPlaceholder: {
+        placeholderContainer: {
             display: "flex",
             flexDirection: "row",
-            justifyContent: "flex-start",
             alignItems: "center",
         },
-        favouriteIcon: {
-            display: "flex",
-            justifyContent: "center",
-            alignContent: "center",
+        placeholder: {
+            fontWeight: "500",
+            fontSize: 16,
+            marginLeft: 5,
+            color: colors.text,
         },
     });
 
     return (
-        <TouchableOpacity style={{ ...styles.container, ...props.style }}>
-            <View style={styles.searchIconAndPlaceholder}>
+        <TouchableOpacity style={styles.container}>
+            <View style={styles.placeholderContainer}>
                 <SearchIcon />
-                <ThemedText style={styles.placeholderText}>Search destination</ThemedText>
+                <ThemedText style={styles.placeholder}>Search destination</ThemedText>
             </View>
-            <View style={styles.favouriteIcon}>
-                <StarBorderIcon />
-            </View>
+
+            <StarBorderIcon />
         </TouchableOpacity>
     );
-}
+};
 
 export default SearchBox;

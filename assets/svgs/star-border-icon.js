@@ -1,19 +1,18 @@
-import * as React from "react";
-import Svg, { G, Path } from "react-native-svg";
+import * as React from "react"
+import Svg, { Path } from "react-native-svg"
+import { useTheme } from "@react-navigation/native";
 
-const StarBorderIcon = () => {
+const StarBorderIcon = (props) => {
+    const { colors } = useTheme();
 
     return (
-        <Svg width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <G id="star_border_24px">
-                <Path
-                    id="icon/toggle/star_border_24px"
-                    fill-rule="evenodd"
-                    clip-rule="evenodd"
-                    d="M14.81 9.12L22 9.74L16.55 14.47L18.18 21.5L12 17.77L5.82 21.5L7.46 14.47L2 9.74L9.19 9.13L12 2.5L14.81 9.12ZM8.24 18.17L12 15.9L15.77 18.18L14.77 13.9L18.09 11.02L13.71 10.64L12 6.6L10.3 10.63L5.92 11.01L9.24 13.89L8.24 18.17Z"
-                    fill="white"
-                />
-            </G>
+        <Svg width={24} height={24} fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+            <Path
+                fillRule="evenodd"
+                clipRule="evenodd"
+                d="m14.81 9.12 7.19.62-5.45 4.73 1.63 7.03L12 17.77 5.82 21.5l1.64-7.03L2 9.74l7.19-.61L12 2.5l2.81 6.62Zm-6.57 9.05L12 15.9l3.77 2.28-1-4.28 3.32-2.88-4.38-.38L12 6.6l-1.7 4.03-4.38.38 3.32 2.88-1 4.28Z"
+                fill={colors.text}
+            />
         </Svg>
     );
 };

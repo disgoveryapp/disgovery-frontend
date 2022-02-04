@@ -4,7 +4,6 @@ import ThemedText from "../../components/themed-text";
 import { useTheme } from "@react-navigation/native";
 import MapView, { Polyline } from "react-native-maps";
 import { decode } from "@googlemaps/polyline-codec";
-import App from "../../components/search-box";
 import SearchBox from "../../components/search-box";
 
 export default function Home() {
