@@ -5,7 +5,6 @@ import { useTheme } from "@react-navigation/native";
 import MapView, { Polyline } from "react-native-maps";
 import { decode } from "@googlemaps/polyline-codec";
 import AccountModal from "../../components/account-modal";
-import AccountMenu from "../../components/account-modal-mui";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Home() {

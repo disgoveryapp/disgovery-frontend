@@ -15,7 +15,7 @@ import {
 } from "react-native";
 import { Button, Menu, Divider, Provider } from "react-native-paper";
 import ThemedText from "../themed-text";
-import Person from "../../svg/person";
+import PersonIcon from "../../assets/svgs/person-icon";
 
 export default function AccountModal(props) {
     const ref = useRef();
@@ -30,16 +30,19 @@ export default function AccountModal(props) {
     ];
     const styles = StyleSheet.create({
         image: {
-            width: 36,
-            height: 36,
+            width: 24,
+            height: 24,
             borderRadius: 18,
-            backgroundColor: "white",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
         },
         box: {
             width: 44,
             height: 44,
             borderRadius: 12,
             backgroundColor: colors.upper_background,
+            display: "flex",
             alignItems: "center",
             justifyContent: "center",
         },
@@ -62,8 +65,7 @@ export default function AccountModal(props) {
             height: 34,
             alignContent: "center",
             justifyContent: "center",
-            marginLeft: 10,
-            marginVertical: 3,
+            marginLeft: 15,
         },
         clickoutside: {
             flex: 1,
@@ -88,7 +90,11 @@ export default function AccountModal(props) {
                             {Object.keys(menuItem).map((key, index) => (
                                 <TouchableOpacity
                                     key={key}
-                                    style={styles.submenu}
+                                    style={{
+                                        ...styles.submenu,
+                                        marginTop: index === 0 ? 7 : 5,
+                                        marginBottom: index === menuItem.length - 1 ? 7 : 0,
+                                    }}
                                     onPress={() => setModalVisible(false)}
                                 >
                                     <ThemedText>{menuItem[key].name}</ThemedText>
@@ -111,10 +117,10 @@ export default function AccountModal(props) {
                                     <Image style={styles.image} />
                                 </>
                             ) : (
-                                <Person
+                                <PersonIcon
                                     width={styles.image.width}
                                     height={styles.image.height}
-                                    borderRadius={styles.borderRadius}
+                                    fill={colors.text}
                                 />
                             )}
                         </View>
