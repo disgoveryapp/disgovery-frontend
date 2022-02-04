@@ -17,6 +17,7 @@ import { Text, useColorScheme, View } from "react-native";
 import { darkTheme, lightTheme } from "./themes/themes";
 
 import Home from "./pages/home";
+import Search from "./pages/search";
 
 export default function App() {
     const scheme = useColorScheme();
@@ -43,7 +44,7 @@ export default function App() {
                             headerShown: false,
                         }}
                     >
-                        <Stack.Screen name="Home" component={Home} />
+                        <Stack.Screen name="Search" component={Search} />
                     </Stack.Navigator>
                 </NavigationContainer>
             </>
