@@ -11,12 +11,8 @@ export default function BottomCard() {
             context.translateY = translateY.value;
         },
         onActive: (event, context) => {
-            if (translateY.value > -400) {
-                translateY.value = event.translationY + context.translateY;
-            }
-            else
-                translateY.value = -399;
-            console.log(translateY.value);
+            translateY.value = Max(350, event.translationY + context.translateY);
+            //console.log(translateY.value);
         },
         onEnd: () => {
             const distance = Math.abs(translateY.value);
