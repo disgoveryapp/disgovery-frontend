@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useTheme } from "@react-navigation/native";
-import { View, Text, StyleSheet, Image, Pressable } from "react-native";
+import { View, Text, StyleSheet, Image, Pressable, TouchableWithoutFeedback } from "react-native";
 import { Menu, MenuItem } from "react-native-material-menu";
 import ThemedText from "../themed-text";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -44,7 +44,9 @@ export default function AccountMenu() {
 
     const showMenu = () => setVisible(true);
 
-    return (
+    return <TouchableWithoutFeedback></TouchableWithoutFeedback>;
+}
+/*
         <View style={styles.container}>
             <Menu
                 style={styles.menubox}
@@ -71,5 +73,4 @@ export default function AccountMenu() {
                 </MenuItem>
             </Menu>
         </View>
-    );
-}
+*/

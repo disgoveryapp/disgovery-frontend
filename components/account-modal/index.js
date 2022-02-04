@@ -54,7 +54,7 @@ export default function AccountModal(props) {
         container: {
             flex: 1,
             flexDirection: "column",
-            justifyContent: "center",
+            justifyContent: "flex-end",
             alignItems: "flex-end",
         },
         submenu: {
@@ -65,22 +65,27 @@ export default function AccountModal(props) {
             marginLeft: 10,
             marginVertical: 3,
         },
-        test: {
+        clickoutside: {
             flex: 1,
             width: width,
             height: height,
         },
     });
     return (
-        <View>
-            <TouchableOpacity
-                style={styles.test}
-                onPress={() => setModalVisible(false)}
-            ></TouchableOpacity>
-            <View style={props.accountmodalstyle}>
+        <View style={styles.clickoutside}>
+            {modalVisible ? (
+                <TouchableOpacity
+                    style={styles.clickoutside}
+                    onPress={() => setModalVisible(false)}
+                ></TouchableOpacity>
+            ) : (
+                <></>
+            )}
+
+            <Pressable style={props.accountmodalstyle} onPress={() => setModalVisible(false)}>
                 {modalVisible ? (
                     <>
-                        <TouchableOpacity style={styles.menubox}>
+                        <View style={styles.menubox}>
                             {Object.keys(menuItem).map((key, index) => (
                                 <TouchableOpacity
                                     key={key}
@@ -90,7 +95,7 @@ export default function AccountModal(props) {
                                     <ThemedText>{menuItem[key].name}</ThemedText>
                                 </TouchableOpacity>
                             ))}
-                        </TouchableOpacity>
+                        </View>
                     </>
                 ) : (
                     <></>
@@ -116,7 +121,7 @@ export default function AccountModal(props) {
                         </View>
                     </View>
                 </TouchableOpacity>
-            </View>
+            </Pressable>
         </View>
     );
 }
