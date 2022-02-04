@@ -10,8 +10,8 @@ import {
     Image,
 } from "react-native";
 import ThemedText from "../themed-text";
-import BusIcon from "../../assets/bus-icon";
-import ArrowIcon from "../../assets/arrow_forward-icon";
+import BusIcon from "../../assets/svgs/bus-icon";
+import ArrowIcon from "../../assets/svgs/arrow_forward-icon";
 
 const DATA = [
     {
