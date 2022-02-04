@@ -1,6 +1,8 @@
 import React from "react";
-import { SafeAreaView, View, FlatList, StyleSheet, Text, StatusBar, Image } from 'react-native';
+import { TouchableOpacity, SafeAreaView, View, FlatList, StyleSheet, Text, StatusBar, Image } from 'react-native';
 import ThemedText from "../themed-text";
+import BusIcon from "../../assets/bus-icon";
+import ArrowIcon from "../../assets/arrow_forward-icon";
 
 const DATA = [
     {
@@ -30,19 +32,13 @@ const DATA = [
   ];
   
   const Item = ({ title, time, line }) => (
-    <View style={styles.lower_container}>
+    <TouchableOpacity style={styles.lower_container}>
         <View style={styles.sub_container}>
             <View style={styles.transport}>
-                <Image
-                    style={styles.icon}
-                    source={require('../../assets/bus-icon.png')}
-                    />
+                <BusIcon style={styles.icon}/>
                 <ThemedText style={styles.line}>{line}</ThemedText>
             </View>
-            <Image
-                source={require('../../assets/arrow_forward-icon.png')}
-                style={styles.arrow}
-            />
+            <ArrowIcon style={styles.arrow}/>
             <View style={styles.item}>
             <ThemedText style={styles.title}>{title}</ThemedText>
             </View>
@@ -51,7 +47,7 @@ const DATA = [
             <ThemedText style={styles.time}>{time}</ThemedText>
             <ThemedText style={styles.time}>min</ThemedText>
         </View>
-    </View>
+    </TouchableOpacity>
   );
 
 
@@ -125,7 +121,7 @@ const styles = StyleSheet.create({
         marginBottom:6,
     },
     line: {
-      marginTop:4,
+      marginTop:2,
       fontSize: 25,
       color: "red",
     },
