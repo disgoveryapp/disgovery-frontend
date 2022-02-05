@@ -4,6 +4,7 @@ import ThemedText from "../../components/themed-text";
 import { useTheme } from "@react-navigation/native";
 import MapView, { Polyline } from "react-native-maps";
 import { decode } from "@googlemaps/polyline-codec";
+import BottomCard from "../../components/bottom-card";
 
 export default function Home() {
     const { colors } = useTheme();
@@ -26,6 +27,9 @@ export default function Home() {
             width: "100%",
             height: "100%",
         },
+        bottomCard: {
+            position: "absolute",
+        },
     });
 
     function decodePolyline() {
@@ -42,8 +46,9 @@ export default function Home() {
 
     return (
         <View style={styles.container}>
-            {/* <MapView style={styles.maps}></MapView> */}
+            <MapView style={styles.maps}></MapView>
             <ThemedText style={styles.text}>Hello</ThemedText>
+            <BottomCard style={styles.bottomCard} />
         </View>
     );
 }
