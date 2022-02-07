@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { StyleSheet, View, Platform, NativeModules,ScrollView,Text,FlatList } from "react-native";
+import {
+    StyleSheet,
+    View,
+    Platform,
+    NativeModules,
+    ScrollView,
+    Text,
+    FlatList,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import SearchBox from "../../components/search-box";
 import ThemedText from "../../components/themed-text";
@@ -8,9 +16,7 @@ import { configureFonts, Searchbar } from "react-native-paper";
 
 export default function Search() {
     const { colors } = useTheme();
-    const { StatusBarManager } = NativeModules;
-    const statusbar_height = Platform.OS === "ios" ? 0 : StatusBarManager.HEIGHT;
-    const [searchQuery, setSearchQuery] = React.useState("");
+    const [searchQuery, setSearchQuery] = useState("");
 
     const onChangeSearch = (query) => setSearchQuery(query);
 
@@ -28,7 +34,11 @@ export default function Search() {
     };
 
     const styles = StyleSheet.create({
+        safeArea: {
+            backgroundColor: colors.upper_background,
+        },
         searchbox: {
+            paddingVertical: 5,
             paddingHorizontal: 12,
             paddingBottom: 12,
         },
@@ -39,7 +49,6 @@ export default function Search() {
             borderTopRightRadius: 22,
         },
         container: {
-            flex: 1,
             backgroundColor: colors.upper_background,
         },
         searchbar: {
@@ -47,20 +56,26 @@ export default function Search() {
             shadowColor: colors.upper_background,
         },
         scrollView: {
-            flex: 1,
+            height: "100%",
             backgroundColor: colors.background,
             borderTopLeftRadius: 22,
             borderTopRightRadius: 22,
-            paddingVertical: 22,
-        },item: {
+            paddingHorizontal: 15,
+        },
+        flatList: {
+            paddingTop: 15,
+        },
+        item: {
             padding: 10,
             fontSize: 18,
             height: 44,
-          },
+        },
     });
+
     return (
         <>
-            <SafeAreaView style={styles.container} edges={["top"]}>
+            <View style={styles.container}>
+                <SafeAreaView style={styles.safeArea} edges={["top"]} />
                 <View style={styles.searchbox}>
                     <Searchbar
                         placeholder="Search destination"
@@ -70,24 +85,28 @@ export default function Search() {
                         theme={theme}
                     />
                 </View>
-                <SafeAreaView style={styles.body} edges={["bottom"]}>
-                <FlatList style={styles.scrollView}
-        data={[
-          {key: 'Devin'},
-          {key: 'Dan'},
-          {key: 'Dominic'},
-          {key: 'Jackson'},
-          {key: 'James'},
-          {key: 'Joel'},
-          {key: 'John'},
-          {key: 'Jillian'},
-          {key: 'Jimmy'},
-          {key: 'Julie'},
-        ]}
-        renderItem={({item}) => <ThemedText style={styles.item}>{item.key}</ThemedText>}
-      />
-                </SafeAreaView>
-            </SafeAreaView>
+
+                <View style={styles.scrollView}>
+                    <FlatList
+                        style={styles.flatList}
+                        data={[
+                            { key: "Devin" },
+                            { key: "Dan" },
+                            { key: "Dominic" },
+                            { key: "Jackson" },
+                            { key: "James" },
+                            { key: "Joel" },
+                            { key: "John" },
+                            { key: "Jillian" },
+                            { key: "Jimmy" },
+                            { key: "Julie" },
+                        ]}
+                        renderItem={({ item }) => (
+                            <ThemedText style={styles.item}>{item.key}</ThemedText>
+                        )}
+                    />
+                </View>
+            </View>
         </>
     );
 }
