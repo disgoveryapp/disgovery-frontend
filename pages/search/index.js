@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, View, Platform, NativeModules } from "react-native";
+import { StyleSheet, View, Platform, NativeModules,ScrollView,Text,FlatList } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import SearchBox from "../../components/search-box";
 import ThemedText from "../../components/themed-text";
@@ -46,6 +46,17 @@ export default function Search() {
             backgroundColor: colors.upper_background,
             shadowColor: colors.upper_background,
         },
+        scrollView: {
+            flex: 1,
+            backgroundColor: colors.background,
+            borderTopLeftRadius: 22,
+            borderTopRightRadius: 22,
+            paddingVertical: 22,
+        },item: {
+            padding: 10,
+            fontSize: 18,
+            height: 44,
+          },
     });
     return (
         <>
@@ -59,8 +70,37 @@ export default function Search() {
                         theme={theme}
                     />
                 </View>
-                <SafeAreaView style={styles.body} edges={["bottom"]}></SafeAreaView>
+                <SafeAreaView style={styles.body} edges={["bottom"]}>
+                <FlatList style={styles.scrollView}
+        data={[
+          {key: 'Devin'},
+          {key: 'Dan'},
+          {key: 'Dominic'},
+          {key: 'Jackson'},
+          {key: 'James'},
+          {key: 'Joel'},
+          {key: 'John'},
+          {key: 'Jillian'},
+          {key: 'Jimmy'},
+          {key: 'Julie'},
+        ]}
+        renderItem={({item}) => <ThemedText style={styles.item}>{item.key}</ThemedText>}
+      />
+                </SafeAreaView>
             </SafeAreaView>
         </>
     );
 }
+/*
+<ScrollView style={styles.scrollView}>
+        <ThemedText >
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
+          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+          aliquip ex ea commodo consequat. Duis aute irure dolor in
+          reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+          pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+          culpa qui officia deserunt mollit anim id est laborum.
+        </ThemedText>
+      </ScrollView>
+*/
