@@ -1,18 +1,9 @@
 import React, { useState } from "react";
-import {
-    StyleSheet,
-    View,
-    Platform,
-    NativeModules,
-    ScrollView,
-    Text,
-    FlatList,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { StyleSheet, View, ScrollView, FlatList, SafeAreaView } from "react-native";
 import SearchBox from "../../components/search-box";
 import ThemedText from "../../components/themed-text";
 import { useTheme } from "@react-navigation/native";
-import { configureFonts, Searchbar } from "react-native-paper";
+import { Searchbar } from "react-native-paper";
 
 export default function Search() {
     const { colors } = useTheme();
@@ -34,9 +25,6 @@ export default function Search() {
     };
 
     const styles = StyleSheet.create({
-        safeArea: {
-            backgroundColor: colors.upper_background,
-        },
         searchbox: {
             paddingVertical: 5,
             paddingHorizontal: 12,
@@ -75,7 +63,7 @@ export default function Search() {
     return (
         <>
             <View style={styles.container}>
-                <SafeAreaView style={styles.safeArea} edges={["top"]} />
+                <SafeAreaView />
                 <View style={styles.searchbox}>
                     <Searchbar
                         placeholder="Search destination"
