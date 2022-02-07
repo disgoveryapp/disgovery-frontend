@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { StyleSheet, View, ScrollView, FlatList, SafeAreaView,Platform, StatusBar } from "react-native";
+import {
+    StyleSheet,
+    View,
+    ScrollView,
+    FlatList,
+    SafeAreaView,
+    Platform,
+    StatusBar,
+} from "react-native";
 import SearchBox from "../../components/search-box";
 import ThemedText from "../../components/themed-text";
 import { useTheme } from "@react-navigation/native";
@@ -33,7 +41,7 @@ export default function Search() {
         container: {
             flex: 1,
             backgroundColor: colors.upper_background,
-            paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0
+            paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
         },
         searchbar: {
             backgroundColor: colors.upper_background,
@@ -48,9 +56,6 @@ export default function Search() {
         },
         flatList: {
             height: "100%",
-            marginTop: 12,
-            marginBottom: 35,
-            overflow: "visible",
         },
         item: {
             padding: 10,
@@ -76,6 +81,7 @@ export default function Search() {
                 <View style={styles.scrollView}>
                     <FlatList
                         style={styles.flatList}
+                        contentContainerStyle={{ paddingBottom: 35 }}
                         data={[
                             { key: "Devin" },
                             { key: "Dan" },
