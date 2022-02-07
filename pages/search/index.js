@@ -81,6 +81,8 @@ export default function Search() {
                 <View style={styles.scrollView}>
                     <FlatList
                         style={styles.flatList}
+                        showsHorizontalScrollIndicator={false}
+                        showsHorizontalScrollIndicator={false}
                         contentContainerStyle={{ paddingBottom: 35,paddingTop:12 }}
                         data={[
                             { key: "Devin" },
