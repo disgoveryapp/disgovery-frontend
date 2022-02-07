@@ -81,7 +81,7 @@ export default function Search() {
                 <View style={styles.scrollView}>
                     <FlatList
                         style={styles.flatList}
-                        contentContainerStyle={{ paddingBottom: 35 }}
+                        contentContainerStyle={{ paddingBottom: 35,paddingTop:12 }}
                         data={[
                             { key: "Devin" },
                             { key: "Dan" },
