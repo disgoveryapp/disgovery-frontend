@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, View, ScrollView, FlatList, SafeAreaView } from "react-native";
+import { StyleSheet, View, ScrollView, FlatList, SafeAreaView,Platform, StatusBar } from "react-native";
 import SearchBox from "../../components/search-box";
 import ThemedText from "../../components/themed-text";
 import { useTheme } from "@react-navigation/native";
@@ -33,6 +33,7 @@ export default function Search() {
         container: {
             flex: 1,
             backgroundColor: colors.upper_background,
+            paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0
         },
         searchbar: {
             backgroundColor: colors.upper_background,
