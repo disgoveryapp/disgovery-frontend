@@ -6,6 +6,7 @@ import SearchIcon from "../../../../assets/svgs/search-icon";
 import CloseIcon from "../../../../assets/svgs/close-icon";
 
 export default function SearchBar(props) {
+    const clearText = () => props.onChangeText("");
     const styles = StyleSheet.create({
         container: {
             width: "auto",
@@ -38,7 +39,7 @@ export default function SearchBar(props) {
             </View>
             <View>
                 {props.value ? (
-                    <TouchableOpacity onPress={() => (props.onChangeText = useState(""))}>
+                    <TouchableOpacity onPress={() => clearText()}>
                         <CloseIcon />
                     </TouchableOpacity>
                 ) : (
