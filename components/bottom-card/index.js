@@ -10,26 +10,23 @@ import { GestureHandlerRootView, PanGestureHandler } from "react-native-gesture-
 import { useTheme } from "@react-navigation/native";
 
 const SIZE = 100.0;
+const startingPosition = 800;
+const endingPosition = 500;
 
-export default function BottomCard(props) {
-    const translateX = useSharedValue(0);
-    const translateY = useSharedValue(0);
+export default function bottomCard(props) {
+    const translateY = useSharedValue(startingPosition);
     const { colors } = useTheme();
 
     const panGestureEvent = useAnimatedGestureHandler({
-        onStart: (event, context) => {
+        onStart: (context) => {
             context.translateY = translateY.value;
         },
         onActive: (event, context) => {
-            translateY.value = Math.max(350, event.translationY + context.translateY);
-            //console.log(translateY.value);
+            translateY.value = Math.max(endingPosition, event.translationY + context.translateY);
         },
-        onEnd: () => {
-            const distance = Math.abs(translateY.value);
-            //console.log(distance)
-            if (distance < SIZE * 3) {
-                //console.log("1")
-                translateY.value = withSpring(0);
+        onEnd: (event, context) => {
+            if (event.translationY + context.translateY > endingPosition) {
+                translateY.value = withSpring(startingPosition);
             }
         },
     });
@@ -45,38 +42,19 @@ export default function BottomCard(props) {
     });
 
     const styles = StyleSheet.create({
-        container: {
-            flex: 1,
-            backgroundColor: colors.text,
-            alignItems: "center",
-            bottom: -700,
-        },
-        square: {
+        card: {
             width: SIZE * 4.28,
             height: SIZE * 6,
             backgroundColor: colors.background,
             borderRadius: 22,
         },
-        box: {
-            width: SIZE * 4,
-            height: SIZE * 8,
-            alignItems: "center",
-            justifyContent: "center",
-            borderWidth: 0,
-            borderColor: colors.background,
-        },
     });
 
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
-            {/* <Text>{translateY.value}</Text> */}
-            <View style={styles.container}>
-                <View style={styles.box}>
-                    <PanGestureHandler onGestureEvent={panGestureEvent}>
-                        <Animated.View style={[styles.square, rStyle]} />
-                    </PanGestureHandler>
-                </View>
-            </View>
+            <PanGestureHandler onGestureEvent={panGestureEvent}>
+                <Animated.View style={[styles.card, rStyle]}/>
+            </PanGestureHandler>
         </GestureHandlerRootView>
     );
 }
