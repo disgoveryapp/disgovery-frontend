@@ -24,7 +24,7 @@ export default function ThemedText(props) {
         if (fontStyle === "italic") fontFamily = "Barlow_700Bold_Italic";
         else fontFamily = "Barlow_700Bold";
     } else if (fontWeight === "800" || fontWeight === "extrabold") {
-        if (fontStyle === "italic") fontFamily = "Barlow_800ExtraBold_Italic"
+        if (fontStyle === "italic") fontFamily = "Barlow_800ExtraBold_Italic";
         else fontFamily = "Barlow_800ExtraBold";
     } else {
         fontFamily = "Barlow_500Medium";
