@@ -8,6 +8,7 @@ import { googleMapsStyling } from "../../maps/google-maps-styling";
 import * as Location from "expo-location";
 import RecenterButton from "../../components/recenter-button";
 import AccountModal from "../../components/account-modal";
+import AutoSlidingThemedText from "../../components/auto-sliding-themed-text";
 
 const INITIAL_MAP_REGION = {
     latitude: 13.764889,
@@ -29,7 +30,7 @@ export default function Home() {
             backgroundColor: colors.background,
             flex: 1,
             justifyContent: "center",
-            alignItems: "flex-end",
+            alignItems: "center",
         },
         text: {
             fontSize: 32,
@@ -110,7 +111,11 @@ export default function Home() {
 
     return (
         <View style={styles.container}>
-            <SafeAreaView />
+            <AutoSlidingThemedText style={{ fontSize: 40, fontWeight: "bold" }}>
+                Please mind the gap between the train and the platform. This is Aldgate. This is a
+                Circle line train via Liverpool Street and King’s Cross St. Pancras
+            </AutoSlidingThemedText>
+            {/* <SafeAreaView />
             <MapView
                 ref={mapRef}
                 style={styles.maps}
@@ -120,7 +125,7 @@ export default function Home() {
                 onTouchStart={() => setMapsIsRecentered(false)}
                 showsUserLocation
             ></MapView>
-            <RecenterButton recentered={mapsIsRecentered} onPress={recenter} />
+            <RecenterButton recentered={mapsIsRecentered} onPress={recenter} /> */}
         </View>
     );
 }
