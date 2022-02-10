@@ -14,12 +14,10 @@ function StationTab(props) {
         container: {
             width: "100%",
             height: 71,
-            backgroundColor: colors.background,
             display: "flex",
             flexDirection: "row",
             justifyContent: "space-between",
             alignItems: "center",
-            padding: 20,
             borderBottomColor: "grey",
             borderBottomWidth: 2,
         },
@@ -51,35 +49,46 @@ function StationTab(props) {
             justifyContent: "center",
             alignItems: "center",
         },
+        subcontainer: {
+            width: "100%",
+            height: 71,
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+            padding: 20,
+        },
     });
 
     return (
-        <TouchableOpacity style={styles.container}>
-            <View style={styles.placeholderContainer}>
-                <View style={styles.iconContainer}>
-                    {(() => {
-                        if (props.icon == "bus") {
-                            return <BusIcon />;
-                        } else if (props.icon == "train") {
-                            return <SubwayIcon />;
-                        } else {
-                            return <PlaceIcon fill={colors.background} />;
-                        }
-                    })()}
+        <View style={styles.container}>
+            <TouchableOpacity style={styles.subcontainer} onPress={props.onPress}>
+                <View style={styles.placeholderContainer}>
+                    <View style={styles.iconContainer}>
+                        {(() => {
+                            if (props.icon == "bus") {
+                                return <BusIcon />;
+                            } else if (props.icon == "train") {
+                                return <SubwayIcon />;
+                            } else {
+                                return <PlaceIcon fill={colors.background} />;
+                            }
+                        })()}
+                    </View>
+                    <View>
+                        <ThemedText style={styles.title} numberOfLines={1}>
+                            {props.place}
+                        </ThemedText>
+                        <ThemedText style={styles.subtitle} numberOfLines={1}>
+                            {props.type}
+                        </ThemedText>
+                    </View>
                 </View>
-                <View>
-                    <ThemedText style={styles.title} numberOfLines={1}>
-                        {props.place}
-                    </ThemedText>
-                    <ThemedText style={styles.subtitle} numberOfLines={1}>
-                        {props.type}
-                    </ThemedText>
-                </View>
-            </View>
-            <TouchableOpacity>
-                <InfoIcon />
+                <TouchableOpacity onPress={props.onPress}>
+                    <InfoIcon />
+                </TouchableOpacity>
             </TouchableOpacity>
-        </TouchableOpacity>
+        </View>
     );
 }
 
