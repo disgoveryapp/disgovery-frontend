@@ -59,7 +59,7 @@ export default function Search() {
             });
             setApi22Result(result.data.data);
         };
-        /*const simpleApi21Call = async (str) => {
+        const simpleApi21Call = async (str) => {
             const result = await axios({
                 method: "get",
                 url: `http://localhost:3000/autocomplete/places?query=${text}`,
@@ -68,10 +68,10 @@ export default function Search() {
             if (debouncedValue) {
                 setApi21Result(result.data);
             }
-        };*/
+        };
         console.log(text);
         simpleApi22Call();
-        //simpleApi21Call();
+        simpleApi21Call();
         console.log(api22Result);
         console.log(api21Result);
     }, [debouncedValue]);
@@ -161,9 +161,7 @@ export default function Search() {
                                                     <PlaceTab
                                                         key={key}
                                                         place={item.name.en}
-                                                        address={
-                                                            "Rama IV Road, เเขวง วังใหม่ Pathum Wan District, Bangkok, Thailand"
-                                                        }
+                                                        address={item.address.en}
                                                     ></PlaceTab>
                                                 ))}
                                             </>
@@ -191,62 +189,3 @@ export default function Search() {
         </>
     );
 }
-/*
-<ScrollView style={styles.scrollView}>
-        <ThemedText >
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-          aliquip ex ea commodo consequat. Duis aute irure dolor in
-          reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-          pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-          culpa qui officia deserunt mollit anim id est laborum.
-        </ThemedText>
-      </ScrollView>
-
-      <FlatList
-                        style={styles.flatList}
-                        showsHorizontalScrollIndicator={false}
-                        showsVerticalScrollIndicator={false}
-                        contentContainerStyle={{ paddingBottom: 35, paddingTop: 12 }}
-                        data={[
-                            { key: "Devin" },
-                            { key: "Dan" },
-                            { key: "Dominic" },
-                            { key: "Jackson" },
-                            { key: "James" },
-                            { key: "Joel" },
-                            { key: "John" },
-                            { key: "Jillian" },
-                            { key: "Jimmy" },
-                            { key: "Julie" },
-                            { key: "Devin" },
-                            { key: "Dan" },
-                            { key: "Dominic" },
-                            { key: "Jackson" },
-                            { key: "James" },
-                            { key: "Joel" },
-                            { key: "John" },
-                            { key: "Jillian" },
-                            { key: "Jimmy" },
-                            { key: "Julie" },
-                            { key: "Dan" },
-                            { key: "Dominic" },
-                            { key: "Jackson" },
-                            { key: "James" },
-                            { key: "Joel" },
-                            { key: "John" },
-                            { key: "Jillian" },
-                            { key: "Jimmy" },
-                            { key: "Julie" },
-                        ]}
-                        renderItem={({ item }) => (
-                            <ThemedText style={styles.item}>{item.key}</ThemedText>
-                        )}
-                        {Object.keys(api21Result).map((key, index) => (
-                                        <View key={key} onPress={() => setModalVisible(false)}>
-                                            <ThemedText>{api21Result[key].name}</ThemedText>
-                                        </View>
-                                    ))}
-                    />
-*/
