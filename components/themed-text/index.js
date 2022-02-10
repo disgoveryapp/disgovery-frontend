@@ -37,6 +37,7 @@ export default function ThemedText(props) {
                 fontFamily: fontFamily === "" ? undefined : fontFamily,
                 ...props.style,
             }}
+            numberOfLines={props.numberOfLines}
         >
             {props.children}
         </Text>
