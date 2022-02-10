@@ -15,23 +15,49 @@ import Searchbar from "./components/search-bar";
 import axios from "axios";
 import PlaceTab from "./components/place-tab";
 import { useDebounce } from "use-lodash-debounce";
+import StationTab from "./components/station-tab";
 
 export default function Search() {
     const { colors } = useTheme();
     const [text, onChangeText] = useState("");
-    const [api22Result, setApi22Result] = useState({});
-    const [api21Result, setApi21Result] = useState({});
+    const [api22Result, setApi22Result] = useState([
+        {
+            location: {
+                coords: {
+                    lat: "",
+                    lon: "",
+                },
+            },
+            name: {
+                en: "",
+                th: "",
+            },
+            station_id: "",
+        },
+    ]);
+    const [api21Result, setApi21Result] = useState([
+        {
+            address: {
+                en: "",
+                th: "",
+            },
+            name: {
+                en: "",
+                th: "",
+            },
+            place_id: "",
+        },
+    ]);
     const debouncedValue = useDebounce(text, 300);
 
     useEffect(() => {
         const simpleApi22Call = async (str) => {
             const result = await axios({
                 method: "get",
-                url: `http://localhost:3000/autocomplete/stations?query=Siam&max_result=4`,
+                url: `http://localhost:3000/autocomplete/stations?query=${text}&max_result=4`,
                 headers: {},
             });
-                setApi22Result(result.data);
-
+            setApi22Result(result.data.data);
         };
         /*const simpleApi21Call = async (str) => {
             const result = await axios({
@@ -40,14 +66,14 @@ export default function Search() {
                 headers: {},
             });
             if (debouncedValue) {
-                setApi21Result(result.data.data);
+                setApi21Result(result.data);
             }
         };*/
         console.log(text);
         simpleApi22Call();
         //simpleApi21Call();
         console.log(api22Result);
-        //console.log(api21Result);
+        console.log(api21Result);
     }, [debouncedValue]);
 
     const styles = StyleSheet.create({
@@ -79,6 +105,9 @@ export default function Search() {
             color: "grey",
             paddingHorizontal: 8,
         },
+        tabbarcontainer: {
+            paddingBottom: 12,
+        },
     });
 
     return (
@@ -101,23 +130,47 @@ export default function Search() {
                         showsVerticalScrollIndicator={false}
                         contentContainerStyle={{ paddingBottom: 35, paddingTop: 12 }}
                     >
-                        {text ? (
+                        {api22Result !== undefined && api21Result !== undefined ? (
                             <>
                                 <View>
                                     <ThemedText style={styles.topictext}>Stations</ThemedText>
-                                    {api22Result ? (<>{Object.keys(api22Result).map((key, index) => (
-                                <ThemedText
-                                    key={key}
-                                    onPress={() => setModalVisible(false)}
-                                >
-                                    {api22Result[key].name}.en
-                                </ThemedText>
-                            ))}</>):(<></>)}
-                                    
-
+                                    <View style={styles.tabbarcontainer}>
+                                        {api22Result ? (
+                                            <>
+                                                {api22Result.map((item, key) => (
+                                                    <StationTab
+                                                        key={key}
+                                                        icon="train"
+                                                        place={item.name.en}
+                                                        type="train"
+                                                    ></StationTab>
+                                                ))}
+                                            </>
+                                        ) : (
+                                            <></>
+                                        )}
+                                    </View>
                                 </View>
+
                                 <View>
                                     <ThemedText style={styles.topictext}>Places</ThemedText>
+                                    <View style={styles.tabbarcontainer}>
+                                        {api21Result !== undefined ? (
+                                            <>
+                                                {api21Result.map((item, key) => (
+                                                    <PlaceTab
+                                                        key={key}
+                                                        place={item.name.en}
+                                                        address={
+                                                            "Rama IV Road, เเขวง วังใหม่ Pathum Wan District, Bangkok, Thailand"
+                                                        }
+                                                    ></PlaceTab>
+                                                ))}
+                                            </>
+                                        ) : (
+                                            <></>
+                                        )}
+                                    </View>
                                 </View>
                             </>
                         ) : (
