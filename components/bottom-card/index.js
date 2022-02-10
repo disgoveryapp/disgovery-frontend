@@ -18,14 +18,14 @@ export default function bottomCard(props) {
     const { colors } = useTheme();
 
     const panGestureEvent = useAnimatedGestureHandler({
-        onStart: (context) => {
+        onStart: (event, context) => {
             context.translateY = translateY.value;
         },
         onActive: (event, context) => {
             translateY.value = Math.max(endingPosition, event.translationY + context.translateY);
         },
-        onEnd: (event, context) => {
-            if (event.translationY + context.translateY > endingPosition) {
+        onEnd: () => {
+            if (translateY.value > endingPosition) {
                 translateY.value = withSpring(startingPosition);
             }
         },
