@@ -14,12 +14,10 @@ function PlaceTab(props) {
         container: {
             width: "100%",
             height: 71,
-            backgroundColor: colors.background,
             display: "flex",
             flexDirection: "row",
             justifyContent: "flex-start",
             alignItems: "center",
-            padding: 20,
             borderBottomColor: "grey",
             borderBottomWidth: 2,
         },
@@ -42,32 +40,45 @@ function PlaceTab(props) {
             marginLeft: 15,
             color: colors.subtitle,
         },
+        subcontainer: {
+            width: "100%",
+            height: 71,
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "flex-start",
+            alignItems: "center",
+            padding: 20,
+            borderBottomColor: "grey",
+            borderBottomWidth: 2,
+        },
     });
 
     return (
-        <TouchableOpacity style={styles.container}>
-            <View style={styles.placeholderContainer}>
-                {(() => {
-                    if (props.icon == "my-location") {
-                        return <MyLocationIcon />;
-                    } else if (props.icon == "home") {
-                        return <HomeIcon />;
-                    } else if (props.icon == "work") {
-                        return <WorkIcon />;
-                    } else {
-                        return <PlaceIcon />;
-                    }
-                })()}
-                <View>
-                    <ThemedText style={styles.title} numberOfLines={1}>
-                        {props.place}
-                    </ThemedText>
-                    <ThemedText style={styles.subtitle} numberOfLines={1}>
-                        {props.address}
-                    </ThemedText>
+        <View style={styles.container}>
+            <TouchableOpacity style={styles.subcontainer} onPress={props.onPress}>
+                <View style={styles.placeholderContainer}>
+                    {(() => {
+                        if (props.icon == "my-location") {
+                            return <MyLocationIcon />;
+                        } else if (props.icon == "home") {
+                            return <HomeIcon />;
+                        } else if (props.icon == "work") {
+                            return <WorkIcon />;
+                        } else {
+                            return <PlaceIcon />;
+                        }
+                    })()}
+                    <View>
+                        <ThemedText style={styles.title} numberOfLines={1}>
+                            {props.place}
+                        </ThemedText>
+                        <ThemedText style={styles.subtitle} numberOfLines={1}>
+                            {props.address}
+                        </ThemedText>
+                    </View>
                 </View>
-            </View>
-        </TouchableOpacity>
+            </TouchableOpacity>
+        </View>
     );
 }
 
