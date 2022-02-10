@@ -16,6 +16,7 @@ import axios from "axios";
 import PlaceTab from "./components/place-tab";
 import { useDebounce } from "use-lodash-debounce";
 import StationTab from "./components/station-tab";
+import { configs } from "../../configs/configs";
 
 export default function Search() {
     const { colors } = useTheme();
@@ -54,7 +55,7 @@ export default function Search() {
         const simpleApi22Call = async (str) => {
             const result = await axios({
                 method: "get",
-                url: `http://localhost:3000/autocomplete/stations?query=${text}&max_result=4`,
+                url: `${configs.API_URL}/autocomplete/stations?query=${text}&max_result=4`,
                 headers: {},
             });
             setApi22Result(result.data.data);
@@ -62,7 +63,7 @@ export default function Search() {
         const simpleApi21Call = async (str) => {
             const result = await axios({
                 method: "get",
-                url: `http://localhost:3000/autocomplete/places?query=${text}`,
+                url: `${configs.API_URL}/autocomplete/places?query=${text}`,
                 headers: {},
             });
             if (debouncedValue) {
