@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
     StyleSheet,
     View,
@@ -9,27 +9,46 @@ import {
     StatusBar,
     TouchableOpacity,
 } from "react-native";
-import SearchBox from "../../components/search-box";
 import ThemedText from "../../components/themed-text";
 import { useTheme } from "@react-navigation/native";
 import Searchbar from "./components/search-bar";
+import axios from "axios";
+import PlaceTab from "./components/place-tab";
+import { useDebounce } from "use-lodash-debounce";
 
 export default function Search() {
     const { colors } = useTheme();
     const [text, onChangeText] = useState("");
+    const [api22Result, setApi22Result] = useState({});
+    const [api21Result, setApi21Result] = useState({});
+    const debouncedValue = useDebounce(text, 300);
 
-    const theme = {
-        dark: true,
-        mode: "adaptive",
-        roundness: 12,
+    useEffect(() => {
+        const simpleApi22Call = async (str) => {
+            const result = await axios({
+                method: "get",
+                url: `http://localhost:3000/autocomplete/stations?query=Siam&max_result=4`,
+                headers: {},
+            });
+                setApi22Result(result.data);
 
-        colors: {
-            primary: "grey",
-            text: colors.text,
-            surface: "#000000",
-            placeholder: "grey",
-        },
-    };
+        };
+        /*const simpleApi21Call = async (str) => {
+            const result = await axios({
+                method: "get",
+                url: `http://localhost:3000/autocomplete/places?query=${text}`,
+                headers: {},
+            });
+            if (debouncedValue) {
+                setApi21Result(result.data.data);
+            }
+        };*/
+        console.log(text);
+        simpleApi22Call();
+        //simpleApi21Call();
+        console.log(api22Result);
+        //console.log(api21Result);
+    }, [debouncedValue]);
 
     const styles = StyleSheet.create({
         searchbox: {
@@ -82,18 +101,37 @@ export default function Search() {
                         showsVerticalScrollIndicator={false}
                         contentContainerStyle={{ paddingBottom: 35, paddingTop: 12 }}
                     >
-                        <View>
-                            <ThemedText style={styles.topictext}>Favourite location</ThemedText>
-                        </View>
-                        <View>
-                            <ThemedText style={styles.topictext}>Recent</ThemedText>
-                        </View>
-                        <View>
-                            <ThemedText style={styles.topictext}>stations</ThemedText>
-                        </View>
-                        <View>
-                            <ThemedText style={styles.topictext}>Places</ThemedText>
-                        </View>
+                        {text ? (
+                            <>
+                                <View>
+                                    <ThemedText style={styles.topictext}>Stations</ThemedText>
+                                    {api22Result ? (<>{Object.keys(api22Result).map((key, index) => (
+                                <ThemedText
+                                    key={key}
+                                    onPress={() => setModalVisible(false)}
+                                >
+                                    {api22Result[key].name}.en
+                                </ThemedText>
+                            ))}</>):(<></>)}
+                                    
+
+                                </View>
+                                <View>
+                                    <ThemedText style={styles.topictext}>Places</ThemedText>
+                                </View>
+                            </>
+                        ) : (
+                            <>
+                                <View>
+                                    <ThemedText style={styles.topictext}>
+                                        Favourite location
+                                    </ThemedText>
+                                </View>
+                                <View>
+                                    <ThemedText style={styles.topictext}>Recent</ThemedText>
+                                </View>
+                            </>
+                        )}
                     </ScrollView>
                 </View>
             </View>
@@ -152,5 +190,10 @@ export default function Search() {
                         renderItem={({ item }) => (
                             <ThemedText style={styles.item}>{item.key}</ThemedText>
                         )}
+                        {Object.keys(api21Result).map((key, index) => (
+                                        <View key={key} onPress={() => setModalVisible(false)}>
+                                            <ThemedText>{api21Result[key].name}</ThemedText>
+                                        </View>
+                                    ))}
                     />
 */
