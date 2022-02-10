@@ -136,7 +136,7 @@ export default function Search() {
                                 <View>
                                     <ThemedText style={styles.topictext}>Stations</ThemedText>
                                     <View style={styles.tabbarcontainer}>
-                                        {api22Result ? (
+                                        {api22Result !== undefined ? (
                                             <>
                                                 {api22Result.map((item, key) => (
                                                     <StationTab
