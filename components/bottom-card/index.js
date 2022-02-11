@@ -13,7 +13,7 @@ const SIZE = 100.0;
 const startingPosition = 800;
 const endingPosition = 500;
 
-export default function bottomCard(props) {
+export default function BottomCard(props) {
     const translateY = useSharedValue(startingPosition);
     const { colors } = useTheme();
 
@@ -53,7 +53,7 @@ export default function bottomCard(props) {
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
             <PanGestureHandler onGestureEvent={panGestureEvent}>
-                <Animated.View style={[styles.card, rStyle]}/>
+                <Animated.View style={[styles.card, rStyle]} />
             </PanGestureHandler>
         </GestureHandlerRootView>
     );

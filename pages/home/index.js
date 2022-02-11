@@ -8,6 +8,7 @@ import { googleMapsStyling } from "../../maps/google-maps-styling";
 import * as Location from "expo-location";
 import RecenterButton from "../../components/recenter-button";
 import AccountModal from "../../components/account-modal";
+import BottomCard from "../../components/bottom-card";
 
 const INITIAL_MAP_REGION = {
     latitude: 13.764889,
@@ -121,6 +122,7 @@ export default function Home() {
                 showsUserLocation
             ></MapView>
             <RecenterButton recentered={mapsIsRecentered} onPress={recenter} />
+            {/* <BottomCard /> */}
         </View>
     );
 }
