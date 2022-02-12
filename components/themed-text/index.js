@@ -38,6 +38,8 @@ export default function ThemedText(props) {
                 ...props.style,
             }}
             numberOfLines={props.numberOfLines}
+            onTextLayout={props.onTextLayout || function () {}}
+            ellipsizeMode={props.ellipsizeMode}
         >
             {props.children}
         </Text>
