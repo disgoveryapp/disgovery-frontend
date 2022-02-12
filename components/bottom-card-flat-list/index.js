@@ -13,34 +13,101 @@ import ThemedText from "../themed-text";
 import BusIcon from "../../assets/svgs/bus-icon";
 import ArrowIcon from "../../assets/svgs/arrow_forward-icon";
 
-const DATA = [
-    {
-        id: "1",
-        title: "Victory Monument",
-        line: "333",
-        time: 10,
-    },
-    {
-        id: "2",
-        title: "Rangsit",
-        line: "333",
-        time: 10,
-    },
-    {
-        id: "3",
-        title: "Lam Lukka",
-        line: "333",
-        time: 10,
-    },
-    {
-        id: "4",
-        title: "Lam Lukka",
-        line: "59",
-        time: 10,
-    },
-];
+const raw_Data = {
+    data: [
+        {
+            name: "Victory",
+            uid: "12",
+            code: "AAA",
+            arriving_in: 10,
+            lines: [
+                {
+                    name: {
+						short_name: "333",
+						long_name: "333",
+					},
+                    destination: {
+						uid: "A",
+						name: "Victory",
+					},
+                    color: "red",
+                }
+            ],
+        },
+        {
+            name: "Victory",
+            uid: "12",
+            code: "AAA",
+            arriving_in: 10,
+            lines: [
+                {
+                    name: {
+						short_name: "333",
+						long_name: "333",
+					},
+                    destination: {
+						uid: "A",
+						name: "Rangsit",
+					},
+                    color: "red",
+                }
+            ],
+        },
+        {
+            name: "Victory",
+            uid: "12",
+            code: "AAA",
+            arriving_in: 10,
+            lines: [
+                {
+                    name: {
+						short_name: "333",
+						long_name: "333",
+					},
+                    destination: {
+						uid: "A",
+						name: "Lam Lukka",
+					},
+                    color: "red",
+                }
+            ],
+        },
+        {
+            name: "Victory",
+            uid: "12",
+            code: "AAA",
+            arriving_in: 20,
+            lines: [
+                {
+                    name: {
+						short_name: "59",
+						long_name: "333",
+					},
+                    destination: {
+						uid: "A",
+						name: "Lam Lukka",
+					},
+                    color: "red",
+                }
+            ],
+        }
+    ]
+};
 
-const Item = ({ title, time, line }) => (
+const data = raw_Data["data"];
+const size = Object.keys(data).length;
+let result = [];
+for(i=0; i < size; i++){
+  let object = {};
+  object['name'] = data[i]['lines'][0]["destination"]["name"];
+  object['time'] = data[i]['arriving_in'];
+  object['line'] = data[i]['lines'][0]["name"]["short_name"];
+  result.push(object);
+};
+
+const DATA = result;
+
+const Item = ({ name, time, line }) => (
     <TouchableOpacity style={styles.lower_container}>
         <View style={styles.sub_container}>
             <View style={styles.transport}>
@@ -49,7 +116,7 @@ const Item = ({ title, time, line }) => (
             </View>
             <ArrowIcon style={styles.arrow} />
             <View style={styles.item}>
-                <ThemedText style={styles.title}>{title}</ThemedText>
+                <ThemedText style={styles.name}>{name}</ThemedText>
             </View>
         </View>
         <View style={styles.timeSection}>
@@ -60,9 +127,8 @@ const Item = ({ title, time, line }) => (
 );
 
 export default function BottomCardFlatList() {
-    // const { colors } = useTheme();
 
-    const renderItem = ({ item }) => <Item title={item.title} time={item.time} line={item.line} />;
+    const renderItem = ({ item }) => <Item name={item.name} time={item.time} line={item.line} />;
 
     const ItemDivider = () => {
         return <View style={styles.devider} />;
@@ -99,7 +165,9 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "center",
     },
-    container: {},
+    container: {
+        width: "100%",
+    },
     transport: {
         display: "flex",
         flexDirection: "row",
@@ -124,7 +192,7 @@ const styles = StyleSheet.create({
         marginLeft: 5,
         marginRight: 5,
     },
-    title: {
+    name: {
         fontSize: 18,
         color: "white",
     },
