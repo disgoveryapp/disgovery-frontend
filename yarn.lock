@@ -3088,6 +3088,11 @@ expo-keep-awake@~10.0.2:
   resolved "https://registry.yarnpkg.com/expo-keep-awake/-/expo-keep-awake-10.0.2.tgz#706bda839782bb3e8ad4cbe43bde471a56368813"
   integrity sha512-Ro1lgyKldbFs4mxhWM+goX9sg0S2SRR8FiJJeOvaRzf8xNhrZfWA00Zpr+/3ocCoWQ3eEL+X9UF4PXXHf0KoOg==
 
+expo-linear-gradient@~11.0.0:
+  version "11.0.3"
+  resolved "https://registry.yarnpkg.com/expo-linear-gradient/-/expo-linear-gradient-11.0.3.tgz#bc559b9a251c9dc8aa37fb6c66c7a497fe92993c"
+  integrity sha512-LuzTM5+iEHCQfC2TBHAAI+ZjPvf0TvGiA7GYMsyTnakGA2r4JtsV8Ah/miQPKhfG06jLDOo4grUoSMGqbmSrEw==
+
 expo-location@^14.0.1:
   version "14.0.2"
   resolved "https://registry.yarnpkg.com/expo-location/-/expo-location-14.0.2.tgz#933276b36558f546964753f107493b37953068b7"
@@ -5395,6 +5400,11 @@ react-native-svg@^12.1.1:
   dependencies:
     css-select "^2.1.0"
     css-tree "^1.0.0-alpha.39"
+
+react-native-text-ticker@^1.14.0:
+  version "1.14.0"
+  resolved "https://registry.yarnpkg.com/react-native-text-ticker/-/react-native-text-ticker-1.14.0.tgz#dc537d2c587efc18ef19db9a85dc678a28aa8c57"
+  integrity sha512-8TNGTcW43dfnCqIuXVA7F1Ny8SKGrw0pIrNS5nM7eda+6AsuPTZh3JQ2CwmSRYfsrlnS4QFrpyo5ykpI8nvtCw==
 
 react-native-web@0.17.1:
   version "0.17.1"
