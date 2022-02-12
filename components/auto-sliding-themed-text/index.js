@@ -1,11 +1,11 @@
 import { Easing, StyleSheet, View, Animated } from "react-native";
 import React, { useState } from "react";
 import ThemedText from "../themed-text";
-import TextTicker from "react-native-text-ticker";
 import { LinearGradient } from "expo-linear-gradient";
 import { useTheme } from "@react-navigation/native";
+import TextMarquee from "./text-ticker";
 
-export default function AutoSlidingThemedText(props) {
+export default function ThemedTextMarquee(props) {
     const { colors } = useTheme();
     const OVERLAY_WIDTH = props.overlayWidth || 40;
     const OVERLAY_BACKGROUND_COLOR = props.overlayBackgroundColor || colors.background;
@@ -41,31 +41,26 @@ export default function AutoSlidingThemedText(props) {
     });
 
     function onScrollStart() {
-        Animated.timing(leftOverlayOpacity, {
-            toValue: 1,
-            duration: 400,
-            delay: MARQUEE_DELAY - MARQUEE_DELAY / 10,
-        }).start();
+        Animated.sequence([
+            Animated.timing(leftOverlayOpacity, {
+                toValue: 1,
+                duration: 400,
+                useNativeDriver: true,
+            }),
+            Animated.delay(props.children.length * MARQUEE_SPEED - 800),
+            Animated.timing(leftOverlayOpacity, {
+                toValue: 0,
+                duration: 400,
+                useNativeDriver: true,
+            }),
+        ]).start();
     }
 
-    function onScrollStop() {
-        // Animated.sequence([
-        //     Animated.timing(leftOverlayOpacity, {
-        //         toValue: 0,
-        //         duration: 100,
-        //     }),
-        //     Animated.delay(MARQUEE_DELAY),
-        //     Animated.timing(leftOverlayOpacity, {
-        //         toValue: 1,
-        //         duration: 400,
-        //         delay: MARQUEE_DELAY / 2,
-        //     }),
-        // ]).start();
-    }
+    function onScrollStop() {}
 
     return (
         <View style={styles.container}>
-            <TextTicker
+            <TextMarquee
                 style={{ alignItems: "flex-start" }}
                 duration={MARQUEE_SPEED * props.children.length}
                 loop
@@ -73,13 +68,14 @@ export default function AutoSlidingThemedText(props) {
                 repeatSpacer={70}
                 marqueeDelay={MARQUEE_DELAY}
                 easing={Easing.linear}
-                onScrollStart={onScrollStart}
+                onMarqueeStart={onScrollStart}
                 onMarqueeComplete={onScrollStop}
+                scroll={false}
             >
                 <ThemedText style={{ ...props.style }} numberOfLines={props.numberOfLines || 1}>
                     {props.children}
                 </ThemedText>
-            </TextTicker>
+            </TextMarquee>
 
             <Animated.View style={[styles.leftOverlayView, { opacity: leftOverlayOpacity }]}>
                 <LinearGradient
