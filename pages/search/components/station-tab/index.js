@@ -19,7 +19,7 @@ function StationTab(props) {
             justifyContent: "space-between",
             alignItems: "center",
             borderBottomColor: "grey",
-            borderBottomWidth: 2,
+            borderBottomWidth: 1,
         },
         placeholderContainer: {
             display: "flex",
@@ -41,8 +41,8 @@ function StationTab(props) {
             color: colors.subtitle,
         },
         iconContainer: {
-            width: 24,
-            height: 24,
+            width: 27,
+            height: 27,
             borderRadius: 6,
             backgroundColor: colors.text,
             display: "flex",
@@ -56,7 +56,7 @@ function StationTab(props) {
             flexDirection: "row",
             justifyContent: "space-between",
             alignItems: "center",
-            padding: 20,
+            padding: 15,
         },
     });
 
