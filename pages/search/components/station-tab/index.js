@@ -11,6 +11,9 @@ import TransportName from "../../../../components/transport-name";
 
 function StationTab(props) {
     const { colors } = useTheme();
+    const tripname = [];
+    const triptype = [];
+    const tripdata = props.trip;
 
     const styles = StyleSheet.create({
         container: {
@@ -63,34 +66,100 @@ function StationTab(props) {
     });
 
     return (
-        <View style={styles.container}>
-            <TouchableOpacity style={styles.subcontainer} onPress={props.onPress}>
-                <View style={styles.placeholderContainer}>
-                    <View style={styles.iconContainer}>
-                        {(() => {
-                            if (props.icon == "bus") {
-                                return <BusIcon />;
-                            } else if (props.icon == "train") {
-                                return <SubwayIcon />;
-                            } else {
-                                return <PlaceIcon fill={colors.background} />;
-                            }
-                        })()}
-                    </View>
-                    <View>
-                        <ThemedTextMarquee style={styles.title} numberOfLines={1}>
-                            {props.place}
-                        </ThemedTextMarquee>
-                        <ThemedText style={styles.subtitle} numberOfLines={1}>
-                            <TransportName color={props.color} name={props.type} />
-                        </ThemedText>
-                    </View>
-                </View>
-                <TouchableOpacity onPress={props.onPress}>
-                    <InfoIcon />
-                </TouchableOpacity>
-            </TouchableOpacity>
-        </View>
+        <>
+            {tripdata !== undefined && tripdata !== null ? (
+                <>
+                    {tripdata.map((item, key) => (
+                        <View key={key}>
+                            {(() => {
+                                if (!triptype.includes(item.type)) {
+                                    triptype.push(item.type);
+                                    return (
+                                        <>
+                                            <View style={styles.container}>
+                                                <TouchableOpacity
+                                                    style={styles.subcontainer}
+                                                    onPress={props.onPress}
+                                                >
+                                                    <View style={styles.placeholderContainer}>
+                                                        <View style={styles.iconContainer}>
+                                                            {(() => {
+                                                                if (item.type == "bus") {
+                                                                    return <BusIcon />;
+                                                                } else if (item.type == "0") {
+                                                                    return <SubwayIcon />;
+                                                                } else {
+                                                                    return (
+                                                                        <PlaceIcon
+                                                                            fill={colors.background}
+                                                                        />
+                                                                    );
+                                                                }
+                                                            })()}
+                                                        </View>
+                                                        <View>
+                                                            <ThemedTextMarquee style={styles.title}>
+                                                                {props.place}
+                                                            </ThemedTextMarquee>
+                                                            <ThemedText
+                                                                style={styles.subtitle}
+                                                                numberOfLines={1}
+                                                            >
+                                                                <>
+                                                                    {tripdata.map((item2, key) => (
+                                                                        <>
+                                                                            {(() => {
+                                                                                if (
+                                                                                    !tripname.includes(
+                                                                                        item2
+                                                                                            .route_name
+                                                                                            .long_name,
+                                                                                    )
+                                                                                ) {
+                                                                                    tripname.push(
+                                                                                        item2
+                                                                                            .route_name
+                                                                                            .long_name,
+                                                                                    );
+                                                                                    return (
+                                                                                        <TransportName
+                                                                                            key={
+                                                                                                key
+                                                                                            }
+                                                                                            color={
+                                                                                                item2.color
+                                                                                            }
+                                                                                            name={
+                                                                                                item2
+                                                                                                    .route_name
+                                                                                                    .long_name
+                                                                                            }
+                                                                                        />
+                                                                                    );
+                                                                                }
+                                                                            })()}
+                                                                        </>
+                                                                    ))}
+                                                                </>
+                                                            </ThemedText>
+                                                        </View>
+                                                    </View>
+                                                    <TouchableOpacity onPress={props.onPress}>
+                                                        <InfoIcon />
+                                                    </TouchableOpacity>
+                                                </TouchableOpacity>
+                                            </View>
+                                        </>
+                                    );
+                                }
+                            })()}
+                        </View>
+                    ))}
+                </>
+            ) : (
+                <></>
+            )}
+        </>
     );
 }
 
