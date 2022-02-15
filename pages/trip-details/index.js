@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
     StyleSheet,
     View,
@@ -12,7 +12,7 @@ import {
 import { configs, pSBC } from "../../configs/configs";
 import axios from "axios";
 import ThemedText from "../../components/themed-text";
-import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
+import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { googleMapsStyling } from "../../maps/google-maps-styling";
 import { useTheme } from "@react-navigation/native";
 import OriginToDestinationTitle from "../../components/origin-to-destination-title";
@@ -57,6 +57,9 @@ dayjs.updateLocale("en", {
 
 function TripDetails(props) {
     const { colors } = useTheme();
+
+    const mapRef = useRef(null);
+
     const [tripDetails, setTripDetails] = useState(undefined);
     const [loading, setLoading] = useState(true);
     const [approximateTime, setApproximateTime] = useState(false);
@@ -67,6 +70,15 @@ function TripDetails(props) {
     useEffect(() => {
         fetchTripDetails();
     }, []);
+
+    async function recenter(latitude, longitude) {
+        mapRef.current.animateToRegion({
+            latitude: latitude,
+            longitude: longitude,
+            latitudeDelta: 0.005,
+            longitudeDelta: 0.005,
+        });
+    }
 
     function formatSeconds(seconds) {
         seconds = parseInt(seconds);
@@ -96,6 +108,8 @@ function TripDetails(props) {
 
             setTripDetails(responseData);
             setLoading(false);
+
+            recenter(responseData.origin.coordinates.lat, responseData.origin.coordinates.lng);
 
             for (let previousStop of responseData.previous) {
                 if (previousStop.approximate_time) {
@@ -269,6 +283,12 @@ function TripDetails(props) {
             fontWeight: "600",
             color: colors.primary,
         },
+        marker: {
+            width: 20,
+            height: 20,
+            borderRadius: 30,
+            borderWidth: 2.5,
+        },
     });
 
     const approximateTimeWarning = (
@@ -432,104 +452,128 @@ function TripDetails(props) {
         </>
     );
 
-    if (!loading)
-        return (
+    return (
+        <>
             <View>
                 <MapView
+                    ref={mapRef}
                     style={styles.topMap}
                     provider={PROVIDER_GOOGLE}
                     customMapStyle={googleMapsStyling}
                     initialRegion={configs.INITIAL_MAP_REGION}
                     mapPadding={{ bottom: 0.05 * Dimensions.get("screen").height }}
-                ></MapView>
-
-                {typeof tripDetails === "object" && (
-                    <ScrollView
-                        style={styles.bottomCard}
-                        contentContainerStyle={{ paddingBottom: 50 }}
-                    >
-                        <>
-                            <OriginToDestinationTitle
-                                style={styles.title}
-                                origin={tripDetails.origin.name.en}
-                                destination={tripDetails.destination.name.en}
-                                time={tripDetails.meta.arriving_in}
-                                subTime={"On time"}
-                                subTimeColor={colors.primary}
+                >
+                    {!loading && typeof tripDetails === "object" && (
+                        <Marker
+                            coordinate={{
+                                latitude: tripDetails.origin.coordinates.lat,
+                                longitude: tripDetails.origin.coordinates.lng,
+                            }}
+                        >
+                            <View
+                                style={{
+                                    ...styles.marker,
+                                    backgroundColor: colors.white,
+                                    borderColor: colors.middle_grey,
+                                }}
                             />
+                        </Marker>
+                    )}
+                </MapView>
 
-                            <TransitLine style={styles.transitLine} line={tripDetails.meta.line} />
-
-                            {tripDetails.meta.headway.headway_secs && (
-                                <ThemedText style={styles.scheduledText}>
-                                    Scheduled for every{" "}
-                                    {formatSeconds(tripDetails.meta.headway.headway_secs)}
-                                </ThemedText>
-                            )}
-
-                            {approximateTime && approximateTimeWarning}
-
-                            {seePreviousStopsButton(tripDetails.previous)}
-
-                            {showPreviousStops && (
+                {!loading && (
+                    <>
+                        {typeof tripDetails === "object" && (
+                            <ScrollView
+                                style={styles.bottomCard}
+                                showsVerticalScrollIndicator={false}
+                                contentContainerStyle={{ paddingBottom: 50 }}
+                            >
                                 <>
-                                    {Object.keys(tripDetails.previous).map((key, iteration) => (
+                                    <OriginToDestinationTitle
+                                        style={styles.title}
+                                        origin={tripDetails.origin.name.en}
+                                        destination={tripDetails.destination.name.en}
+                                        time={tripDetails.meta.arriving_in}
+                                        subTime={"On time"}
+                                        subTimeColor={colors.primary}
+                                    />
+
+                                    <TransitLine
+                                        style={styles.transitLine}
+                                        line={tripDetails.meta.line}
+                                    />
+
+                                    {tripDetails.meta.headway.headway_secs && (
+                                        <ThemedText style={styles.scheduledText}>
+                                            Scheduled for every{" "}
+                                            {formatSeconds(tripDetails.meta.headway.headway_secs)}
+                                            until {formatTime(tripDetails.meta.headway.to)}
+                                        </ThemedText>
+                                    )}
+
+                                    {approximateTime && approximateTimeWarning}
+
+                                    {seePreviousStopsButton(tripDetails.previous)}
+
+                                    {showPreviousStops && (
                                         <>
-                                            {tripDetails.previous[key] &&
-                                                previousStops(
-                                                    tripDetails.previous[key],
+                                            {Object.keys(tripDetails.previous).map(
+                                                (key, iteration) => (
+                                                    <>
+                                                        {tripDetails.previous[key] &&
+                                                            previousStops(
+                                                                tripDetails.previous[key],
+                                                                iteration === 0,
+                                                                iteration,
+                                                            )}
+                                                    </>
+                                                ),
+                                            )}
+                                        </>
+                                    )}
+
+                                    {Object.keys(tripDetails.next).map((key, iteration) => (
+                                        <>
+                                            {tripDetails.next[key] &&
+                                                nextStops(
+                                                    tripDetails.next[key],
                                                     iteration === 0,
+                                                    iteration === tripDetails.next.length - 1,
                                                     iteration,
+                                                    tripDetails.meta.line.color,
                                                 )}
                                         </>
                                     ))}
                                 </>
-                            )}
+                            </ScrollView>
+                        )}
 
-                            {Object.keys(tripDetails.next).map((key, iteration) => (
-                                <>
-                                    {tripDetails.next[key] &&
-                                        nextStops(
-                                            tripDetails.next[key],
-                                            iteration === 0,
-                                            iteration === tripDetails.next.length - 1,
-                                            iteration,
-                                            tripDetails.meta.line.color,
-                                        )}
-                                </>
-                            ))}
-                        </>
-                    </ScrollView>
+                        {typeof tripDetails === "string" && (
+                            <>
+                                <View style={styles.unableToLoadView}>
+                                    <ThemedText style={styles.unableToLoadTheTripText}>
+                                        Unable to load the trip
+                                    </ThemedText>
+                                    <TouchableOpacity>
+                                        <ThemedText style={styles.goBackText}>Go back</ThemedText>
+                                    </TouchableOpacity>
+                                </View>
+                            </>
+                        )}
+                    </>
                 )}
 
-                {typeof tripDetails === "string" && (
+                {loading && (
                     <>
-                        <View style={styles.unableToLoadView}>
-                            <ThemedText style={styles.unableToLoadTheTripText}>
-                                Unable to load the trip
-                            </ThemedText>
-                            <TouchableOpacity>
-                                <ThemedText style={styles.goBackText}>Go back</ThemedText>
-                            </TouchableOpacity>
+                        <View>
+                            <View style={styles.bottomCard}></View>
                         </View>
                     </>
                 )}
             </View>
-        );
-    else
-        return (
-            <View>
-                <MapView
-                    style={styles.topMap}
-                    provider={PROVIDER_GOOGLE}
-                    customMapStyle={googleMapsStyling}
-                    initialRegion={configs.INITIAL_MAP_REGION}
-                    mapPadding={{ bottom: 0.05 * Dimensions.get("screen").height }}
-                ></MapView>
-
-                <View style={styles.bottomCard}></View>
-            </View>
-        );
+        </>
+    );
 }
 
 export default TripDetails;
