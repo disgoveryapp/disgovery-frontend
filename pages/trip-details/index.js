@@ -171,7 +171,7 @@ function TripDetails(props) {
         },
         approximateTimeText: {
             fontSize: 16,
-            fontWeight: "600",
+            fontWeight: "500",
             color: colors.yellow,
             marginLeft: 7,
         },
