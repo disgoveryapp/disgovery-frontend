@@ -47,10 +47,10 @@ export default function ThemedTextMarquee(props) {
                 duration: 400,
                 useNativeDriver: true,
             }),
-            Animated.delay(props.children.length * MARQUEE_SPEED - 800),
+            Animated.delay(props.children.length * MARQUEE_SPEED - 1100),
             Animated.timing(leftOverlayOpacity, {
                 toValue: 0,
-                duration: 400,
+                duration: 200,
                 useNativeDriver: true,
             }),
         ]).start();
@@ -63,9 +63,10 @@ export default function ThemedTextMarquee(props) {
             <TextMarquee
                 style={{ alignItems: "flex-start" }}
                 duration={MARQUEE_SPEED * props.children.length}
+                animationType="scroll"
                 loop
-                bounce
                 repeatSpacer={70}
+                bouncePadding={OVERLAY_WIDTH}
                 marqueeDelay={MARQUEE_DELAY}
                 easing={Easing.linear}
                 onMarqueeStart={onScrollStart}
