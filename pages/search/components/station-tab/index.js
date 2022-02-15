@@ -6,6 +6,8 @@ import InfoIcon from "../../../../assets/svgs/info-icon";
 import BusIcon from "../../../../assets/svgs/bus-icon";
 import SubwayIcon from "../../../../assets/svgs/subway-icon";
 import { useTheme } from "@react-navigation/native";
+import ThemedTextMarquee from "../../../../components/themed-text-marquee";
+import TransportName from "../../../../components/transport-name";
 
 function StationTab(props) {
     const { colors } = useTheme();
@@ -76,11 +78,11 @@ function StationTab(props) {
                         })()}
                     </View>
                     <View>
-                        <ThemedText style={styles.title} numberOfLines={1}>
+                        <ThemedTextMarquee style={styles.title} numberOfLines={1}>
                             {props.place}
-                        </ThemedText>
+                        </ThemedTextMarquee>
                         <ThemedText style={styles.subtitle} numberOfLines={1}>
-                            {props.type}
+                            <TransportName color={props.color} name={props.type} />
                         </ThemedText>
                     </View>
                 </View>
