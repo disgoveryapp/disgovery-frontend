@@ -6,6 +6,7 @@ import HomeIcon from "../../../../assets/svgs/home-icon";
 import MyLocationIcon from "../../../../assets/svgs/my-location-icon";
 import WorkIcon from "../../../../assets/svgs/work-icon";
 import { useTheme } from "@react-navigation/native";
+import ThemedTextMarquee from "../../../../components/themed-text-marquee";
 
 function PlaceTab(props) {
     const { colors } = useTheme();
@@ -30,7 +31,7 @@ function PlaceTab(props) {
             maxWidth: 320,
             fontWeight: "600",
             fontSize: 18,
-            marginLeft: 15,
+            paddingLeft: 15,
             color: colors.text,
         },
         subtitle: {
@@ -69,9 +70,9 @@ function PlaceTab(props) {
                         }
                     })()}
                     <View>
-                        <ThemedText style={styles.title} numberOfLines={1}>
+                        <ThemedTextMarquee style={styles.title} numberOfLines={1}>
                             {props.place}
-                        </ThemedText>
+                        </ThemedTextMarquee>
                         <ThemedText style={styles.subtitle} numberOfLines={1}>
                             {props.address}
                         </ThemedText>
