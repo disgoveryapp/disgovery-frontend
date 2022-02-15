@@ -31,7 +31,7 @@ function PlaceTab(props) {
             maxWidth: 320,
             fontWeight: "600",
             fontSize: 18,
-            paddingLeft: 15,
+            marginLeft: 15,
             color: colors.text,
         },
         subtitle: {
