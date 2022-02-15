@@ -84,9 +84,9 @@ function StationTab(props) {
                                                     <View style={styles.placeholderContainer}>
                                                         <View style={styles.iconContainer}>
                                                             {(() => {
-                                                                if (item.type == "bus") {
+                                                                if (item.type === "3") {
                                                                     return <BusIcon />;
-                                                                } else if (item.type == "0") {
+                                                                } else if (item.type === "0") {
                                                                     return <SubwayIcon />;
                                                                 } else {
                                                                     return (
@@ -114,7 +114,9 @@ function StationTab(props) {
                                                                                         item2
                                                                                             .route_name
                                                                                             .long_name,
-                                                                                    )
+                                                                                    ) &&
+                                                                                    item.type ===
+                                                                                        item2.type
                                                                                 ) {
                                                                                     tripname.push(
                                                                                         item2
