@@ -347,7 +347,7 @@ function TripDetails(props) {
                                         height: origin
                                             ? nextStationLineHeights[iteration] +
                                               MARGIN_BETWEEN_STATION +
-                                              21
+                                              PLATFORM_FONT_SIZE
                                             : nextStationLineHeights[iteration] +
                                               MARGIN_BETWEEN_STATION,
                                         top: STATION_CIRCLE_DIAMETER / 2,
@@ -422,7 +422,7 @@ function TripDetails(props) {
                                             height: origin
                                                 ? nextStationLineHeights[iteration] +
                                                   MARGIN_BETWEEN_STATION +
-                                                  21
+                                                  PLATFORM_FONT_SIZE
                                                 : nextStationLineHeights[iteration] +
                                                   MARGIN_BETWEEN_STATION,
                                             top: STATION_CIRCLE_DIAMETER / 2,
