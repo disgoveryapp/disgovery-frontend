@@ -25,8 +25,8 @@ import WarningIcon from "../../assets/svgs/warning-icon";
 import ThemedTextMarquee from "../../components/themed-text-marquee";
 import ExpandDownIcon from "../../assets/svgs/expand-down-icon";
 
-const TRIP = "MRT_PURPLE_WD_PP16_PP01";
-const ORIGIN = "MRT_PP19";
+const TRIP = "BTS_SUKHUMVIT_WD_E15_N24";
+const ORIGIN = "BTS_N9";
 
 const MARGIN_BETWEEN_STATION = 25;
 const MARGIN_BETWEEN_STATION_TITLE_AND_CIRCLE = 10;
@@ -95,7 +95,6 @@ function TripDetails(props) {
             let approximateTime = false;
 
             setTripDetails(responseData);
-
             setLoading(false);
 
             for (let previousStop of responseData.previous) {
@@ -476,11 +475,12 @@ function TripDetails(props) {
                                 <>
                                     {Object.keys(tripDetails.previous).map((key, iteration) => (
                                         <>
-                                            {previousStops(
-                                                tripDetails.previous[key],
-                                                iteration === 0,
-                                                iteration,
-                                            )}
+                                            {tripDetails.previous[key] &&
+                                                previousStops(
+                                                    tripDetails.previous[key],
+                                                    iteration === 0,
+                                                    iteration,
+                                                )}
                                         </>
                                     ))}
                                 </>
@@ -488,13 +488,14 @@ function TripDetails(props) {
 
                             {Object.keys(tripDetails.next).map((key, iteration) => (
                                 <>
-                                    {nextStops(
-                                        tripDetails.next[key],
-                                        iteration === 0,
-                                        iteration === tripDetails.next.length - 1,
-                                        iteration,
-                                        tripDetails.meta.line.color,
-                                    )}
+                                    {tripDetails.next[key] &&
+                                        nextStops(
+                                            tripDetails.next[key],
+                                            iteration === 0,
+                                            iteration === tripDetails.next.length - 1,
+                                            iteration,
+                                            tripDetails.meta.line.color,
+                                        )}
                                 </>
                             ))}
                         </>
