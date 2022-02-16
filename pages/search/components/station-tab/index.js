@@ -19,6 +19,7 @@ function StationTab(props) {
         container: {
             width: "100%",
             height: 71,
+            flex: 1,
             display: "flex",
             flexDirection: "row",
             justifyContent: "space-between",
@@ -32,17 +33,13 @@ function StationTab(props) {
             alignItems: "center",
         },
         title: {
-            maxWidth: 300,
             fontWeight: "600",
             fontSize: 18,
-            marginLeft: 15,
             color: colors.text,
         },
         subtitle: {
-            maxWidth: 300,
             fontWeight: "500",
             fontSize: 14,
-            marginLeft: 15,
             color: colors.subtitle,
         },
         iconContainer: {
@@ -62,6 +59,13 @@ function StationTab(props) {
             justifyContent: "space-between",
             alignItems: "center",
             padding: 15,
+        },
+        textcontainer: {
+            flex: 1,
+            paddingLeft: 15,
+        },
+        transportnamecontainer: {
+            paddingRight: 3,
         },
     });
 
@@ -97,7 +101,7 @@ function StationTab(props) {
                                                                 }
                                                             })()}
                                                         </View>
-                                                        <View>
+                                                        <View style={styles.textcontainer}>
                                                             <ThemedTextMarquee style={styles.title}>
                                                                 {props.place}
                                                             </ThemedTextMarquee>
@@ -136,6 +140,9 @@ function StationTab(props) {
                                                                                                     .route_name
                                                                                                     .long_name
                                                                                             }
+                                                                                            style={
+                                                                                                styles.transportnamecontainer
+                                                                                            }
                                                                                         />
                                                                                     );
                                                                                 }
@@ -145,10 +152,10 @@ function StationTab(props) {
                                                                 </>
                                                             </ThemedText>
                                                         </View>
+                                                        <TouchableOpacity onPress={props.onPress}>
+                                                            <InfoIcon />
+                                                        </TouchableOpacity>
                                                     </View>
-                                                    <TouchableOpacity onPress={props.onPress}>
-                                                        <InfoIcon />
-                                                    </TouchableOpacity>
                                                 </TouchableOpacity>
                                             </View>
                                         </>
