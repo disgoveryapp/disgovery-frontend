@@ -25,6 +25,8 @@ import updateLocale from "dayjs/plugin/updateLocale";
 import WarningIcon from "../../assets/svgs/warning-icon";
 import ThemedTextMarquee from "../../components/themed-text-marquee";
 import ExpandDownIcon from "../../assets/svgs/expand-down-icon";
+import BackButton from "../../components/back-button";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const TRIP = "BTS_SUKHUMVIT_WD_E15_N24";
 const ORIGIN = "BTS_N9";
@@ -140,6 +142,13 @@ function TripDetails(props) {
     }
 
     const styles = StyleSheet.create({
+        backButtonContainer: {
+            position: "absolute",
+            top: 0,
+            alignSelf: "flex-start",
+            paddingHorizontal: 15,
+            zIndex: 10,
+        },
         topMap: {
             position: "absolute",
             top: 0,
@@ -463,6 +472,10 @@ function TripDetails(props) {
     return (
         <>
             <View>
+                <View style={styles.backButtonContainer}>
+                    <SafeAreaView edges={["top"]} />
+                    <BackButton />
+                </View>
                 <MapView
                     ref={mapRef}
                     style={styles.topMap}

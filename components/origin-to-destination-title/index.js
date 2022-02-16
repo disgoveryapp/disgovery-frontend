@@ -4,7 +4,7 @@ import ArrowIcon from "../../assets/svgs/arrow_forward-icon";
 import ThemedText from "../themed-text";
 import { useTheme } from "@react-navigation/native";
 import ThemedTextMarquee from "../themed-text-marquee";
-import ArrowIcon24 from "../../assets/svgs/arrow_forward_24px";
+import ArrowIcon24 from "../../assets/svgs/arrow-forward-24px";
 
 function OriginToDestinationTitle(props) {
     const { colors } = useTheme();
