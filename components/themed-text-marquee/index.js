@@ -59,7 +59,6 @@ export default function ThemedTextMarquee(props) {
     function onScrollStop() {}
 
     return (
-        <View style={props.style}>
             <View style={styles.container}>
                 <TextMarquee
                     style={{ alignItems: "flex-start" }}
@@ -96,6 +95,5 @@ export default function ThemedTextMarquee(props) {
                     ></LinearGradient>
                 </Animated.View>
             </View>
-        </View>
     );
 }
