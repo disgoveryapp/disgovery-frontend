@@ -12,19 +12,19 @@ export default function TransportName(props) {
             borderRadius: 6,
             justifyContent: "center",
             paddingHorizontal: 5,
-            paddingVertical: 2,
+            paddingVertical: 1,
         },
         text: {
             fontWeight: "bold",
         },
     });
     return (
-        <>
+        <View style={props.style}>
             <View style={styles.container}>
                 <View style={styles.subcontainer}>
                     <ThemedText style={styles.text}>{props.name}</ThemedText>
                 </View>
             </View>
-        </>
+        </View>
     );
 }
