@@ -15,6 +15,7 @@ import ThemedText from "../../components/themed-text";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { googleMapsStyling } from "../../maps/google-maps-styling";
 import { useTheme } from "@react-navigation/native";
+import SvgAnimatedLinearGradient from "react-native-svg-animated-linear-gradient";
 import OriginToDestinationTitle from "../../components/origin-to-destination-title";
 import TransitLine from "../../components/transit-line";
 import dayjs from "dayjs";
@@ -102,33 +103,39 @@ function TripDetails(props) {
 
     function fetchTripDetails() {
         setLoading(true);
-        axios.get(`${configs.API_URL}/trip/${TRIP}?origin=${ORIGIN}`).then((response) => {
-            let responseData = response.data.data;
-            let approximateTime = false;
+        axios
+            .get(`${configs.API_URL}/trip/${TRIP}?origin=${ORIGIN}`)
+            .then((response) => {
+                let responseData = response.data.data;
+                let approximateTime = false;
 
-            setTripDetails(responseData);
-            setLoading(false);
+                setTripDetails(responseData);
+                setLoading(false);
 
-            recenter(responseData.origin.coordinates.lat, responseData.origin.coordinates.lng);
+                recenter(responseData.origin.coordinates.lat, responseData.origin.coordinates.lng);
 
-            for (let previousStop of responseData.previous) {
-                if (previousStop.approximate_time) {
-                    approximateTime = true;
-                    setApproximateTime(true);
-                    break;
+                for (let previousStop of responseData.previous) {
+                    if (previousStop.approximate_time) {
+                        approximateTime = true;
+                        setApproximateTime(true);
+                        break;
+                    }
                 }
-            }
 
-            if (approximateTime) return;
+                if (approximateTime) return;
 
-            for (let nextStop of responseData.next) {
-                if (nextStop.approximate_time) {
-                    approximateTime = true;
-                    setApproximateTime(true);
-                    break;
+                for (let nextStop of responseData.next) {
+                    if (nextStop.approximate_time) {
+                        approximateTime = true;
+                        setApproximateTime(true);
+                        break;
+                    }
                 }
-            }
-        });
+            })
+            .catch((error) => {
+                console.log(error);
+                setTripDetails("");
+            });
     }
 
     const styles = StyleSheet.create({
@@ -567,7 +574,23 @@ function TripDetails(props) {
                 {loading && (
                     <>
                         <View>
-                            <View style={styles.bottomCard}></View>
+                            <View style={styles.bottomCard}>
+                                <SvgAnimatedLinearGradient
+                                    style={{ marginTop: 15 }}
+                                    width={0.8 * Dimensions.get("screen").width}
+                                    height={40}
+                                    primaryColor={colors.background}
+                                    secondaryColor={colors.upper_background}
+                                ></SvgAnimatedLinearGradient>
+
+                                <SvgAnimatedLinearGradient
+                                    style={{ marginTop: 10 }}
+                                    width={0.5 * Dimensions.get("screen").width}
+                                    height={30}
+                                    primaryColor={colors.background}
+                                    secondaryColor={colors.upper_background}
+                                ></SvgAnimatedLinearGradient>
+                            </View>
                         </View>
                     </>
                 )}
