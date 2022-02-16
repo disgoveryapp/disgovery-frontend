@@ -8,6 +8,9 @@ import SubwayIcon from "../../../../assets/svgs/subway-icon";
 import { useTheme } from "@react-navigation/native";
 import ThemedTextMarquee from "../../../../components/themed-text-marquee";
 import TransportName from "../../../../components/transport-name";
+import TramIcon from "../../../../assets/svgs/tram-icon";
+import BoatIcon from "../../../../assets/svgs/boat-icon";
+import RailIcon from "../../../../assets/svgs/rail-icon";
 
 function StationTab(props) {
     const { colors } = useTheme();
@@ -89,10 +92,25 @@ function StationTab(props) {
                                                     <View style={styles.placeholderContainer}>
                                                         <View style={styles.iconContainer}>
                                                             {(() => {
-                                                                if (item.type === "3") {
-                                                                    return <BusIcon />;
-                                                                } else if (item.type === "0") {
+                                                                if (
+                                                                    item.type === "0" ||
+                                                                    item.type === "5"
+                                                                ) {
+                                                                    return <TramIcon />;
+                                                                } else if (item.type === "1") {
                                                                     return <SubwayIcon />;
+                                                                } else if (
+                                                                    item.type === "2" ||
+                                                                    item.type === "12"
+                                                                ) {
+                                                                    return <RailIcon />;
+                                                                } else if (
+                                                                    item.type === "3" ||
+                                                                    item.type === "11"
+                                                                ) {
+                                                                    return <BusIcon />;
+                                                                } else if (item.type === "4") {
+                                                                    return <BoatIcon />;
                                                                 } else {
                                                                     return (
                                                                         <PlaceIcon
