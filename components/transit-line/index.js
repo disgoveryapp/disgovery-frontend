@@ -36,6 +36,7 @@ function TransitLine(props) {
 
 TransitLine.propTypes = {
     line: PropTypes.exact({
+        id: PropTypes.string,
         name: PropTypes.exact({
             short_name: PropTypes.string,
             long_name: PropTypes.string,

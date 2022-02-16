@@ -12,7 +12,7 @@ import {
 import { configs, pSBC } from "../../configs/configs";
 import axios from "axios";
 import ThemedText from "../../components/themed-text";
-import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
+import MapView, { Marker, Polyline, PROVIDER_GOOGLE } from "react-native-maps";
 import { googleMapsStyling } from "../../maps/google-maps-styling";
 import { useTheme } from "@react-navigation/native";
 import SvgAnimatedLinearGradient from "react-native-svg-animated-linear-gradient";
@@ -27,6 +27,7 @@ import ThemedTextMarquee from "../../components/themed-text-marquee";
 import ExpandDownIcon from "../../assets/svgs/expand-down-icon";
 import BackButton from "../../components/back-button";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { decode } from "@googlemaps/polyline-codec";
 
 const TRIP = "BTS_SUKHUMVIT_WD_E15_N24";
 const ORIGIN = "BTS_N9";
@@ -69,6 +70,8 @@ function TripDetails(props) {
     const [showPreviousStops, setShowPreviousStops] = useState(false);
     const [nextStationLineHeights, setNextStationLineHeight] = useState([]);
     const [previousStationLineHeights, setPreviousStationLineHeights] = useState([]);
+
+    const [shape, setShape] = useState([]);
 
     useEffect(() => {
         fetchTripDetails();
@@ -114,9 +117,15 @@ function TripDetails(props) {
                 setTripDetails(responseData);
                 setLoading(false);
 
-                console.log(responseData);
-
                 if (typeof responseData === "object") {
+                    fetchRouteShape(
+                        responseData.meta.line.id,
+                        responseData.origin.coordinates.lat,
+                        responseData.origin.coordinates.lng,
+                        responseData.destination.coordinates.lat,
+                        responseData.destination.coordinates.lng,
+                    );
+
                     recenter(
                         responseData.origin.coordinates.lat,
                         responseData.origin.coordinates.lng,
@@ -142,9 +151,40 @@ function TripDetails(props) {
                 }
             })
             .catch((error) => {
-                console.log("An error occured" + error);
+                console.log("An error occured while getting trip details" + error);
                 setTripDetails("error");
                 setLoading(false);
+            });
+    }
+
+    function fetchRouteShape(route_id, origin_lat, origin_lng, destination_lat, destination_lng) {
+        axios
+            .get(
+                `${configs.API_URL}/shape/${route_id}?from=${origin_lat},${origin_lng}&to=${destination_lat},${destination_lng}`,
+            )
+            .then((response) => {
+                let responseData = response.data.data;
+
+                let decodedShape = [];
+                let formattedDecodedShape = [];
+
+                if (responseData)
+                    if (responseData.shape_encoded) {
+                        decodedShape = decode(responseData.shape_encoded, 5);
+
+                        decodedShape.forEach((element) => {
+                            formattedDecodedShape.push({
+                                latitude: element[0],
+                                longitude: element[1],
+                            });
+                        });
+
+                        setShape(formattedDecodedShape);
+                    }
+            })
+            .catch((error) => {
+                console.log("An error occured while getting shapes" + error);
+                setShape([]);
             });
     }
 
@@ -492,20 +532,37 @@ function TripDetails(props) {
                     mapPadding={{ bottom: 0.05 * Dimensions.get("screen").height }}
                 >
                     {!loading && typeof tripDetails === "object" && (
-                        <Marker
-                            coordinate={{
-                                latitude: tripDetails.origin.coordinates.lat,
-                                longitude: tripDetails.origin.coordinates.lng,
-                            }}
-                        >
-                            <View
-                                style={{
-                                    ...styles.marker,
-                                    backgroundColor: colors.white,
-                                    borderColor: colors.middle_grey,
+                        <>
+                            <Marker
+                                coordinate={{
+                                    latitude: tripDetails.origin.coordinates.lat,
+                                    longitude: tripDetails.origin.coordinates.lng,
                                 }}
+                            >
+                                <View
+                                    style={{
+                                        ...styles.marker,
+                                        backgroundColor: colors.white,
+                                        borderColor: colors.middle_grey,
+                                    }}
+                                />
+                            </Marker>
+                            <Polyline
+                                coordinates={shape}
+                                strokeWidth={14}
+                                strokeColor={pSBC(
+                                    -0.5,
+                                    tripDetails.meta.line.color
+                                        ? `#${tripDetails.meta.line.color}`
+                                        : colors.upper_background,
+                                )}
                             />
-                        </Marker>
+                            <Polyline
+                                coordinates={shape}
+                                strokeWidth={8}
+                                strokeColor={`#${tripDetails.meta.line.color}`}
+                            />
+                        </>
                     )}
                 </MapView>
 
