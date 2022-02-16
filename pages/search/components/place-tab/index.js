@@ -28,17 +28,13 @@ function PlaceTab(props) {
             alignItems: "center",
         },
         title: {
-            maxWidth: 320,
             fontWeight: "600",
             fontSize: 18,
-            marginLeft: 15,
             color: colors.text,
         },
         subtitle: {
-            maxWidth: 320,
             fontWeight: "500",
             fontSize: 14,
-            marginLeft: 15,
             color: colors.subtitle,
         },
         subcontainer: {
@@ -52,12 +48,17 @@ function PlaceTab(props) {
             borderBottomColor: "grey",
             borderBottomWidth: 1,
         },
+        datacontainer: {
+            flex:1,
+            paddingLeft: 15,
+        }
     });
 
     return (
         <View style={styles.container}>
             <TouchableOpacity style={styles.subcontainer} onPress={props.onPress}>
                 <View style={styles.placeholderContainer}>
+                    <View>
                     {(() => {
                         if (props.icon == "my-location") {
                             return <MyLocationIcon />;
@@ -69,7 +70,8 @@ function PlaceTab(props) {
                             return <PlaceIcon />;
                         }
                     })()}
-                    <View>
+                    </View>
+                    <View style={styles.datacontainer}>
                         <ThemedTextMarquee style={styles.title} numberOfLines={1}>
                             {props.place}
                         </ThemedTextMarquee>
