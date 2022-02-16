@@ -10,8 +10,8 @@ import { GestureHandlerRootView, PanGestureHandler } from "react-native-gesture-
 import { useTheme } from "@react-navigation/native";
 
 const SIZE = 100.0;
-const startingPosition = 800;
-const endingPosition = 500;
+const startingPosition = 0;
+const endingPosition = -300;
 
 export default function bottomCard(props) {
     const translateY = useSharedValue(startingPosition);
@@ -22,7 +22,8 @@ export default function bottomCard(props) {
             context.translateY = translateY.value;
         },
         onActive: (event, context) => {
-            translateY.value = Math.max(endingPosition, event.translationY + context.translateY);
+            translateY.value = Math.max(endingPosition,event.translationY + context.translateY);
+            //console.log(event.translationY +context.translateY);
         },
         onEnd: () => {
             if (translateY.value > endingPosition) {
@@ -42,6 +43,9 @@ export default function bottomCard(props) {
     });
 
     const styles = StyleSheet.create({
+        container: {
+            bottom: -625,
+        },
         card: {
             width: SIZE * 4.28,
             height: SIZE * 6,
@@ -51,7 +55,7 @@ export default function bottomCard(props) {
     });
 
     return (
-        <GestureHandlerRootView style={{ flex: 1 }}>
+        <GestureHandlerRootView style={[styles.container]}>
             <PanGestureHandler onGestureEvent={panGestureEvent}>
                 <Animated.View style={[styles.card, rStyle]}/>
             </PanGestureHandler>
