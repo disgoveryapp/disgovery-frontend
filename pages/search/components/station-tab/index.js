@@ -66,6 +66,7 @@ function StationTab(props) {
         },
         transportnamecontainer: {
             paddingRight: 3,
+            paddingTop: 6,
         },
     });
 
