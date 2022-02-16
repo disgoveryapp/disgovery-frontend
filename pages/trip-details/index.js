@@ -114,23 +114,30 @@ function TripDetails(props) {
                 setTripDetails(responseData);
                 setLoading(false);
 
-                recenter(responseData.origin.coordinates.lat, responseData.origin.coordinates.lng);
+                console.log(responseData);
 
-                for (let previousStop of responseData.previous) {
-                    if (previousStop.approximate_time) {
-                        approximateTime = true;
-                        setApproximateTime(true);
-                        break;
+                if (typeof responseData === "object") {
+                    recenter(
+                        responseData.origin.coordinates.lat,
+                        responseData.origin.coordinates.lng,
+                    );
+
+                    for (let previousStop of responseData.previous) {
+                        if (previousStop.approximate_time) {
+                            approximateTime = true;
+                            setApproximateTime(true);
+                            break;
+                        }
                     }
-                }
 
-                if (approximateTime) return;
+                    if (approximateTime) return;
 
-                for (let nextStop of responseData.next) {
-                    if (nextStop.approximate_time) {
-                        approximateTime = true;
-                        setApproximateTime(true);
-                        break;
+                    for (let nextStop of responseData.next) {
+                        if (nextStop.approximate_time) {
+                            approximateTime = true;
+                            setApproximateTime(true);
+                            break;
+                        }
                     }
                 }
             })
