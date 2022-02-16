@@ -133,8 +133,9 @@ function TripDetails(props) {
                 }
             })
             .catch((error) => {
-                console.log(error);
-                setTripDetails("");
+                console.log("An error occured" + error);
+                setTripDetails("error");
+                setLoading(false);
             });
     }
 
@@ -556,7 +557,7 @@ function TripDetails(props) {
                             </ScrollView>
                         )}
 
-                        {typeof tripDetails === "string" && (
+                        {typeof tripDetails !== "object" && (
                             <>
                                 <View style={styles.unableToLoadView}>
                                     <ThemedText style={styles.unableToLoadTheTripText}>
