@@ -59,41 +59,41 @@ export default function ThemedTextMarquee(props) {
     function onScrollStop() {}
 
     return (
-            <View style={styles.container}>
-                <TextMarquee
-                    style={{ alignItems: "flex-start" }}
-                    duration={MARQUEE_SPEED * props.children.length}
-                    loop
-                    bounce
-                    repeatSpacer={70}
-                    marqueeDelay={MARQUEE_DELAY}
-                    easing={Easing.linear}
-                    onMarqueeStart={onScrollStart}
-                    onMarqueeComplete={onScrollStop}
-                    scroll={false}
-                >
-                    <ThemedText style={{ ...props.style }} numberOfLines={props.numberOfLines || 1}>
-                        {props.children}
-                    </ThemedText>
-                </TextMarquee>
+        <View style={styles.container}>
+            <TextMarquee
+                style={{ alignItems: "flex-start" }}
+                duration={MARQUEE_SPEED * props.children.length}
+                loop
+                bounce
+                repeatSpacer={70}
+                marqueeDelay={MARQUEE_DELAY}
+                easing={Easing.linear}
+                onMarqueeStart={onScrollStart}
+                onMarqueeComplete={onScrollStop}
+                scroll={false}
+            >
+                <ThemedText style={{ ...props.style }} numberOfLines={props.numberOfLines || 1}>
+                    {props.children}
+                </ThemedText>
+            </TextMarquee>
 
-                <Animated.View style={[styles.leftOverlayView, { opacity: leftOverlayOpacity }]}>
-                    <LinearGradient
-                        style={styles.leftOverlayGradient}
-                        colors={[`${OVERLAY_BACKGROUND_COLOR}FF`, `${OVERLAY_BACKGROUND_COLOR}00`]}
-                        start={{ x: 0.1, y: 0.5 }}
-                        end={{ x: 1, y: 0.5 }}
-                    ></LinearGradient>
-                </Animated.View>
+            <Animated.View style={[styles.leftOverlayView, { opacity: leftOverlayOpacity }]}>
+                <LinearGradient
+                    style={styles.leftOverlayGradient}
+                    colors={[`${OVERLAY_BACKGROUND_COLOR}FF`, `${OVERLAY_BACKGROUND_COLOR}00`]}
+                    start={{ x: 0.1, y: 0.5 }}
+                    end={{ x: 1, y: 0.5 }}
+                ></LinearGradient>
+            </Animated.View>
 
-                <Animated.View style={styles.rightOverlayView}>
-                    <LinearGradient
-                        style={styles.rightOverlayGradient}
-                        colors={[`${OVERLAY_BACKGROUND_COLOR}FF`, `${OVERLAY_BACKGROUND_COLOR}00`]}
-                        start={{ x: 0.9, y: 0.5 }}
-                        end={{ x: 0, y: 0.5 }}
-                    ></LinearGradient>
-                </Animated.View>
-            </View>
+            <Animated.View style={styles.rightOverlayView}>
+                <LinearGradient
+                    style={styles.rightOverlayGradient}
+                    colors={[`${OVERLAY_BACKGROUND_COLOR}FF`, `${OVERLAY_BACKGROUND_COLOR}00`]}
+                    start={{ x: 0.9, y: 0.5 }}
+                    end={{ x: 0, y: 0.5 }}
+                ></LinearGradient>
+            </Animated.View>
+        </View>
     );
 }
