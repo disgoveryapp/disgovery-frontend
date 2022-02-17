@@ -72,17 +72,18 @@ function TripDetails(props) {
     const [previousStationLineHeights, setPreviousStationLineHeights] = useState([]);
 
     const [shape, setShape] = useState([]);
+    const [markers, setMarkers] = useState([]);
 
     useEffect(() => {
         fetchTripDetails();
     }, []);
 
-    async function recenter(latitude, longitude) {
+    async function recenter(latitude, longitude, latitudeDelta, longitudeDelta) {
         mapRef.current.animateToRegion({
             latitude: latitude,
             longitude: longitude,
-            latitudeDelta: 0.005,
-            longitudeDelta: 0.005,
+            latitudeDelta: latitudeDelta || 0.005,
+            longitudeDelta: longitudeDelta || 0.005,
         });
     }
 
@@ -139,15 +140,23 @@ function TripDetails(props) {
                         }
                     }
 
-                    if (approximateTime) return;
-
-                    for (let nextStop of responseData.next) {
-                        if (nextStop.approximate_time) {
-                            approximateTime = true;
-                            setApproximateTime(true);
-                            break;
+                    if (!approximateTime) {
+                        for (let nextStop of responseData.next) {
+                            if (nextStop.approximate_time) {
+                                approximateTime = true;
+                                setApproximateTime(true);
+                                break;
+                            }
                         }
                     }
+
+                    setMarkers([
+                        ...markers,
+                        {
+                            latitude: parseFloat(responseData.origin.coordinates.lat),
+                            longitude: parseFloat(responseData.origin.coordinates.lng),
+                        },
+                    ]);
                 }
             })
             .catch((error) => {
@@ -180,12 +189,31 @@ function TripDetails(props) {
                         });
 
                         setShape(formattedDecodedShape);
+
+                        if (formattedDecodedShape.length !== 0)
+                            setMarkers([
+                                formattedDecodedShape[0],
+                                formattedDecodedShape[formattedDecodedShape.length - 1],
+                            ]);
                     }
             })
             .catch((error) => {
                 console.log("An error occured while getting shapes" + error);
                 setShape([]);
             });
+    }
+
+    function onPolylinePressed() {
+        recenter(
+            (parseFloat(tripDetails.origin.coordinates.lat) +
+                parseFloat(tripDetails.destination.coordinates.lat)) /
+                2,
+            (parseFloat(tripDetails.origin.coordinates.lng) +
+                parseFloat(tripDetails.destination.coordinates.lng)) /
+                2,
+            (tripDetails.destination.coordinates.lat - tripDetails.origin.coordinates.lat) * 1.5,
+            (tripDetails.destination.coordinates.lng - tripDetails.origin.coordinates.lng) * 1.5,
+        );
     }
 
     const styles = StyleSheet.create({
@@ -523,6 +551,7 @@ function TripDetails(props) {
                     <SafeAreaView edges={["top"]} />
                     <BackButton />
                 </View>
+
                 <MapView
                     ref={mapRef}
                     style={styles.topMap}
@@ -533,20 +562,18 @@ function TripDetails(props) {
                 >
                     {!loading && typeof tripDetails === "object" && (
                         <>
-                            <Marker
-                                coordinate={{
-                                    latitude: tripDetails.origin.coordinates.lat,
-                                    longitude: tripDetails.origin.coordinates.lng,
-                                }}
-                            >
-                                <View
-                                    style={{
-                                        ...styles.marker,
-                                        backgroundColor: colors.white,
-                                        borderColor: colors.middle_grey,
-                                    }}
-                                />
-                            </Marker>
+                            {Object.keys(markers).map((key) => (
+                                <Marker coordinate={markers[key]}>
+                                    <View
+                                        style={{
+                                            ...styles.marker,
+                                            backgroundColor: colors.white,
+                                            borderColor: colors.middle_grey,
+                                        }}
+                                    />
+                                </Marker>
+                            ))}
+
                             <Polyline
                                 coordinates={shape}
                                 strokeWidth={14}
@@ -556,11 +583,15 @@ function TripDetails(props) {
                                         ? `#${tripDetails.meta.line.color}`
                                         : colors.upper_background,
                                 )}
+                                tappable
+                                onPress={() => onPolylinePressed()}
                             />
                             <Polyline
                                 coordinates={shape}
                                 strokeWidth={8}
                                 strokeColor={`#${tripDetails.meta.line.color}`}
+                                tappable
+                                onPress={() => onPolylinePressed()}
                             />
                         </>
                     )}
