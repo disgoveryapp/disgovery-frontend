@@ -28,6 +28,8 @@ import ExpandDownIcon from "../../assets/svgs/expand-down-icon";
 import BackButton from "../../components/back-button";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { decode } from "@googlemaps/polyline-codec";
+import { LinearGradient } from "expo-linear-gradient";
+import ArrowIcon24 from "../../assets/svgs/arrow-forward-24px";
 
 const TRIP = "BTS_SUKHUMVIT_WD_E15_N24";
 const ORIGIN = "BTS_N9";
@@ -377,6 +379,38 @@ function TripDetails(props) {
             borderRadius: 30,
             borderWidth: 2.5,
         },
+        titleOnScrollContainer: {
+            position: "absolute",
+            paddingHorizontal: 15,
+            top: 0,
+            zIndex: 1,
+            flexDirection: "row",
+            width: Dimensions.get("screen").width,
+            height: 50,
+            display: "flex",
+            alignItems: "center",
+        },
+        titleOnScrollOriginStationNameContainer: {
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "flex-start",
+        },
+        titleOnScrollDestinationStationNameContainer: {
+            flex: 1,
+        },
+        titleOnScrollArrowIcon: {
+            width: 24,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            marginHorizontal: 5,
+        },
+        titleOnScrollStationNameText: {
+            width: "100%",
+            fontSize: 18,
+            fontWeight: "600",
+            textAlign: "center",
+        },
     });
 
     const approximateTimeWarning = (
@@ -540,6 +574,29 @@ function TripDetails(props) {
         </>
     );
 
+    const TitleOnScroll = () => (
+        <LinearGradient
+            style={styles.titleOnScrollContainer}
+            colors={[colors.background, `${colors.background}00`]}
+        >
+            <View style={styles.titleOnScrollOriginStationNameContainer}>
+                <ThemedText style={styles.titleOnScrollStationNameText}>
+                    {tripDetails.origin.name.en}
+                </ThemedText>
+            </View>
+
+            <View style={styles.titleOnScrollArrowIcon}>
+                <ArrowIcon24 />
+            </View>
+
+            <View style={styles.titleOnScrollDestinationStationNameContainer}>
+                <ThemedTextMarquee style={styles.titleOnScrollStationNameText}>
+                    {tripDetails.destination.name.en}
+                </ThemedTextMarquee>
+            </View>
+        </LinearGradient>
+    );
+
     return (
         <>
             <View>
@@ -606,69 +663,76 @@ function TripDetails(props) {
                 {!loading && (
                     <>
                         {typeof tripDetails === "object" && (
-                            <ScrollView
-                                style={styles.bottomCard}
-                                showsVerticalScrollIndicator={false}
-                                contentContainerStyle={{ paddingBottom: 50 }}
-                            >
-                                <>
-                                    <OriginToDestinationTitle
-                                        style={styles.title}
-                                        origin={tripDetails.origin.name.en}
-                                        destination={tripDetails.destination.name.en}
-                                        time={tripDetails.meta.arriving_in}
-                                        subTime={"On time"}
-                                        subTimeColor={colors.primary}
-                                    />
-
-                                    <TransitLine
-                                        style={styles.transitLine}
-                                        line={tripDetails.meta.line}
-                                    />
-
-                                    {tripDetails.meta.headway.headway_secs && (
-                                        <ThemedText style={styles.scheduledText}>
-                                            Scheduled for every{" "}
-                                            {formatSeconds(tripDetails.meta.headway.headway_secs)}
-                                            until {formatTime(tripDetails.meta.headway.to)}
-                                        </ThemedText>
-                                    )}
-
-                                    {approximateTime && approximateTimeWarning}
-
-                                    {seePreviousStopsButton(tripDetails.previous)}
-
-                                    {showPreviousStops && (
+                            <>
+                                <View style={styles.bottomCard}>
+                                    <ScrollView
+                                        showsVerticalScrollIndicator={false}
+                                        contentContainerStyle={{ paddingBottom: 50 }}
+                                    >
                                         <>
-                                            {Object.keys(tripDetails.previous).map(
-                                                (key, iteration) => (
-                                                    <>
-                                                        {tripDetails.previous[key] &&
-                                                            previousStops(
-                                                                tripDetails.previous[key],
-                                                                iteration === 0,
-                                                                iteration,
-                                                            )}
-                                                    </>
-                                                ),
+                                            <OriginToDestinationTitle
+                                                style={styles.title}
+                                                origin={tripDetails.origin.name.en}
+                                                destination={tripDetails.destination.name.en}
+                                                time={tripDetails.meta.arriving_in}
+                                                subTime={"On time"}
+                                                subTimeColor={colors.primary}
+                                            />
+
+                                            <TransitLine
+                                                style={styles.transitLine}
+                                                line={tripDetails.meta.line}
+                                            />
+
+                                            {tripDetails.meta.headway.headway_secs && (
+                                                <ThemedText style={styles.scheduledText}>
+                                                    Scheduled for every{" "}
+                                                    {formatSeconds(
+                                                        tripDetails.meta.headway.headway_secs,
+                                                    )}
+                                                    until {formatTime(tripDetails.meta.headway.to)}
+                                                </ThemedText>
                                             )}
-                                        </>
-                                    )}
 
-                                    {Object.keys(tripDetails.next).map((key, iteration) => (
-                                        <>
-                                            {tripDetails.next[key] &&
-                                                nextStops(
-                                                    tripDetails.next[key],
-                                                    iteration === 0,
-                                                    iteration === tripDetails.next.length - 1,
-                                                    iteration,
-                                                    tripDetails.meta.line.color,
-                                                )}
+                                            {approximateTime && approximateTimeWarning}
+
+                                            {seePreviousStopsButton(tripDetails.previous)}
+
+                                            {showPreviousStops && (
+                                                <>
+                                                    {Object.keys(tripDetails.previous).map(
+                                                        (key, iteration) => (
+                                                            <>
+                                                                {tripDetails.previous[key] &&
+                                                                    previousStops(
+                                                                        tripDetails.previous[key],
+                                                                        iteration === 0,
+                                                                        iteration,
+                                                                    )}
+                                                            </>
+                                                        ),
+                                                    )}
+                                                </>
+                                            )}
+
+                                            {Object.keys(tripDetails.next).map((key, iteration) => (
+                                                <>
+                                                    {tripDetails.next[key] &&
+                                                        nextStops(
+                                                            tripDetails.next[key],
+                                                            iteration === 0,
+                                                            iteration ===
+                                                                tripDetails.next.length - 1,
+                                                            iteration,
+                                                            tripDetails.meta.line.color,
+                                                        )}
+                                                </>
+                                            ))}
                                         </>
-                                    ))}
-                                </>
-                            </ScrollView>
+                                    </ScrollView>
+                                    <TitleOnScroll />
+                                </View>
+                            </>
                         )}
 
                         {typeof tripDetails !== "object" && (

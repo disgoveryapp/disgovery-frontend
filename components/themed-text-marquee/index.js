@@ -7,8 +7,8 @@ import TextMarquee from "./text-ticker";
 
 export default function ThemedTextMarquee(props) {
     const { colors } = useTheme();
+
     const OVERLAY_WIDTH = props.overlayWidth || 40;
-    const OVERLAY_BACKGROUND_COLOR = props.overlayBackgroundColor || colors.background;
     const MARQUEE_DELAY = 1000;
     const MARQUEE_SPEED = 150;
     const leftOverlayOpacity = new Animated.Value(0);
@@ -59,7 +59,7 @@ export default function ThemedTextMarquee(props) {
     function onScrollStop() {}
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, props.style]}>
             <TextMarquee
                 style={{ alignItems: "flex-start" }}
                 duration={MARQUEE_SPEED * props.children.length}
@@ -81,7 +81,10 @@ export default function ThemedTextMarquee(props) {
             <Animated.View style={[styles.leftOverlayView, { opacity: leftOverlayOpacity }]}>
                 <LinearGradient
                     style={styles.leftOverlayGradient}
-                    colors={[`${OVERLAY_BACKGROUND_COLOR}FF`, `${OVERLAY_BACKGROUND_COLOR}00`]}
+                    colors={[
+                        `${props.overlayBackgroundColor || colors.background}FF`,
+                        `${props.overlayBackgroundColor || colors.background}00`,
+                    ]}
                     start={{ x: 0.1, y: 0.5 }}
                     end={{ x: 1, y: 0.5 }}
                 ></LinearGradient>
@@ -90,7 +93,10 @@ export default function ThemedTextMarquee(props) {
             <Animated.View style={styles.rightOverlayView}>
                 <LinearGradient
                     style={styles.rightOverlayGradient}
-                    colors={[`${OVERLAY_BACKGROUND_COLOR}FF`, `${OVERLAY_BACKGROUND_COLOR}00`]}
+                    colors={[
+                        `${props.overlayBackgroundColor || colors.background}FF`,
+                        `${props.overlayBackgroundColor || colors.background}00`,
+                    ]}
                     start={{ x: 0.9, y: 0.5 }}
                     end={{ x: 0, y: 0.5 }}
                 ></LinearGradient>
