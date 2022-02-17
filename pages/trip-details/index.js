@@ -30,6 +30,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { decode } from "@googlemaps/polyline-codec";
 import { LinearGradient } from "expo-linear-gradient";
 import ArrowIcon24 from "../../assets/svgs/arrow-forward-24px";
+import ArrowIcon from "../../assets/svgs/arrow_forward-icon";
 
 const TRIP = "BTS_SUKHUMVIT_WD_E15_N24";
 const ORIGIN = "BTS_N9";
@@ -72,6 +73,8 @@ function TripDetails(props) {
     const [showPreviousStops, setShowPreviousStops] = useState(false);
     const [nextStationLineHeights, setNextStationLineHeight] = useState([]);
     const [previousStationLineHeights, setPreviousStationLineHeights] = useState([]);
+
+    const scrollY = new Animated.Value(0);
 
     const [shape, setShape] = useState([]);
     const [markers, setMarkers] = useState([]);
@@ -233,7 +236,6 @@ function TripDetails(props) {
             height: 0.7 * Dimensions.get("screen").height,
             marginTop: 0.3 * Dimensions.get("screen").height,
             paddingHorizontal: 15,
-            paddingTop: 15,
             backgroundColor: colors.background,
             borderTopLeftRadius: 22,
             borderTopRightRadius: 22,
@@ -386,9 +388,12 @@ function TripDetails(props) {
             zIndex: 1,
             flexDirection: "row",
             width: Dimensions.get("screen").width,
-            height: 50,
+            height: 60,
             display: "flex",
             alignItems: "center",
+            overflow: "hidden",
+            borderTopLeftRadius: 22,
+            borderTopRightRadius: 22,
         },
         titleOnScrollOriginStationNameContainer: {
             display: "flex",
@@ -403,7 +408,7 @@ function TripDetails(props) {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            marginHorizontal: 5,
+            marginHorizontal: 1,
         },
         titleOnScrollStationNameText: {
             width: "100%",
@@ -574,27 +579,36 @@ function TripDetails(props) {
         </>
     );
 
+    const titleOnScrollOpacity = scrollY.interpolate({
+        inputRange: [50, 125],
+        outputRange: [0, 1],
+        extrapolate: "clamp",
+    });
+
     const TitleOnScroll = () => (
-        <LinearGradient
-            style={styles.titleOnScrollContainer}
-            colors={[colors.background, `${colors.background}00`]}
-        >
-            <View style={styles.titleOnScrollOriginStationNameContainer}>
-                <ThemedText style={styles.titleOnScrollStationNameText}>
-                    {tripDetails.origin.name.en}
-                </ThemedText>
-            </View>
+        <Animated.View style={[styles.titleOnScrollContainer, { opacity: titleOnScrollOpacity }]}>
+            <LinearGradient
+                style={styles.titleOnScrollContainer}
+                colors={[colors.background, `${colors.background}00`]}
+                start={{ x: 0.5, y: 0.7 }}
+            >
+                <View style={styles.titleOnScrollOriginStationNameContainer}>
+                    <ThemedText style={styles.titleOnScrollStationNameText}>
+                        {tripDetails.origin.name.en}
+                    </ThemedText>
+                </View>
 
-            <View style={styles.titleOnScrollArrowIcon}>
-                <ArrowIcon24 />
-            </View>
+                <View style={styles.titleOnScrollArrowIcon}>
+                    <ArrowIcon />
+                </View>
 
-            <View style={styles.titleOnScrollDestinationStationNameContainer}>
-                <ThemedTextMarquee style={styles.titleOnScrollStationNameText}>
-                    {tripDetails.destination.name.en}
-                </ThemedTextMarquee>
-            </View>
-        </LinearGradient>
+                <View style={styles.titleOnScrollDestinationStationNameContainer}>
+                    <ThemedTextMarquee style={styles.titleOnScrollStationNameText}>
+                        {tripDetails.destination.name.en}
+                    </ThemedTextMarquee>
+                </View>
+            </LinearGradient>
+        </Animated.View>
     );
 
     return (
@@ -667,7 +681,14 @@ function TripDetails(props) {
                                 <View style={styles.bottomCard}>
                                     <ScrollView
                                         showsVerticalScrollIndicator={false}
-                                        contentContainerStyle={{ paddingBottom: 50 }}
+                                        contentContainerStyle={{
+                                            paddingBottom: 50,
+                                            paddingTop: 15,
+                                        }}
+                                        scrollEventThrottle={16}
+                                        onScroll={(event) =>
+                                            scrollY.setValue(event.nativeEvent.contentOffset.y)
+                                        }
                                     >
                                         <>
                                             <OriginToDestinationTitle
@@ -755,7 +776,7 @@ function TripDetails(props) {
                         <View>
                             <View style={styles.bottomCard}>
                                 <SvgAnimatedLinearGradient
-                                    style={{ marginTop: 15 }}
+                                    style={{ marginTop: 30 }}
                                     width={0.8 * Dimensions.get("screen").width}
                                     height={40}
                                     primaryColor={colors.background}
