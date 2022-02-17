@@ -685,7 +685,7 @@ function TripDetails(props) {
                                             paddingBottom: 50,
                                             paddingTop: 15,
                                         }}
-                                        scrollEventThrottle={16}
+                                        scrollEventThrottle={32}
                                         onScroll={(event) =>
                                             scrollY.setValue(event.nativeEvent.contentOffset.y)
                                         }
