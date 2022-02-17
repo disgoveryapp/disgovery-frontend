@@ -149,14 +149,6 @@ function TripDetails(props) {
                             }
                         }
                     }
-
-                    setMarkers([
-                        ...markers,
-                        {
-                            latitude: parseFloat(responseData.origin.coordinates.lat),
-                            longitude: parseFloat(responseData.origin.coordinates.lng),
-                        },
-                    ]);
                 }
             })
             .catch((error) => {
@@ -563,7 +555,7 @@ function TripDetails(props) {
                     {!loading && typeof tripDetails === "object" && (
                         <>
                             {Object.keys(markers).map((key) => (
-                                <Marker coordinate={markers[key]}>
+                                <Marker coordinate={markers[key]} anchor={{ x: 0.5, y: 0.5 }}>
                                     <View
                                         style={{
                                             ...styles.marker,
