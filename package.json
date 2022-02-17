@@ -13,6 +13,7 @@
         "@expo-google-fonts/barlow": "^0.2.2",
         "@googlemaps/polyline-codec": "^1.0.17",
         "@mui/material": "^5.3.1",
+        "@react-native-async-storage/async-storage": "^1.16.1",
         "@react-native-community/hooks": "^2.8.1",
         "@react-navigation/native": "^6.0.6",
         "@react-navigation/native-stack": "^6.2.5",
@@ -39,9 +40,9 @@
         "react-native-safe-area-context": "^3.3.2",
         "react-native-screens": "^3.10.2",
         "react-native-svg": "^12.1.1",
+        "react-native-text-ticker": "^1.14.0",
         "react-native-web": "0.17.1",
-        "use-lodash-debounce": "^1.2.0",
-        "react-native-text-ticker": "^1.14.0"
+        "use-lodash-debounce": "^1.2.0"
     },
     "devDependencies": {
         "@babel/core": "^7.12.9"
