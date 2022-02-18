@@ -45,7 +45,7 @@ export default function BottomCard(props) {
 
     const styles = StyleSheet.create({
         container: {
-            bottom: -625,
+            bottom: 0,
         },
         card: {
             width: SIZE * 4.28,

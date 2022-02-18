@@ -9,6 +9,8 @@ import * as Location from "expo-location";
 import RecenterButton from "../../components/recenter-button";
 import AccountModal from "../../components/account-modal";
 import ThemedTextMarquee from "../../components/themed-text-marquee";
+import BottomCard from "../../components/bottom-card";
+import SearchBox from "../../components/search-box";
 
 const INITIAL_MAP_REGION = {
     latitude: 13.764889,
@@ -56,6 +58,11 @@ export default function Home() {
             bottom: 25,
             alignItems: "flex-end",
         },
+        bottomcard:{
+            bottom: -475,
+            justifyContent: "center",
+            alignItems: "center",
+        }
     });
 
     useEffect(() => {
@@ -111,11 +118,11 @@ export default function Home() {
 
     return (
         <View style={styles.container}>
-            <ThemedTextMarquee style={{ fontSize: 40, fontWeight: "bold" }}>
+            {/* <ThemedTextMarquee style={{ fontSize: 40, fontWeight: "bold" }}>
                 Please mind the gap between the train and the platform. This is Aldgate. This is a
                 Circle line train via Liverpool Street and King’s Cross St. Pancras
-            </ThemedTextMarquee>
-            {/* <SafeAreaView />
+            </ThemedTextMarquee> */}
+            <SafeAreaView />
             <MapView
                 ref={mapRef}
                 style={styles.maps}
@@ -125,7 +132,17 @@ export default function Home() {
                 onTouchStart={() => setMapsIsRecentered(false)}
                 showsUserLocation
             ></MapView>
-            <RecenterButton recentered={mapsIsRecentered} onPress={recenter} /> */}
+            <RecenterButton recentered={mapsIsRecentered} onPress={recenter} />
+            <View style={styles.bottomcard}>
+                <BottomCard>
+                    <View style={styles.searchbox}>
+                        <SearchBox/>
+                    </View>
+                    <View style={styles.accountbox}>
+                        <AccountModal/>
+                    </View>
+                </BottomCard>
+            </View>
         </View>
     );
 }
