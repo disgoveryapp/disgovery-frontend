@@ -19,6 +19,8 @@ import { configs } from "../../configs/configs";
 import BadConnectionComponent from "./components/bad-connection";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+
+
 export default function Search() {
     const { colors } = useTheme();
     const [text, onChangeText] = useState("");
@@ -38,13 +40,16 @@ export default function Search() {
             setError22(false);
             setApi22Result(result.data.data);
         };
-        simpleApi22Call();
+        if(text === ""){
+            setApi21Result([]);
+            setApi22Result([]);
+        }else{
+            simpleApi22Call();
+        }
+        
         console.log(api22Result);
         console.log(error21)
         console.log(error22)
-        if(text === ""){
-            setApi21Result([])
-        }
     }, [text]);
 
     useEffect(() => {
@@ -132,7 +137,7 @@ export default function Search() {
         },
         topictext: {
             color: "grey",
-            paddingHorizontal: 8,
+            paddingHorizontal: 15,
         },
         tabbarcontainer: {
             paddingBottom: 12,
