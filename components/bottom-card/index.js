@@ -23,12 +23,13 @@ export default function bottomCard(props) {
         },
         onActive: (event, context) => {
             translateY.value = Math.max(endingPosition,event.translationY + context.translateY);
-            //console.log(event.translationY +context.translateY);
+            console.log(event.translationY +context.translateY);
         },
         onEnd: () => {
-            if (translateY.value > endingPosition) {
+            if (translateY.value > endingPosition/2) {
                 translateY.value = withSpring(startingPosition);
             }
+            else translateY.value = withSpring(endingPosition);
         },
     });
 
