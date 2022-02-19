@@ -17,16 +17,14 @@ import { useDebounce } from "use-lodash-debounce";
 import StationTab from "./components/station-tab";
 import { configs } from "../../configs/configs";
 import BadConnectionComponent from "./components/bad-connection";
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Search() {
     const { colors } = useTheme();
     const [text, onChangeText] = useState("");
     const [api22Result, setApi22Result] = useState([]);
     const [api21Result, setApi21Result] = useState([]);
-    const debouncedValue = useDebounce(text, 100);
+    const debouncedValue = useDebounce(text, 200);
     const [error21, setError21] = useState(false);
     const [error22, setError22] = useState(false);
 
@@ -40,16 +38,16 @@ export default function Search() {
             setError22(false);
             setApi22Result(result.data.data);
         };
-        if(text === ""){
+        if (text === "") {
             setApi21Result([]);
             setApi22Result([]);
-        }else{
+        } else {
             simpleApi22Call();
         }
-        
+
         console.log(api22Result);
-        console.log(error21)
-        console.log(error22)
+        console.log(error21);
+        console.log(error22);
     }, [text]);
 
     useEffect(() => {
@@ -67,49 +65,45 @@ export default function Search() {
 
         simpleApi21Call();
     }, [debouncedValue]);
-    
 
     const storeFavouriteData = async (value) => {
         try {
-          const jsonValue = JSON.stringify({name: "King Palace", location: "Pathumwan Resort"})
-          await AsyncStorage.setItem('Favourite', jsonValue)
+            const jsonValue = JSON.stringify({ name: "King Palace", location: "Pathumwan Resort" });
+            await AsyncStorage.setItem("Favourite", jsonValue);
         } catch (e) {
-            console.log(e)
-          // saving error
+            console.log(e);
+            // saving error
         }
-      }
+    };
 
-      const getFavouriteData = async () => {
+    const getFavouriteData = async () => {
         try {
-          const jsonValue = await AsyncStorage.getItem('Favourite')
-          return jsonValue != null ? JSON.parse(jsonValue) : null;
-        } catch(e) {
-            console.log(e)
-          // error reading value
-        }
-      }
-
-      const storeRecentData = async (value) => {
-        try {
-          const jsonValue = JSON.stringify(value)
-          await AsyncStorage.setItem('Recents', jsonValue)
+            const jsonValue = await AsyncStorage.getItem("Favourite");
+            return jsonValue != null ? JSON.parse(jsonValue) : null;
         } catch (e) {
-          // saving error
+            console.log(e);
+            // error reading value
         }
-      }
+    };
 
-      const getRecentData = async () => {
+    const storeRecentData = async (value) => {
         try {
-          const jsonValue = await AsyncStorage.getItem('Recents')
-          return jsonValue != null ? JSON.parse(jsonValue) : null;
-        } catch(e) {
-          // error reading value
+            const jsonValue = JSON.stringify(value);
+            await AsyncStorage.setItem("Recents", jsonValue);
+        } catch (e) {
+            // saving error
         }
-      }
-      
-    
+    };
 
-    
+    const getRecentData = async () => {
+        try {
+            const jsonValue = await AsyncStorage.getItem("Recents");
+            return jsonValue != null ? JSON.parse(jsonValue) : null;
+        } catch (e) {
+            // error reading value
+        }
+    };
+
     const styles = StyleSheet.create({
         searchbox: {
             paddingVertical: 5,
@@ -160,67 +154,63 @@ export default function Search() {
                 <View style={styles.scrollView}>
                     {!(error21 && error22) ? (
                         <ScrollView
-                        style={styles.scrollView}
-                        showsHorizontalScrollIndicator={false}
-                        showsVerticalScrollIndicator={false}
-                        contentContainerStyle={{ paddingBottom: 35, paddingTop: 12 }}
-                        bounces={false}
-                    >
-                        {(api22Result !== undefined &&
-                            api22Result !== null &&
-                            api22Result.length !== 0) ||
-                        (api21Result !== undefined &&
-                            api21Result !== null &&
-                            api21Result.length !== 0) ? (
-                            <>
-                                {api22Result !== undefined &&
+                            style={styles.scrollView}
+                            showsHorizontalScrollIndicator={false}
+                            showsVerticalScrollIndicator={false}
+                            contentContainerStyle={{ paddingBottom: 35, paddingTop: 12 }}
+                        >
+                            {(api22Result !== undefined &&
                                 api22Result !== null &&
-                                api22Result.length !== 0 ? (
-                                    <>
-                                        <ThemedText style={styles.topictext}>
-                                            Stations
-                                        </ThemedText>
-                                        <View style={styles.tabbarcontainer}>
-                                            <>
-                                                {api22Result.map((item, key) => (
-                                                    <StationTab
+                                api22Result.length !== 0) ||
+                            (api21Result !== undefined &&
+                                api21Result !== null &&
+                                api21Result.length !== 0) ? (
+                                <>
+                                    {api22Result !== undefined &&
+                                    api22Result !== null &&
+                                    api22Result.length !== 0 ? (
+                                        <>
+                                            <ThemedText style={styles.topictext}>
+                                                Stations
+                                            </ThemedText>
+                                            <View style={styles.tabbarcontainer}>
+                                                <>
+                                                    {api22Result.map((item, key) => (
+                                                        <StationTab
+                                                            key={key}
+                                                            place={item.name.en}
+                                                            trip={item.trips}
+                                                        ></StationTab>
+                                                    ))}
+                                                </>
+                                            </View>
+                                        </>
+                                    ) : (
+                                        <></>
+                                    )}
+                                    {api21Result !== undefined &&
+                                    api21Result !== null &&
+                                    api21Result.length !== 0 ? (
+                                        <View>
+                                            <ThemedText style={styles.topictext}>Places</ThemedText>
+                                            <View style={styles.tabbarcontainer}>
+                                                {api21Result.map((item, key) => (
+                                                    <PlaceTab
                                                         key={key}
                                                         place={item.name.en}
-                                                        trip={item.trips}
-                                                    ></StationTab>
+                                                        address={item.address.en}
+                                                    ></PlaceTab>
                                                 ))}
-                                            </>
+                                            </View>
                                         </View>
-                                    </>
-                                ) : (
-                                    <></>
-                                )}
-                                {api21Result !== undefined &&
-                                api21Result !== null &&
-                                api21Result.length !== 0 ? (
-                                    <View>
-                                        <ThemedText style={styles.topictext}>Places</ThemedText>
-                                        <View style={styles.tabbarcontainer}>
-                                            {api21Result.map((item, key) => (
-                                                <PlaceTab
-                                                    key={key}
-                                                    place={item.name.en}
-                                                    address={item.address.en}
-                                                ></PlaceTab>
-                                            ))}
-                                        </View>
-                                    </View>
-                                ) : (
-                                    <></>
-                                )}
-                            </>
-                        ) : (
-                            <>
-                            
-                            </>
-                        )}
-                    </ScrollView>
-                        
+                                    ) : (
+                                        <></>
+                                    )}
+                                </>
+                            ) : (
+                                <></>
+                            )}
+                        </ScrollView>
                     ) : (
                         <BadConnectionComponent />
                     )}
