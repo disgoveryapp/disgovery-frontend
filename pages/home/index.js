@@ -111,10 +111,10 @@ export default function Home() {
 
     return (
         <View style={styles.container}>
-            <AutoSlidingThemedText style={{ fontSize: 40, fontWeight: "bold" }}>
+            <ThemedTextMarquee style={{ fontSize: 40, fontWeight: "bold" }}>
                 Please mind the gap between the train and the platform. This is Aldgate. This is a
                 Circle line train via Liverpool Street and King’s Cross St. Pancras
-            </AutoSlidingThemedText>
+            </ThemedTextMarquee>
             {/* <SafeAreaView />
             <MapView
                 ref={mapRef}

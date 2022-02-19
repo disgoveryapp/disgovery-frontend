@@ -8,6 +8,8 @@ export const darkTheme = {
         red: "#EE2929",
         yellow: "#FFBF1C",
         primary: "#7EC13A",
+        middle_grey: "#7B7B7B",
+        white: "#fff",
     },
 };
 
@@ -21,5 +23,7 @@ export const lightTheme = {
         red: "#EE2929",
         yellow: "#FFBF1C",
         primary: "#7EC13A",
+        middle_grey: "#7B7B7B",
+        white: "#fff",
     },
 };
