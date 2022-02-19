@@ -19,6 +19,7 @@ import { darkTheme, lightTheme } from "./themes/themes";
 import Home from "./pages/home";
 
 import TripDetails from "./pages/trip-details";
+import Search from "./pages/search";
 
 export default function App() {
     const scheme = useColorScheme();
@@ -46,7 +47,7 @@ export default function App() {
                         }}
                     >
                         {/* <Stack.Screen name="Home" component={Home} /> */}
-                        <Stack.Screen name="TripDetails" component={TripDetails} />
+                        <Stack.Screen name="Search" component={Search} />
                     </Stack.Navigator>
                 </NavigationContainer>
             </>
