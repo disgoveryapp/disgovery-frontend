@@ -168,11 +168,11 @@ const Item = ({ name, time, line, type, color }) => (
 
 );
 
-export default function BottomCardFlatList() {
-
-        const detail = "/station/nearby?lat&lng&radius";
+export default function BottomCardFlatList(props) {
+        const detail = `/station/nearby?lat=${props.latitude}&lng=${props.longitude}&radius=${props.radius}`;
 
         const [data, setData] = useState(); 
+
         useEffect(() => { 
             getRawData();
         }, []);
