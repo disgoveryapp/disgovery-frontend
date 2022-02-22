@@ -11,6 +11,7 @@ import AccountModal from "../../components/account-modal";
 import ThemedTextMarquee from "../../components/themed-text-marquee";
 import BottomCard from "../../components/bottom-card";
 import SearchBox from "../../components/search-box";
+import BottomCardFlatList from "../../components/bottom-card-flat-list";
 
 const INITIAL_MAP_REGION = {
     latitude: 13.764889,
@@ -46,20 +47,21 @@ export default function Home() {
             height: "100%",
         },
         searchbox: {
-            flex: 1,
-            flexDirection: "row",
             justifyContent: "space-between",
-            alignItems: "flex-end",
-            paddingHorizontal: 12,
+            paddingHorizontal: 40,
+            bottom: 25,
+            right: 25, 
         },
         accountbox: {
-            position: "absolute",
-            right: 0,
-            bottom: 25,
-            alignItems: "flex-end",
+            bottom: 70,
+            left: 370, 
+        },
+        flatlistcontainer: {
+            flex: 1,
+            bottom: 50,
         },
         bottomcard:{
-            bottom: -475,
+            bottom: -550,
             justifyContent: "center",
             alignItems: "center",
         }
@@ -140,6 +142,9 @@ export default function Home() {
                     </View>
                     <View style={styles.accountbox}>
                         <AccountModal/>
+                    </View>
+                    <View style={styles.flatlistcontainer}>
+                        <BottomCardFlatList/>
                     </View>
                 </BottomCard>
             </View>

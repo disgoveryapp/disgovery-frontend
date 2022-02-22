@@ -1,5 +1,5 @@
-import React from "react";
-import { StyleSheet, View } from "react-native";
+import React, { useCallback, useEffect, useImperativeHandle } from "react";
+import { Dimensions, StyleSheet, View } from "react-native";
 import Animated, {
     useAnimatedGestureHandler,
     useAnimatedStyle,
@@ -12,11 +12,12 @@ import { useTheme } from "@react-navigation/native";
 const SIZE = 100.0;
 const startingPosition = 0;
 const endingPosition = -300;
+const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
-export default function BottomCard(props) {
+const BottomCard = (({ children }) => {
     const translateY = useSharedValue(startingPosition);
     const { colors } = useTheme();
-
+ 
     const panGestureEvent = useAnimatedGestureHandler({
         onStart: (event, context) => {
             context.translateY = translateY.value;
@@ -58,8 +59,12 @@ export default function BottomCard(props) {
     return (
         <GestureHandlerRootView style={[styles.container]}>
             <PanGestureHandler onGestureEvent={panGestureEvent}>
-                <Animated.View style={[styles.card, rStyle]} />
+                <Animated.View style={[styles.card, rStyle]}>
+                    {children}
+                </Animated.View>
             </PanGestureHandler>
         </GestureHandlerRootView>
     );
-}
+});
+
+export default BottomCard;
