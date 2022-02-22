@@ -59,6 +59,8 @@ export default function Home() {
         flatlistcontainer: {
             flex: 1,
             bottom: 50,
+            // marginLeft:"auto",
+            // marginRight:"auto",
         },
         bottomcard:{
             bottom: -550,

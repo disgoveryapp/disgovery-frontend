@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
     TouchableOpacity,
     SafeAreaView,
@@ -20,6 +20,8 @@ import SubwayIcon from "../../assets/svgs/subway-icon";
 import MLineIcon from "../../assets/svgs/MLine-icon";
 import RedLineIcon from "../../assets/svgs/RedLine-icon";
 import { Dimensions, Platform, PixelRatio } from 'react-native';
+import axios from 'axios';
+import { API_URL } from "../../configs/configs";
 
 
 const raw_Data = {
@@ -167,6 +169,24 @@ const Item = ({ name, time, line, type, color }) => (
 );
 
 export default function BottomCardFlatList() {
+
+        const detail = "/station/nearby?lat&lng&radius";
+
+        const [data, setData] = useState(); 
+        useEffect(() => { 
+            getRawData();
+        }, []);
+
+        const getRawData = async () => {
+            try {
+            const response = await axios.get(`${API_URL}${detail}`);
+            const rawdata = response;
+            setData(rawdata);
+            // console.log(rawData);
+            } catch (error) {
+            console.error(error);
+            }
+        }
 
     const renderItem = ({ item }) => <Item name={item.name} time={item.time} line={item.line} type={item.type} color={item.color}/>;
 
