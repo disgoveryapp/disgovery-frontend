@@ -40,6 +40,7 @@ export default function ThemedTextInput(props) {
             placeholder={props.placeholder}
             onChangeText={props.onChangeText}
             value={props.value}
+            onChange={props.onChange}
         >
             {props.children}
         </TextInput>

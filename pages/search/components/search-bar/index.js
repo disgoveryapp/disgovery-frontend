@@ -21,6 +21,7 @@ export default function SearchBar(props) {
             flexDirection: "row",
         },
         textinput: {
+            flex: 1,
             fontSize: 18,
             paddingHorizontal: 8,
         },
@@ -35,6 +36,7 @@ export default function SearchBar(props) {
                     style={styles.textinput}
                     onChangeText={props.onChangeText}
                     value={props.value}
+                    onChange={props.onChange}
                 />
             </View>
             <View>
