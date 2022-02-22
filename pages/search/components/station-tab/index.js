@@ -11,6 +11,7 @@ import TransportName from "../../../../components/transport-name";
 import TramIcon from "../../../../assets/svgs/tram-icon";
 import BoatIcon from "../../../../assets/svgs/boat-icon";
 import RailIcon from "../../../../assets/svgs/rail-icon";
+import TransitLine from "../../../../components/transit-line";
 
 function StationTab(props) {
     const { colors } = useTheme();
@@ -67,10 +68,7 @@ function StationTab(props) {
             flex: 1,
             paddingLeft: 15,
         },
-        transportnamecontainer: {
-            paddingRight: 3,
-            paddingTop: 6,
-        },
+        transportnamecontainer: {},
     });
 
     return (
@@ -147,18 +145,24 @@ function StationTab(props) {
                                                                                             .long_name,
                                                                                     );
                                                                                     return (
-                                                                                        <TransportName
+                                                                                        <TransitLine
                                                                                             key={
                                                                                                 key
                                                                                             }
-                                                                                            color={
-                                                                                                item2.color
-                                                                                            }
-                                                                                            name={
-                                                                                                item2
-                                                                                                    .route_name
-                                                                                                    .long_name
-                                                                                            }
+                                                                                            line={{
+                                                                                                id: item2.route_id,
+                                                                                                name: {
+                                                                                                    short_name:
+                                                                                                        item2
+                                                                                                            .route_name
+                                                                                                            .short_name,
+                                                                                                    long_name:
+                                                                                                        item2
+                                                                                                            .route_name
+                                                                                                            .long_name,
+                                                                                                },
+                                                                                                color: item2.color,
+                                                                                            }}
                                                                                             style={
                                                                                                 styles.transportnamecontainer
                                                                                             }
