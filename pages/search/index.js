@@ -17,92 +17,64 @@ import { useDebounce } from "use-lodash-debounce";
 import StationTab from "./components/station-tab";
 import { configs } from "../../configs/configs";
 import BadConnectionComponent from "./components/bad-connection";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Search() {
     const { colors } = useTheme();
     const [text, onChangeText] = useState("");
     const [api22Result, setApi22Result] = useState([]);
     const [api21Result, setApi21Result] = useState([]);
-    const debouncedValue = useDebounce(text, 200);
+    const debouncedValue = useDebounce(text, 1200);
     const [error21, setError21] = useState(false);
     const [error22, setError22] = useState(false);
-
-    useEffect(() => {
-        const simpleApi22Call = async (str) => {
+    const [loading, setLoading] = useState(false);
+    const simpleApi22Call = async (str) => {
+        try {
             const result = await axios({
                 method: "get",
                 url: `${configs.API_URL}/autocomplete/stations?query=${text}&max_result=4`,
                 headers: {},
-            }).catch(setError22(true));
+            });
             setError22(false);
-            setApi22Result(result.data.data);
-        };
-        if (text === "") {
-            setApi21Result([]);
-            setApi22Result([]);
-        } else {
-            simpleApi22Call();
+            if (result.data.data === undefined && result.data.data === null) {
+                setApi22Result([]);
+            } else {
+                setApi22Result(result.data.data);
+            }
+        } catch {
+            setError22(true);
         }
-
-        console.log(api22Result);
-        console.log(error21);
-        console.log(error22);
-    }, [text]);
-
-    useEffect(() => {
-        const simpleApi21Call = async (str) => {
+    };
+    const simpleApi21Call = async (str) => {
+        try {
             const result = await axios({
                 method: "get",
                 url: `${configs.API_URL}/autocomplete/places?query=${text}`,
                 headers: {},
-            }).catch(setError21(true));
+            });
             setError21(false);
-            if (debouncedValue) {
+            if (result.data === undefined && result.data === null) {
+                setApi21Result([]);
+            } else {
                 setApi21Result(result.data);
             }
-        };
+        } catch {
+            setError21(true);
+        }
+    };
 
-        simpleApi21Call();
+    const handleOnChange = async () => {
+        setLoading(true);
+        await simpleApi22Call();
+        setLoading(false);
+    };
+    useEffect(() => {
+        if (text === "") {
+            setApi21Result([]);
+            setApi22Result([]);
+        } else {
+            simpleApi21Call();
+        }
     }, [debouncedValue]);
-
-    const storeFavouriteData = async (value) => {
-        try {
-            const jsonValue = JSON.stringify({ name: "King Palace", location: "Pathumwan Resort" });
-            await AsyncStorage.setItem("Favourite", jsonValue);
-        } catch (e) {
-            console.log(e);
-            // saving error
-        }
-    };
-
-    const getFavouriteData = async () => {
-        try {
-            const jsonValue = await AsyncStorage.getItem("Favourite");
-            return jsonValue != null ? JSON.parse(jsonValue) : null;
-        } catch (e) {
-            console.log(e);
-            // error reading value
-        }
-    };
-
-    const storeRecentData = async (value) => {
-        try {
-            const jsonValue = JSON.stringify(value);
-            await AsyncStorage.setItem("Recents", jsonValue);
-        } catch (e) {
-            // saving error
-        }
-    };
-
-    const getRecentData = async () => {
-        try {
-            const jsonValue = await AsyncStorage.getItem("Recents");
-            return jsonValue != null ? JSON.parse(jsonValue) : null;
-        } catch (e) {
-            // error reading value
-        }
-    };
 
     const styles = StyleSheet.create({
         searchbox: {
@@ -147,72 +119,81 @@ export default function Search() {
                         placeholder="Search destination"
                         onChangeText={onChangeText}
                         value={text}
+                        onChange={handleOnChange}
                     />
                 </View>
                 <TouchableOpacity onPress={() => onChangeText}></TouchableOpacity>
 
                 <View style={styles.scrollView}>
-                    {!(error21 && error22) ? (
-                        <ScrollView
-                            style={styles.scrollView}
-                            showsHorizontalScrollIndicator={false}
-                            showsVerticalScrollIndicator={false}
-                            contentContainerStyle={{ paddingBottom: 35, paddingTop: 12 }}
-                        >
-                            {(api22Result !== undefined &&
-                                api22Result !== null &&
-                                api22Result.length !== 0) ||
-                            (api21Result !== undefined &&
-                                api21Result !== null &&
-                                api21Result.length !== 0) ? (
-                                <>
-                                    {api22Result !== undefined &&
-                                    api22Result !== null &&
-                                    api22Result.length !== 0 ? (
+                    {loading ? (
+                        <></>
+                    ) : (
+                        <>
+                            {!(error21 && error22) ? (
+                                <ScrollView
+                                    style={styles.scrollView}
+                                    showsHorizontalScrollIndicator={false}
+                                    showsVerticalScrollIndicator={false}
+                                    contentContainerStyle={{ paddingBottom: 35, paddingTop: 12 }}
+                                >
+                                    {(api22Result !== undefined &&
+                                        api22Result !== null &&
+                                        api22Result.length !== 0) ||
+                                    (api21Result !== undefined &&
+                                        api21Result !== null &&
+                                        api21Result.length !== 0) ? (
                                         <>
-                                            <ThemedText style={styles.topictext}>
-                                                Stations
-                                            </ThemedText>
-                                            <View style={styles.tabbarcontainer}>
+                                            {api22Result !== undefined &&
+                                            api22Result !== null &&
+                                            api22Result.length !== 0 ? (
                                                 <>
-                                                    {api22Result.map((item, key) => (
-                                                        <StationTab
-                                                            key={key}
-                                                            place={item.name.en}
-                                                            trip={item.trips}
-                                                        ></StationTab>
-                                                    ))}
+                                                    <ThemedText style={styles.topictext}>
+                                                        Stations
+                                                    </ThemedText>
+                                                    <View style={styles.tabbarcontainer}>
+                                                        <>
+                                                            {api22Result.map((item, key) => (
+                                                                <StationTab
+                                                                    key={key}
+                                                                    place={item.name.en}
+                                                                    trip={item.trips}
+                                                                ></StationTab>
+                                                            ))}
+                                                        </>
+                                                    </View>
                                                 </>
-                                            </View>
+                                            ) : (
+                                                <></>
+                                            )}
+                                            {api21Result !== undefined &&
+                                            api21Result !== null &&
+                                            api21Result.length !== 0 ? (
+                                                <View>
+                                                    <ThemedText style={styles.topictext}>
+                                                        Places
+                                                    </ThemedText>
+                                                    <View style={styles.tabbarcontainer}>
+                                                        {api21Result.map((item, key) => (
+                                                            <PlaceTab
+                                                                key={key}
+                                                                place={item.name.en}
+                                                                address={item.address.en}
+                                                            ></PlaceTab>
+                                                        ))}
+                                                    </View>
+                                                </View>
+                                            ) : (
+                                                <></>
+                                            )}
                                         </>
                                     ) : (
                                         <></>
                                     )}
-                                    {api21Result !== undefined &&
-                                    api21Result !== null &&
-                                    api21Result.length !== 0 ? (
-                                        <View>
-                                            <ThemedText style={styles.topictext}>Places</ThemedText>
-                                            <View style={styles.tabbarcontainer}>
-                                                {api21Result.map((item, key) => (
-                                                    <PlaceTab
-                                                        key={key}
-                                                        place={item.name.en}
-                                                        address={item.address.en}
-                                                    ></PlaceTab>
-                                                ))}
-                                            </View>
-                                        </View>
-                                    ) : (
-                                        <></>
-                                    )}
-                                </>
+                                </ScrollView>
                             ) : (
-                                <></>
+                                <BadConnectionComponent />
                             )}
-                        </ScrollView>
-                    ) : (
-                        <BadConnectionComponent />
+                        </>
                     )}
                 </View>
             </View>
