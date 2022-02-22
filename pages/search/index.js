@@ -23,7 +23,7 @@ export default function Search() {
     const [text, onChangeText] = useState("");
     const [api22Result, setApi22Result] = useState([]);
     const [api21Result, setApi21Result] = useState([]);
-    const debouncedValue = useDebounce(text, 1200);
+    const debouncedValue = useDebounce(text, 200);
     const [error21, setError21] = useState(false);
     const [error22, setError22] = useState(false);
     const [loading, setLoading] = useState(false);
