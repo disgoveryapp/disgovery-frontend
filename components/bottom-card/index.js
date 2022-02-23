@@ -9,10 +9,9 @@ import Animated, {
 import { GestureHandlerRootView, PanGestureHandler } from "react-native-gesture-handler";
 import { useTheme } from "@react-navigation/native";
 
-const SIZE = 100.0;
+const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window');
 const startingPosition = 0;
-const endingPosition = -300;
-const { height: SCREEN_HEIGHT } = Dimensions.get('window');
+const endingPosition = -SCREEN_HEIGHT/3;
 
 const BottomCard = (({ children }) => {
     const translateY = useSharedValue(startingPosition);
@@ -24,7 +23,6 @@ const BottomCard = (({ children }) => {
         },
         onActive: (event, context) => {
             translateY.value = Math.max(endingPosition,event.translationY + context.translateY);
-            console.log(event.translationY +context.translateY);
         },
         onEnd: () => {
             if (translateY.value > endingPosition/2) {
@@ -45,19 +43,16 @@ const BottomCard = (({ children }) => {
     });
 
     const styles = StyleSheet.create({
-        container: {
-            bottom: 0,
-        },
         card: {
-            width: SIZE * 4.28,
-            height: SIZE * 6,
+            width: SCREEN_WIDTH,
+            height: SCREEN_HEIGHT*2/3,
             backgroundColor: colors.background,
             borderRadius: 22,
         },
     });
 
     return (
-        <GestureHandlerRootView style={[styles.container]}>
+        <GestureHandlerRootView>
             <PanGestureHandler onGestureEvent={panGestureEvent}>
                 <Animated.View style={[styles.card, rStyle]}>
                     {children}

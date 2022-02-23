@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { SafeAreaView, StyleSheet, Text, View } from "react-native";
+import { SafeAreaView, StyleSheet, Text, View, Dimensions } from "react-native";
 import ThemedText from "../../components/themed-text";
 import { useTheme } from "@react-navigation/native";
 import MapView, { Polyline } from "react-native-maps";
@@ -12,6 +12,8 @@ import ThemedTextMarquee from "../../components/themed-text-marquee";
 import BottomCard from "../../components/bottom-card";
 import SearchBox from "../../components/search-box";
 import BottomCardFlatList from "../../components/bottom-card-flat-list";
+
+const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window');
 
 const INITIAL_MAP_REGION = {
     latitude: 13.764889,
@@ -49,19 +51,19 @@ export default function Home() {
         searchbox: {
             justifyContent: "space-between",
             paddingHorizontal: 40,
-            bottom: 25,
+            bottom: 30,
             right: 25, 
         },
         accountbox: {
-            bottom: 70,
-            left: 370, 
+            bottom: 75,
+            left: 369, 
         },
         flatlistcontainer: {
             flex: 1,
             bottom: 50,
         },
         bottomcard:{
-            bottom: -550,
+            top: SCREEN_HEIGHT*(3/5),
             justifyContent: "center",
             alignItems: "center",
         }
