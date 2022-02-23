@@ -50,9 +50,9 @@ export default function Home() {
         },
         searchbox: {
             justifyContent: "space-between",
-            paddingHorizontal: 40,
+            paddingHorizontal: 10,
             bottom: 30,
-            right: 25, 
+            right: 0, 
         },
         accountbox: {
             bottom: 75,
@@ -60,7 +60,7 @@ export default function Home() {
         },
         flatlistcontainer: {
             flex: 1,
-            bottom: 50,
+            bottom: 20,
         },
         bottomcard:{
             top: SCREEN_HEIGHT*(3/5),
@@ -142,9 +142,9 @@ export default function Home() {
                     <View style={styles.searchbox}>
                         <SearchBox/>
                     </View>
-                    <View style={styles.accountbox}>
+                    {/* <View style={styles.accountbox}>
                         <AccountModal/>
-                    </View>
+                    </View> */}
                     <View style={styles.flatlistcontainer}>
                         <BottomCardFlatList/>
                     </View>
