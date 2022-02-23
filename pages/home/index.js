@@ -60,7 +60,7 @@ export default function Home() {
         },
         flatlistcontainer: {
             flex: 1,
-            bottom: 20,
+            bottom: 30,
         },
         bottomcard:{
             top: SCREEN_HEIGHT*(3/5),

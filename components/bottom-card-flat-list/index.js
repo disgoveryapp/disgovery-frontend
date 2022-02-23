@@ -11,7 +11,6 @@ import {
     Dimensions,
 } from "react-native";
 import ThemedText from "../themed-text";
-import { darkTheme, lightTheme } from "../../themes/themes";
 import BusIcon from "../../assets/svgs/bus-icon";
 import ArrowIcon from "../../assets/svgs/arrow_forward-icon";
 import { useTheme } from "@react-navigation/native";
@@ -97,9 +96,11 @@ export default function BottomCardFlatList() {
             display: "flex",
             flexDirection: "row",
             justifyContent: "space-around",
-            backgroundColor: colors.text,
-            width: 80,
-            borderRadius: 5,
+            backgroundColor: colors.flatlist_transport,
+            width: 92,
+            height: 44,
+            borderRadius: 12,
+            paddingTop: 4,
         },
         icon: {
             width: 25,
@@ -111,7 +112,7 @@ export default function BottomCardFlatList() {
         line: {
             marginTop: 2,
             fontSize: 25,
-            color: colors.red,
+            color: colors.flatlist_line,
         },
         arrow: {
             marginLeft: 5,
@@ -129,7 +130,7 @@ export default function BottomCardFlatList() {
         time: {
             fontSize: 25,
             marginRight: 2,
-            marginTop: 3,
+            marginTop: 4,
             textAlign: "right",
             color: colors.text,
         },
