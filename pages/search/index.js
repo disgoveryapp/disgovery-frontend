@@ -40,7 +40,7 @@ export default function Search() {
             } else {
                 setApi22Result(result.data.data);
             }
-        } catch {
+        } catch (error) {
             setError22(true);
         }
     };
@@ -57,16 +57,22 @@ export default function Search() {
             } else {
                 setApi21Result(result.data);
             }
-        } catch {
+        } catch (error) {
             setError21(true);
         }
     };
 
-    const handleOnChange = async () => {
-        setLoading(true);
-        await simpleApi22Call();
-        setLoading(false);
-    };
+    useEffect(() => {
+        if (text === "") {
+            setApi22Result([]);
+        } else {
+            setLoading(true);
+            simpleApi22Call();
+            setLoading(false);
+            console.log(api22Result);
+        }
+    }, [text]);
+
     useEffect(() => {
         if (text === "") {
             setApi21Result([]);
@@ -119,7 +125,6 @@ export default function Search() {
                         placeholder="Search destination"
                         onChangeText={onChangeText}
                         value={text}
-                        onChange={handleOnChange}
                     />
                 </View>
                 <TouchableOpacity onPress={() => onChangeText}></TouchableOpacity>

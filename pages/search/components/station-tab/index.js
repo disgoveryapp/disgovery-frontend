@@ -68,7 +68,11 @@ function StationTab(props) {
             flex: 1,
             paddingLeft: 15,
         },
-        transportnamecontainer: {},
+        transportnamecontainer: {
+            paddingTop: 7,
+            paddingRight: 7,
+        },
+        transportnamesubcontainer: {},
     });
 
     return (
@@ -145,28 +149,37 @@ function StationTab(props) {
                                                                                             .long_name,
                                                                                     );
                                                                                     return (
-                                                                                        <TransitLine
-                                                                                            key={
-                                                                                                key
-                                                                                            }
-                                                                                            line={{
-                                                                                                id: item2.route_id,
-                                                                                                name: {
-                                                                                                    short_name:
-                                                                                                        item2
-                                                                                                            .route_name
-                                                                                                            .short_name,
-                                                                                                    long_name:
-                                                                                                        item2
-                                                                                                            .route_name
-                                                                                                            .long_name,
-                                                                                                },
-                                                                                                color: item2.color,
-                                                                                            }}
+                                                                                        <View
                                                                                             style={
                                                                                                 styles.transportnamecontainer
                                                                                             }
-                                                                                        />
+                                                                                        >
+                                                                                            <TransitLine
+                                                                                                key={
+                                                                                                    key
+                                                                                                }
+                                                                                                line={{
+                                                                                                    id: item2.route_id,
+                                                                                                    name: {
+                                                                                                        short_name:
+                                                                                                            item2
+                                                                                                                .route_name
+                                                                                                                .short_name,
+                                                                                                        long_name:
+                                                                                                            item2
+                                                                                                                .route_name
+                                                                                                                .long_name,
+                                                                                                    },
+                                                                                                    color: item2.color,
+                                                                                                }}
+                                                                                                style={
+                                                                                                    styles.transportnamesubcontainer
+                                                                                                }
+                                                                                                fontSize={
+                                                                                                    14
+                                                                                                }
+                                                                                            />
+                                                                                        </View>
                                                                                     );
                                                                                 }
                                                                             })()}
