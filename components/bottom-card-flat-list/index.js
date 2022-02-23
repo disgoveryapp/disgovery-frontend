@@ -14,8 +14,9 @@ import ThemedText from "../themed-text";
 import BusIcon from "../../assets/svgs/bus-icon";
 import ArrowIcon from "../../assets/svgs/arrow_forward-icon";
 import { useTheme } from "@react-navigation/native";
+import ThemedTextMarquee from "../themed-text-marquee";
 
-const { height: SCREEN_HEIGHT } = Dimensions.get('window');
+const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window');
 
 const DATA = [
     {
@@ -32,7 +33,7 @@ const DATA = [
     },
     {
         id: "3",
-        title: "Lam Lukka",
+        title: "Krung Thep Mahanakorn Amorn Rattana Kosin",
         line: "333",
         time: 10,
     },
@@ -61,8 +62,10 @@ export default function BottomCardFlatList() {
                     <ThemedText style={styles.line}>{line}</ThemedText>
                 </View>
                 <ArrowIcon style={styles.arrow} />
-                <View style={styles.item}>
-                    <ThemedText style={styles.title}>{title}</ThemedText>
+                <View style={styles.itemContainer}>
+                    <View style={styles.item}>
+                        <ThemedTextMarquee style={styles.title}>{title}</ThemedTextMarquee>
+                    </View>
                 </View>
             </View>
             <View style={styles.timeSection}>
@@ -88,10 +91,13 @@ export default function BottomCardFlatList() {
         },
         item: {
             display: "flex",
-            flexDirection: "row",
-            justifyContent: "center",
+            flex: 1,
         },
-        container: {},
+        itemContainer: {
+            width: SCREEN_WIDTH/2,
+            flexDirection: "row",
+            justifyContent: "flex-start",
+        },
         transport: {
             display: "flex",
             flexDirection: "row",
@@ -121,6 +127,9 @@ export default function BottomCardFlatList() {
         title: {
             fontSize: 18,
             color: colors.text,
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
         },
         timeSection: {
             display: "flex",
