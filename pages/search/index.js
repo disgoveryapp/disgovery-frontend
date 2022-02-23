@@ -20,21 +20,26 @@ import BadConnectionComponent from "./components/bad-connection";
 
 export default function Search() {
     const { colors } = useTheme();
+
     const [text, onChangeText] = useState("");
     const [api22Result, setApi22Result] = useState([]);
     const [api21Result, setApi21Result] = useState([]);
-    const debouncedValue = useDebounce(text, 200);
     const [error21, setError21] = useState(false);
     const [error22, setError22] = useState(false);
     const [loading, setLoading] = useState(false);
-    const simpleApi22Call = async (str) => {
+
+    const debouncedValue = useDebounce(text, 200);
+
+    async function simpleApi22Call() {
         try {
             const result = await axios({
                 method: "get",
                 url: `${configs.API_URL}/autocomplete/stations?query=${text}&max_result=4`,
                 headers: {},
             });
+
             setError22(false);
+
             if (result.data.data === undefined && result.data.data === null) {
                 setApi22Result([]);
             } else {
@@ -43,15 +48,18 @@ export default function Search() {
         } catch (error) {
             setError22(true);
         }
-    };
-    const simpleApi21Call = async (str) => {
+    }
+
+    async function simpleApi21Call() {
         try {
             const result = await axios({
                 method: "get",
                 url: `${configs.API_URL}/autocomplete/places?query=${text}`,
                 headers: {},
             });
+
             setError21(false);
+
             if (result.data === undefined && result.data === null) {
                 setApi21Result([]);
             } else {
@@ -60,7 +68,7 @@ export default function Search() {
         } catch (error) {
             setError21(true);
         }
-    };
+    }
 
     useEffect(() => {
         if (text === "") {
@@ -127,6 +135,7 @@ export default function Search() {
                         value={text}
                     />
                 </View>
+
                 <TouchableOpacity onPress={() => onChangeText}></TouchableOpacity>
 
                 <View style={styles.scrollView}>
