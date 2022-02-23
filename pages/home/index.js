@@ -146,7 +146,10 @@ export default function Home() {
                         <AccountModal/>
                     </View>
                     <View style={styles.flatlistcontainer}>
-                        <BottomCardFlatList latitude={location.latitude} longitude={location.longitude} radius={2000}/>
+                        <BottomCardFlatList 
+                        latitude={location.latitude} 
+                        longitude={location.longitude}
+                        radius={2000}/>
                     </View>
                 </BottomCard>
             </View>

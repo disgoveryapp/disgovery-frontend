@@ -23,92 +23,6 @@ import { Dimensions, Platform, PixelRatio } from 'react-native';
 import axios from 'axios';
 import { API_URL } from "../../configs/configs";
 
-
-const raw_Data = {
-    data: [
-        {
-            name: "Victory",
-            uid: "12",
-            code: "AAA",
-            lines: [
-                {
-                    name: {
-						short_name: "REDFFFLAGH",
-						long_name: "333",
-					},
-                    headsign: "Subway",
-                    destination: {
-						uid: "A",
-						name: "Victory",
-					},
-                    color: "#7FBF3A",
-                    arriving_in: 2222,
-                }
-            ],
-        },
-        {
-            name: "Victory",
-            uid: "12",
-            code: "AAA",
-            lines: [
-                {
-                    name: {
-						short_name: "333",
-						long_name: "333",
-					},
-                    headsign: "MLine",
-                    destination: {
-						uid: "A",
-						name: "Rangsit",
-					},
-                    color: "blue",
-                    arriving_in: 3600,
-                }
-            ],
-        },
-        {
-            name: "Victory",
-            uid: "12",
-            code: "AAA",
-            lines: [
-                {
-                    name: {
-						short_name: "333",
-						long_name: "333",
-					},
-                    headsign: "Ship",
-                    destination: {
-						uid: "A",
-						name: "Lam Lukka",
-					},
-                    color: "red",
-                    arriving_in: 3600,
-                }
-            ],
-        },
-        {
-            name: "Victory",
-            uid: "12",
-            code: "AAA",
-            lines: [
-                {
-                    name: {
-						short_name: "59",
-						long_name: "333",
-					},
-                    headsign: "BRT",
-                    destination: {
-						uid: "A",
-						name: "Lam Lukka",
-					},
-                    color: "red",
-                    arriving_in: 2000,
-                }
-            ],
-        }
-    ]
-};
-
 const data = raw_Data["data"];
 const size = Object.keys(data).length;
 let result = [];
@@ -116,7 +30,7 @@ for(let i=0; i < size; i++){
   let object = {};
   object['name'] = data[i]['lines'][0]["destination"]["name"];
   object['line'] = data[i]['lines'][0]["name"]["short_name"];
-  object['type'] = data[i]['lines'][0]["headsign"];
+  object['type'] = data[i]['lines'][0]["id"];
   object['time'] = Math.floor(data[i]['lines'][0]["arriving_in"]/60);
   object['color'] = data[i]['lines'][0]["color"];
   result.push(object);
@@ -143,16 +57,16 @@ const Item = ({ name, time, line, type, color }) => (
                 {type == 'Bus'? <BusIcon style={styles.icon}/>: null }
                 {type == 'Ship'? <ShipIcon style={styles.Shipicon}/>: null }
                 {type == 'Subway'? <SubwayIcon style={styles.Subwayicon}/>: null }
-                {type == 'BTS'? <BTSIcon style={styles.icon}/>: null }
-                {type == 'MLine'? <MLineIcon style={styles.MLineicon} fill={color}/>: null }
+                {type.indexOf('BTS') != -1? <BTSIcon style={styles.icon}/>: null }
+                {type.indexOf('MRT') != -1? <MLineIcon style={styles.MLineicon} fill={color}/>: null }
                 {type == 'BRT'? <BRTIcon style={styles.icon}/>: null }
-                {type == 'RedLine'? <RedLineIcon style={styles.RedLineicon} fill={color}/>: null }
+                {type.indexOf('SRT') != -1? <RedLineIcon style={styles.RedLineicon} fill={color}/>: null }
                 {type == 'ARL'? <ARLIcon style={styles.icon}/>: null }
                 <View style={styles.linecont}>
-                    {/* <ThemedText style={styles.line}>{line}</ThemedText> */}
                     {line.length <= 4 ? <ThemedText style={styles.line_short}>{line}</ThemedText>
                         : line.length <= 10 ? <ThemedText style={styles.line_middle}>{line}</ThemedText>: 
-                            line.length > 10? <ThemedText style={styles.line_long}>{line}</ThemedText>: null  }
+                            line.length <= 14? <ThemedText style={styles.line_long}>{line}</ThemedText>: 
+                            line.length > 14? <ThemedText style={styles.line_longer}>{line}</ThemedText>: null  }
                 </View>
             </View>
             <ArrowIcon style={styles.arrow} />
@@ -171,7 +85,7 @@ const Item = ({ name, time, line, type, color }) => (
 export default function BottomCardFlatList(props) {
         const detail = `/station/nearby?lat=${props.latitude}&lng=${props.longitude}&radius=${props.radius}`;
 
-        const [data, setData] = useState(); 
+        const [Data, setData] = useState(); 
 
         useEffect(() => { 
             getRawData();
@@ -197,7 +111,7 @@ export default function BottomCardFlatList(props) {
     return (
         <SafeAreaView style={{ width: "100%",}}>
             <FlatList
-                data={DATA}
+                data={Data}
                 renderItem={renderItem}
                 keyExtractor={(item) => item.id}
                 ItemSeparatorComponent={ItemDivider}
@@ -236,7 +150,6 @@ const styles = StyleSheet.create({
         width: 80,
         borderRadius: 5,
         borderWidth: 5,
-        // borderColor:{color},
         borderTopLeftRadius: 10,
         borderTopRightRadius: 10,
         borderBottomLeftRadius: 10,
@@ -297,6 +210,12 @@ const styles = StyleSheet.create({
     },
     line_long:{
         fontSize: 12,
+        color: "black",
+        textAlign:"right",
+        width: "70%",
+    },
+    line_longer:{
+        fontSize: 9,
         color: "black",
         textAlign:"right",
         width: "70%",
