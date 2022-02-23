@@ -17,6 +17,7 @@ import { useDebounce } from "use-lodash-debounce";
 import StationTab from "./components/station-tab";
 import { configs } from "../../configs/configs";
 import BadConnectionComponent from "./components/bad-connection";
+import SearchOriginBar from "./components/search-origin-bar";
 
 export default function Search() {
     const { colors } = useTheme();
@@ -27,6 +28,14 @@ export default function Search() {
     const [error21, setError21] = useState(false);
     const [error22, setError22] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [clickDestination, setClickDestination] = useState(false);
+    const [searchOrigin, setSearchOrigin] = useState(false);
+    const [searchDestination, setSearchDestination] = useState(false);
+    const [originData, setOriginData] = useState([]);
+    const [destinationData, setDestinationData] = useState([]);
+    const [originInput, setOriginInput] = useState("");
+    const [destinationInput, setDestinationInput] = useState("");
+
     const numberOfApi22Data = 4;
 
     const debouncedValue = useDebounce(text, 200);
@@ -129,12 +138,19 @@ export default function Search() {
         <>
             <View style={styles.container}>
                 <SafeAreaView />
+
                 <View style={styles.searchbox}>
-                    <Searchbar
-                        placeholder="Search destination"
-                        onChangeText={onChangeText}
-                        value={text}
-                    />
+                    {clickDestination ? (
+                        <>
+                            <SearchOriginBar />
+                        </>
+                    ) : (
+                        <Searchbar
+                            placeholder="Search destination"
+                            onChangeText={onChangeText}
+                            value={text}
+                        />
+                    )}
                 </View>
 
                 <TouchableOpacity onPress={() => onChangeText}></TouchableOpacity>
@@ -202,7 +218,17 @@ export default function Search() {
                                             )}
                                         </>
                                     ) : (
-                                        <></>
+                                        <>
+                                            {clickDestination === true ? (
+                                                <>
+                                                    <ThemedText>
+                                                        Clickdestination is true
+                                                    </ThemedText>
+                                                </>
+                                            ) : (
+                                                <ThemedText>Hello</ThemedText>
+                                            )}
+                                        </>
                                     )}
                                 </ScrollView>
                             ) : (
