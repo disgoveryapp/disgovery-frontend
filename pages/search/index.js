@@ -27,6 +27,7 @@ export default function Search() {
     const [error21, setError21] = useState(false);
     const [error22, setError22] = useState(false);
     const [loading, setLoading] = useState(false);
+    const numberOfApi22Data = 4;
 
     const debouncedValue = useDebounce(text, 200);
 
@@ -34,7 +35,7 @@ export default function Search() {
         try {
             const result = await axios({
                 method: "get",
-                url: `${configs.API_URL}/autocomplete/stations?query=${text}&max_result=4`,
+                url: `${configs.API_URL}/autocomplete/stations?query=${text}&max_result=${numberOfApi22Data}`,
                 headers: {},
             });
 
