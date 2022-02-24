@@ -23,12 +23,13 @@ export default function Search() {
     const { colors } = useTheme();
 
     const [text, onChangeText] = useState("");
+    const [textLocation, onChangeTextLocation] = useState("");
     const [api22Result, setApi22Result] = useState([]);
     const [api21Result, setApi21Result] = useState([]);
     const [error21, setError21] = useState(false);
     const [error22, setError22] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [clickDestination, setClickDestination] = useState(false);
+    const [clickDestination, setClickDestination] = useState(true);
     const [searchOrigin, setSearchOrigin] = useState(false);
     const [searchDestination, setSearchDestination] = useState(false);
     const [originData, setOriginData] = useState([]);
@@ -142,7 +143,14 @@ export default function Search() {
                 <View style={styles.searchbox}>
                     {clickDestination ? (
                         <>
-                            <SearchOriginBar />
+                            <SearchOriginBar
+                                placeholder="Search Origin"
+                                placeholderLocation="No Location"
+                                onChangeText={onChangeText}
+                                value={text}
+                                onChangeTextLocation={onChangeTextLocation}
+                                valueLocation={textLocation}
+                            />
                         </>
                     ) : (
                         <Searchbar
