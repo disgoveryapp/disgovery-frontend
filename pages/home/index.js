@@ -165,11 +165,7 @@ export default function Home() {
                         <SearchBox />
                     </View>
                     <View style={styles.flatlistcontainer}>
-                        <BottomCardFlatList
-                            latitude={location ? location.latitude : INITIAL_MAP_REGION.latitude}
-                            longitude={location ? location.longitude : INITIAL_MAP_REGION.longitude}
-                            radius={2000}
-                        />
+                        <BottomCardFlatList nearbyStations={nearbyStations} />
                     </View>
                 </BottomCard>
             </View>

@@ -38,8 +38,10 @@ export default function ThemedText(props) {
                 ...props.style,
             }}
             numberOfLines={props.numberOfLines}
+            allowFontScaling={props.allowFontScaling || false}
             onTextLayout={props.onTextLayout || function () {}}
             ellipsizeMode={props.ellipsizeMode}
+            adjustsFontSizeToFit={props.adjustsFontSizeToFit || false}
         >
             {props.children}
         </Text>

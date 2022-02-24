@@ -22,42 +22,36 @@ import MLineIcon from "../../assets/svgs/MLine-icon";
 import RedLineIcon from "../../assets/svgs/RedLine-icon";
 import axios from "axios";
 import { API_URL } from "../../configs/configs";
+import ThemedTextMarquee from "../themed-text-marquee";
 import { useTheme } from "@react-navigation/native";
+import { ScrollView } from "react-native-gesture-handler";
 
 const SCREEN_WIDTH = Dimensions.get("screen").width;
 const SCREEN_HEIGHT = Dimensions.get("screen").height;
 
 export default function BottomCardFlatList(props) {
-    // const detail = `/station/nearby?lat=${props.latitude}&lng=${props.longitude}&radius=${props.radius}`;
-
-    const [Data, setData] = useState();
-
     const { colors } = useTheme();
 
-    // useEffect(() => {
-    //     getRawData();
-    // }, []);
+    console.log(props.nearbyStations);
+    if (!props.nearbyStations) return;
 
-    // const getRawData = async () => {
-    //     try {
-    //         const response = await axios.get(`${API_URL}${detail}`);
-    //         const rawdata = response;
-    //         setData(rawdata);
-    //         // console.log(rawData);
-    //     } catch (error) {
-    //         console.error(error);
-    //     }
-    // };
+    const renderItem = (item) => {
+        console.log(item);
 
-    const renderItem = ({ item }) => (
-        <Item
-            name={item.name}
-            time={item.time}
-            line={item.line}
-            type={item.type}
-            color={item.color}
-        />
-    );
+        if (item.lines.length > 0) {
+            console.log(item.lines[0].name);
+
+            return (
+                <Item
+                    name={item.lines[0].destination.name}
+                    time={item.lines[0].arriving_in}
+                    line={item.lines[0]}
+                    type={item.lines[0].id}
+                    color={`#${item.lines[0].color}`}
+                />
+            );
+        }
+    };
 
     const ItemDivider = () => {
         return <View style={styles.divider} />;
@@ -65,81 +59,84 @@ export default function BottomCardFlatList(props) {
 
     const Item = ({ name, time, line, type, color }) => (
         <TouchableOpacity style={styles.lower_container}>
-            <View style={styles.sub_container}>
-                <View
-                    style={{
-                        display: "flex",
-                        flexDirection: "row",
-                        justifyContent: "space-around",
-                        backgroundColor: "white",
-                        padding: 2,
-                        width: 110,
-                        borderRadius: 5,
-                        borderWidth: 5,
-                        borderColor: color,
-                        borderTopLeftRadius: 10,
-                        borderTopRightRadius: 10,
-                        borderBottomLeftRadius: 10,
-                        borderBottomRightRadius: 10,
-                    }}
-                >
-                    {type == "Bus" ? <BusIcon style={styles.icon} /> : null}
-                    {type == "Ship" ? <ShipIcon style={styles.Shipicon} /> : null}
-                    {type == "Subway" ? <SubwayIcon style={styles.Subwayicon} /> : null}
-                    {type.indexOf("BTS") != -1 ? <BTSIcon style={styles.icon} /> : null}
+            <View
+                style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "space-evenly",
+                    alignContent: "center",
+                    backgroundColor: "white",
+                    paddingLeft: 5,
+                    paddingVertical: 2,
+                    width: 100,
+                    borderRadius: 5,
+                    borderWidth: 5,
+                    borderColor: color,
+                    borderTopLeftRadius: 10,
+                    borderTopRightRadius: 10,
+                    borderBottomLeftRadius: 10,
+                    borderBottomRightRadius: 10,
+                }}
+            >
+                <View style={styles.iconContainer}>
+                    {type == "Bus" ? <BusIcon style={styles.icon} /> : <></>}
+                    {type == "Ship" ? <ShipIcon style={styles.Shipicon} /> : <></>}
+                    {type == "Subway" ? <SubwayIcon style={styles.Subwayicon} /> : <></>}
+                    {type.indexOf("BTS") != -1 ? <BTSIcon style={styles.icon} /> : <></>}
                     {type.indexOf("MRT") != -1 ? (
                         <MLineIcon style={styles.MLineicon} fill={color} />
-                    ) : null}
-                    {type == "BRT" ? <BRTIcon style={styles.icon} /> : null}
+                    ) : (
+                        <></>
+                    )}
+                    {type == "BRT" ? <BRTIcon style={styles.icon} /> : <></>}
                     {type.indexOf("SRT") != -1 ? (
                         <RedLineIcon style={styles.RedLineicon} fill={color} />
-                    ) : null}
-                    {type == "ARL" ? <ARLIcon style={styles.icon} /> : null}
-                    <View style={styles.linecont}>
-                        {line.length <= 4 ? (
-                            <ThemedText style={styles.line_short}>{line}</ThemedText>
-                        ) : line.length <= 10 ? (
-                            <ThemedText style={styles.line_middle}>{line}</ThemedText>
-                        ) : line.length <= 14 ? (
-                            <ThemedText style={styles.line_long}>{line}</ThemedText>
-                        ) : line.length > 14 ? (
-                            <ThemedText style={styles.line_longer}>{line}</ThemedText>
-                        ) : null}
-                    </View>
+                    ) : (
+                        <></>
+                    )}
+                    {type == "ARL" ? <ARLIcon style={styles.icon} /> : <></>}
                 </View>
-                <ArrowIcon style={styles.arrow} />
-                <View style={styles.item}>
-                    <ThemedText style={styles.name}>{name}</ThemedText>
+
+                <View style={styles.linecont}>
+                    <ThemedText
+                        style={styles.line_long}
+                        adjustFontSizeToFit={true}
+                        allowFontScaling={true}
+                    >
+                        {line.name.short_name.replace("Line", "").toUpperCase()}
+                    </ThemedText>
                 </View>
             </View>
+
+            <ArrowIcon style={styles.arrow} />
+
+            <View style={styles.destination}>
+                <ThemedTextMarquee style={styles.name}>{name}</ThemedTextMarquee>
+            </View>
+
             <View style={styles.timeSection}>
-                <ThemedText style={styles.time}>{time}</ThemedText>
-                <ThemedText style={styles.time}>min</ThemedText>
+                <ThemedText style={styles.time}>
+                    {Math.round(time / 60) === 0 ? "now" : Math.round(time / 60)}{" "}
+                    {Math.round(time / 60) === 0 ? "" : "min"}
+                </ThemedText>
             </View>
         </TouchableOpacity>
     );
 
     const styles = StyleSheet.create({
         lower_container: {
+            width: "100%",
             display: "flex",
             flexDirection: "row",
+            paddingVertical: 10,
+            paddingHorizontal: 15,
             justifyContent: "space-between",
-            backgroundColor: colors.background,
-            padding: SCREEN_HEIGHT / 45,
-        },
-        sub_container: {
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "flex-start",
             alignItems: "center",
         },
-        item: {
-            display: "flex",
-            flexDirection: "row",
+        destination: {
+            flex: 1,
             justifyContent: "center",
-        },
-        container: {
-            width: "100%",
+            marginLeft: 5,
         },
         transport: {
             display: "flex",
@@ -189,31 +186,34 @@ export default function BottomCardFlatList(props) {
         linecont: {
             display: "flex",
             flexDirection: "row",
-            justifyContent: "space-around",
+            flex: 1,
+            textAlign: "center",
+            justifyContent: "center",
+            alignItems: "center",
         },
         line_short: {
             marginTop: 2,
             fontSize: 23,
             color: "black",
-            textAlign: "right",
+            textAlign: "center",
         },
         line_middle: {
             textAlignVertical: "center",
             marginTop: 4,
             fontSize: 10,
             color: "black",
-            textAlign: "right",
+            textAlign: "center",
         },
         line_long: {
             fontSize: 12,
             color: "black",
-            textAlign: "right",
+            textAlign: "center",
             width: "70%",
         },
         line_longer: {
             fontSize: 9,
             color: "black",
-            textAlign: "right",
+            textAlign: "center",
             width: "70%",
         },
         line: {
@@ -230,17 +230,13 @@ export default function BottomCardFlatList(props) {
         },
         name: {
             fontSize: 20,
-            color: "white",
+            color: colors.text,
         },
         timeSection: {
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "flex-end",
+            alignItems: "flex-end",
         },
         time: {
-            fontSize: 25,
-            marginRight: 2,
-            marginTop: 4,
+            fontSize: 20,
             textAlign: "right",
             color: colors.text,
         },
@@ -248,16 +244,24 @@ export default function BottomCardFlatList(props) {
             height: 0.5,
             backgroundColor: colors.upper_background,
         },
+        iconContainer: {
+            width: "30%",
+        },
     });
 
     return (
         <SafeAreaView style={{ width: "100%" }}>
-            <FlatList
-                data={Data}
-                renderItem={renderItem}
-                keyExtractor={(item) => item.id}
-                ItemSeparatorComponent={ItemDivider}
-            />
+            <ScrollView
+                contentContainerStyle={{
+                    paddingHorizontal: 5,
+                    paddingTop: 10,
+                    paddingBottom: "60%",
+                }}
+            >
+                {Object.keys(props.nearbyStations).map((key) => {
+                    return <>{renderItem(props.nearbyStations[key])}</>;
+                })}
+            </ScrollView>
         </SafeAreaView>
     );
 }
