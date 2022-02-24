@@ -12,6 +12,8 @@ import ThemedTextMarquee from "../../components/themed-text-marquee";
 import BottomCard from "../../components/bottom-card";
 import SearchBox from "../../components/search-box";
 import BottomCardFlatList from "../../components/bottom-card-flat-list";
+import axios from "axios";
+import { configs } from "../../configs/configs";
 
 const INITIAL_MAP_REGION = {
     latitude: 13.764889,
@@ -27,6 +29,8 @@ export default function Home() {
     const [location, setLocation] = useState(null);
     const [mapCurrentLocationRegion, setMapCurrentLocationRegion] = useState({});
     const [locationErrorMessage, setLocationErrorMessage] = useState(null);
+
+    const [nearbyStations, setNearbyStations] = useState([]);
 
     const styles = StyleSheet.create({
         container: {
@@ -50,11 +54,11 @@ export default function Home() {
             justifyContent: "space-between",
             paddingHorizontal: 40,
             bottom: 25,
-            right: 25, 
+            right: 25,
         },
         accountbox: {
             bottom: 70,
-            left: 370, 
+            left: 370,
         },
         flatlistcontainer: {
             flex: 1,
@@ -62,11 +66,11 @@ export default function Home() {
             // marginLeft:"auto",
             // marginRight:"auto",
         },
-        bottomcard:{
+        bottomcard: {
             bottom: -550,
             justifyContent: "center",
             alignItems: "center",
-        }
+        },
     });
 
     useEffect(() => {
@@ -85,6 +89,7 @@ export default function Home() {
         let location = await Location.getCurrentPositionAsync({
             accuracy: Location.Accuracy.BestForNavigation,
         }).catch(() => {});
+
         setLocation(location);
         setMapCurrentLocationRegion({
             latitude: location.coords.latitude,
@@ -120,6 +125,34 @@ export default function Home() {
         return decodedPolyline;
     }
 
+    function fetchNearbyStations(region) {
+        console.log(
+            `${configs.API_URL}/station/nearby?lat=${region.latitude}&lng=${
+                region.longitude
+            }&radius=${region.latitudeDelta * 111045}`,
+        );
+        axios
+            .get(
+                `${configs.API_URL}/station/nearby?lat=${region.latitude}&lng=${
+                    region.longitude
+                }&radius=${region.latitudeDelta * 111045}`,
+            )
+            .then((response) => {
+                console.log("fetched");
+                setNearbyStations(response.data.data);
+                console.log(response.data.data);
+            })
+            .catch((error) => {
+                console.log(error);
+                setNearbyStations([]);
+            });
+    }
+
+    function onMapRegionChangeComplete(region) {
+        console.log(region);
+        fetchNearbyStations(region);
+    }
+
     return (
         <View style={styles.container}>
             {/* <ThemedTextMarquee style={{ fontSize: 40, fontWeight: "bold" }}>
@@ -134,22 +167,24 @@ export default function Home() {
                 provider="google"
                 customMapStyle={googleMapsStyling}
                 onTouchStart={() => setMapsIsRecentered(false)}
+                onRegionChangeComplete={(region) => onMapRegionChangeComplete(region)}
                 showsUserLocation
             ></MapView>
             <RecenterButton recentered={mapsIsRecentered} onPress={recenter} />
             <View style={styles.bottomcard}>
                 <BottomCard>
                     <View style={styles.searchbox}>
-                        <SearchBox/>
+                        <SearchBox />
                     </View>
                     <View style={styles.accountbox}>
-                        <AccountModal/>
+                        <AccountModal />
                     </View>
                     <View style={styles.flatlistcontainer}>
-                        <BottomCardFlatList 
-                        latitude={location.latitude} 
-                        longitude={location.longitude}
-                        radius={2000}/>
+                        <BottomCardFlatList
+                            latitude={location ? location.latitude : INITIAL_MAP_REGION.latitude}
+                            longitude={location ? location.longitude : INITIAL_MAP_REGION.longitude}
+                            radius={2000}
+                        />
                     </View>
                 </BottomCard>
             </View>

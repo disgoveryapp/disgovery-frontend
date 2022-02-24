@@ -19,54 +19,52 @@ import BRTIcon from "../../assets/svgs/BRT-icon";
 import SubwayIcon from "../../assets/svgs/subway-icon";
 import MLineIcon from "../../assets/svgs/MLine-icon";
 import RedLineIcon from "../../assets/svgs/RedLine-icon";
-import { Dimensions, Platform, PixelRatio } from 'react-native';
-import axios from 'axios';
+import { Dimensions, Platform, PixelRatio } from "react-native";
+import axios from "axios";
 import { API_URL } from "../../configs/configs";
-
-const data = raw_Data["data"];
-const size = Object.keys(data).length;
-let result = [];
-for(let i=0; i < size; i++){
-  let object = {};
-  object['name'] = data[i]['lines'][0]["destination"]["name"];
-  object['line'] = data[i]['lines'][0]["name"]["short_name"];
-  object['type'] = data[i]['lines'][0]["id"];
-  object['time'] = Math.floor(data[i]['lines'][0]["arriving_in"]/60);
-  object['color'] = data[i]['lines'][0]["color"];
-  result.push(object);
-};
-
-const DATA = result;
 
 const Item = ({ name, time, line, type, color }) => (
     <TouchableOpacity style={styles.lower_container}>
         <View style={styles.sub_container}>
-            <View style={{display: "flex",
+            <View
+                style={{
+                    display: "flex",
                     flexDirection: "row",
                     justifyContent: "space-around",
                     backgroundColor: "white",
-                    padding:2,
+                    padding: 2,
                     width: 110,
                     borderRadius: 5,
                     borderWidth: 5,
-                    borderColor:color,
+                    borderColor: color,
                     borderTopLeftRadius: 10,
                     borderTopRightRadius: 10,
                     borderBottomLeftRadius: 10,
-                    borderBottomRightRadius: 10,}}>
-                {type == 'Bus'? <BusIcon style={styles.icon}/>: null }
-                {type == 'Ship'? <ShipIcon style={styles.Shipicon}/>: null }
-                {type == 'Subway'? <SubwayIcon style={styles.Subwayicon}/>: null }
-                {type.indexOf('BTS') != -1? <BTSIcon style={styles.icon}/>: null }
-                {type.indexOf('MRT') != -1? <MLineIcon style={styles.MLineicon} fill={color}/>: null }
-                {type == 'BRT'? <BRTIcon style={styles.icon}/>: null }
-                {type.indexOf('SRT') != -1? <RedLineIcon style={styles.RedLineicon} fill={color}/>: null }
-                {type == 'ARL'? <ARLIcon style={styles.icon}/>: null }
+                    borderBottomRightRadius: 10,
+                }}
+            >
+                {type == "Bus" ? <BusIcon style={styles.icon} /> : null}
+                {type == "Ship" ? <ShipIcon style={styles.Shipicon} /> : null}
+                {type == "Subway" ? <SubwayIcon style={styles.Subwayicon} /> : null}
+                {type.indexOf("BTS") != -1 ? <BTSIcon style={styles.icon} /> : null}
+                {type.indexOf("MRT") != -1 ? (
+                    <MLineIcon style={styles.MLineicon} fill={color} />
+                ) : null}
+                {type == "BRT" ? <BRTIcon style={styles.icon} /> : null}
+                {type.indexOf("SRT") != -1 ? (
+                    <RedLineIcon style={styles.RedLineicon} fill={color} />
+                ) : null}
+                {type == "ARL" ? <ARLIcon style={styles.icon} /> : null}
                 <View style={styles.linecont}>
-                    {line.length <= 4 ? <ThemedText style={styles.line_short}>{line}</ThemedText>
-                        : line.length <= 10 ? <ThemedText style={styles.line_middle}>{line}</ThemedText>: 
-                            line.length <= 14? <ThemedText style={styles.line_long}>{line}</ThemedText>: 
-                            line.length > 14? <ThemedText style={styles.line_longer}>{line}</ThemedText>: null  }
+                    {line.length <= 4 ? (
+                        <ThemedText style={styles.line_short}>{line}</ThemedText>
+                    ) : line.length <= 10 ? (
+                        <ThemedText style={styles.line_middle}>{line}</ThemedText>
+                    ) : line.length <= 14 ? (
+                        <ThemedText style={styles.line_long}>{line}</ThemedText>
+                    ) : line.length > 14 ? (
+                        <ThemedText style={styles.line_longer}>{line}</ThemedText>
+                    ) : null}
                 </View>
             </View>
             <ArrowIcon style={styles.arrow} />
@@ -79,37 +77,44 @@ const Item = ({ name, time, line, type, color }) => (
             <ThemedText style={styles.time}>min</ThemedText>
         </View>
     </TouchableOpacity>
-
 );
 
 export default function BottomCardFlatList(props) {
-        const detail = `/station/nearby?lat=${props.latitude}&lng=${props.longitude}&radius=${props.radius}`;
+    const detail = `/station/nearby?lat=${props.latitude}&lng=${props.longitude}&radius=${props.radius}`;
 
-        const [Data, setData] = useState(); 
+    const [Data, setData] = useState();
 
-        useEffect(() => { 
-            getRawData();
-        }, []);
+    useEffect(() => {
+        getRawData();
+    }, []);
 
-        const getRawData = async () => {
-            try {
+    const getRawData = async () => {
+        try {
             const response = await axios.get(`${API_URL}${detail}`);
             const rawdata = response;
             setData(rawdata);
             // console.log(rawData);
-            } catch (error) {
+        } catch (error) {
             console.error(error);
-            }
         }
+    };
 
-    const renderItem = ({ item }) => <Item name={item.name} time={item.time} line={item.line} type={item.type} color={item.color}/>;
+    const renderItem = ({ item }) => (
+        <Item
+            name={item.name}
+            time={item.time}
+            line={item.line}
+            type={item.type}
+            color={item.color}
+        />
+    );
 
     const ItemDivider = () => {
         return <View style={styles.devider} />;
     };
 
     return (
-        <SafeAreaView style={{ width: "100%",}}>
+        <SafeAreaView style={{ width: "100%" }}>
             <FlatList
                 data={Data}
                 renderItem={renderItem}
@@ -118,7 +123,7 @@ export default function BottomCardFlatList(props) {
             />
         </SafeAreaView>
     );
-};
+}
 
 const styles = StyleSheet.create({
     lower_container: {
@@ -162,28 +167,28 @@ const styles = StyleSheet.create({
         marginTop: 8,
         marginBottom: 6,
     },
-    MLineicon:{
+    MLineicon: {
         width: 25,
         height: 25,
         marginLeft: 0,
         marginTop: 4,
         marginBottom: 3,
     },
-    RedLineicon:{
+    RedLineicon: {
         width: 25,
         height: 25,
         marginLeft: 0,
         marginTop: 3,
         marginBottom: 2,
     },
-    Shipicon:{
+    Shipicon: {
         width: 25,
         height: 25,
         marginLeft: 0,
         marginTop: 0,
         marginBottom: 2,
     },
-    Subwayicon:{
+    Subwayicon: {
         width: 25,
         height: 25,
         marginLeft: 4,
@@ -195,34 +200,34 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-around",
     },
-    line_short:{
+    line_short: {
         marginTop: 2,
         fontSize: 23,
         color: "black",
-        textAlign:"right",
+        textAlign: "right",
     },
-    line_middle:{
-        textAlignVertical:"center",
+    line_middle: {
+        textAlignVertical: "center",
         marginTop: 4,
         fontSize: 10,
         color: "black",
-        textAlign:"right",
+        textAlign: "right",
     },
-    line_long:{
+    line_long: {
         fontSize: 12,
         color: "black",
-        textAlign:"right",
+        textAlign: "right",
         width: "70%",
     },
-    line_longer:{
+    line_longer: {
         fontSize: 9,
         color: "black",
-        textAlign:"right",
+        textAlign: "right",
         width: "70%",
     },
     line: {
         color: "black",
-        textAlign:"right",
+        textAlign: "right",
         width: "60%",
     },
     arrow: {
