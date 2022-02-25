@@ -42,14 +42,20 @@ export default function SearchOriginBar(props) {
             flexDirection: "row",
             alignItems: "center",
         },
+        textContainer: {
+            flex: 1,
+            flexDirection: "row",
+            alignItems: "center",
+            backgroundColor: colors.background,
+            borderRadius: 12,
+            paddingRight: 4,
+        },
         textinput: {
             height: 39,
-            color: "white",
+            color: colors.text,
             flex: 1,
             fontSize: 18,
             paddingHorizontal: 8,
-            backgroundColor: colors.background,
-            borderRadius: 12,
         },
     });
 
@@ -61,23 +67,25 @@ export default function SearchOriginBar(props) {
                         <View style={{ marginRight: 6 }}>
                             <SearchIcon fill={colors.subtitle} />
                         </View>
-                        <ThemedTextInput
-                            placeholder={props.placeholder}
-                            style={styles.textinput}
-                            onChangeText={props.onChangeText}
-                            value={props.value}
-                            onChange={props.onChange}
-                            onPress={props.onPressOrigin}
-                        />
-                    </View>
-                    <View>
-                        {props.value ? (
-                            <TouchableOpacity onPress={() => clearText()}>
-                                <CloseIcon />
-                            </TouchableOpacity>
-                        ) : (
-                            <></>
-                        )}
+                        <View style={styles.textContainer}>
+                            <ThemedTextInput
+                                placeholder={props.placeholder}
+                                style={styles.textinput}
+                                onChangeText={props.onChangeText}
+                                value={props.value}
+                                onChange={props.onChange}
+                                onPress={props.onPressOrigin}
+                            />
+                            <View>
+                                {props.value ? (
+                                    <TouchableOpacity onPress={() => clearText()}>
+                                        <CloseIcon />
+                                    </TouchableOpacity>
+                                ) : (
+                                    <></>
+                                )}
+                            </View>
+                        </View>
                     </View>
                 </View>
                 <View style={styles.container}>
@@ -85,23 +93,25 @@ export default function SearchOriginBar(props) {
                         <View style={{ marginRight: 6 }}>
                             <ArrowIcon24 />
                         </View>
-                        <ThemedTextInput
-                            placeholder={props.placeholderLocation}
-                            style={styles.textinput}
-                            onChangeText={props.onChangeTextLocation}
-                            value={props.valueLocation}
-                            onChange={props.onChange}
-                            onPress={props.onPressDestination}
-                        />
-                    </View>
-                    <View>
-                        {props.valueLocation ? (
-                            <TouchableOpacity onPress={() => clearTextLocation()}>
-                                <CloseIcon />
-                            </TouchableOpacity>
-                        ) : (
-                            <></>
-                        )}
+                        <View style={styles.textContainer}>
+                            <ThemedTextInput
+                                placeholder={props.placeholderLocation}
+                                style={styles.textinput}
+                                onChangeText={props.onChangeTextLocation}
+                                value={props.valueLocation}
+                                onChange={props.onChange}
+                                onPress={props.onPressDestination}
+                            />
+                            <View>
+                                {props.valueLocation ? (
+                                    <TouchableOpacity onPress={() => clearTextLocation()}>
+                                        <CloseIcon />
+                                    </TouchableOpacity>
+                                ) : (
+                                    <></>
+                                )}
+                            </View>
+                        </View>
                     </View>
                 </View>
             </View>
