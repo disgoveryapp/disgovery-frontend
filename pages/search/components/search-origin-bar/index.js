@@ -13,11 +13,11 @@ export default function SearchOriginBar(props) {
 
     const clearText = () => props.onChangeText("");
     const clearTextLocation = () => props.onChangeTextLocation("");
-    const swapValue = () => {
+    function swapValue() {
         const temp = props.value;
         props.onChangeText(props.valueLocation);
         props.onChangeTextLocation(temp);
-    };
+    }
 
     const styles = StyleSheet.create({
         outerContainer: {
@@ -67,6 +67,7 @@ export default function SearchOriginBar(props) {
                             onChangeText={props.onChangeText}
                             value={props.value}
                             onChange={props.onChange}
+                            onPress={props.onPressOrigin}
                         />
                     </View>
                     <View>
@@ -90,6 +91,7 @@ export default function SearchOriginBar(props) {
                             onChangeText={props.onChangeTextLocation}
                             value={props.valueLocation}
                             onChange={props.onChange}
+                            onPress={props.onPressDestination}
                         />
                     </View>
                     <View>
