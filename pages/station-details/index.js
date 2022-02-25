@@ -10,6 +10,7 @@ import BottomCard from "../../components/bottom-card";
 import axios from "axios";
 import { configs } from "../../configs/configs";
 import NavigateBotton from "../../components/navigate-button";
+import BackButton from "../../components/back-button";
 
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -45,15 +46,22 @@ export default function StationDetails() {
             width: "100%",
             height: "100%",
         },
-        bottomcard: {
+        bottomCard: {
             top: SCREEN_HEIGHT * (3.5 / 5),
             justifyContent: "center",
             alignItems: "center",
             flexDirection: "column",
         },
-        navigatebuttoncontainer:{
+        navigateButtonContainer:{
             bottom: 50,
             left: 325,
+        },
+        backButtonContainer: {
+            position: "absolute",
+            top: 0,
+            alignSelf: "flex-start",
+            paddingHorizontal: 15,
+            zIndex: 10,
         },
     });
 
@@ -140,7 +148,10 @@ export default function StationDetails() {
 
     return (
         <View style={styles.container}>
-            <SafeAreaView />
+            <View style={styles.backButtonContainer}>
+                <SafeAreaView edges={["top"]} />
+                <BackButton />
+            </View>
             <MapView
                 ref={mapRef}
                 style={styles.maps}
@@ -151,10 +162,10 @@ export default function StationDetails() {
                 onRegionChangeComplete={(region) => onMapRegionChangeComplete(region)}
                 showsUserLocation
             ></MapView>
-            <View style={styles.bottomcard}>
-                
+            
+            <View style={styles.bottomCard}>
                 <BottomCard>
-                    <View style={styles.navigatebuttoncontainer}>
+                    <View style={styles.navigateButtonContainer}>
                         <NavigateBotton/>
                     </View> 
                 </BottomCard>
