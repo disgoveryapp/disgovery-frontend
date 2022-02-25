@@ -23,13 +23,12 @@ export default function Search() {
     const { colors } = useTheme();
 
     const [text, onChangeText] = useState("");
-    const [textLocation, onChangeTextLocation] = useState("");
     const [api22Result, setApi22Result] = useState([]);
     const [api21Result, setApi21Result] = useState([]);
     const [error21, setError21] = useState(false);
     const [error22, setError22] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [clickDestination, setClickDestination] = useState(true);
+    const [clickDestination, setClickDestination] = useState(false);
     const [searchOrigin, setSearchOrigin] = useState(false);
     const [searchDestination, setSearchDestination] = useState(false);
     const [originData, setOriginData] = useState([]);
@@ -40,12 +39,15 @@ export default function Search() {
     const numberOfApi22Data = 4;
 
     const debouncedValue = useDebounce(text, 200);
+    const debouncedOriginValue = useDebounce(originInput, 200);
+    const debouncedDestinationValue = useDebounce(destinationInput, 200);
+    let searchText = "";
 
     async function simpleApi22Call() {
         try {
             const result = await axios({
                 method: "get",
-                url: `${configs.API_URL}/autocomplete/stations?query=${text}&max_result=${numberOfApi22Data}`,
+                url: `${configs.API_URL}/autocomplete/stations?query=${searchText}&max_result=${numberOfApi22Data}`,
                 headers: {},
             });
 
@@ -65,7 +67,7 @@ export default function Search() {
         try {
             const result = await axios({
                 method: "get",
-                url: `${configs.API_URL}/autocomplete/places?query=${text}`,
+                url: `${configs.API_URL}/autocomplete/places?query=${searchText}`,
                 headers: {},
             });
 
@@ -82,7 +84,16 @@ export default function Search() {
     }
 
     useEffect(() => {
-        if (text === "") {
+        if (clickDestination) {
+            if (searchDestination) {
+                searchText = originInput;
+            } else {
+                searchText = destinationInput;
+            }
+        } else {
+            searchText = text;
+        }
+        if (searchDestination === "") {
             setApi22Result([]);
         } else {
             setLoading(true);
@@ -90,16 +101,18 @@ export default function Search() {
             setLoading(false);
             console.log(api22Result);
         }
-    }, [text]);
+        console.log(api22Result);
+    }, [text, originInput, destinationInput]);
 
     useEffect(() => {
-        if (text === "") {
+        if (clickDestination === "") {
             setApi21Result([]);
             setApi22Result([]);
         } else {
             simpleApi21Call();
         }
-    }, [debouncedValue]);
+        console.log(api21Result);
+    }, [debouncedValue, debouncedOriginValue, debouncedDestinationValue]);
 
     const styles = StyleSheet.create({
         searchbox: {
@@ -146,10 +159,16 @@ export default function Search() {
                             <SearchOriginBar
                                 placeholder="Search Origin"
                                 placeholderLocation="No Location"
-                                onChangeText={onChangeText}
-                                value={text}
-                                onChangeTextLocation={onChangeTextLocation}
-                                valueLocation={textLocation}
+                                onChangeText={setOriginInput}
+                                value={originInput}
+                                onChangeTextLocation={setDestinationInput}
+                                valueLocation={destinationInput}
+                                onPressDestination={() => {
+                                    setSearchDestination(true);
+                                }}
+                                onPressOrigin={() => {
+                                    setSearchDestination(false);
+                                }}
                             />
                         </>
                     ) : (
@@ -196,6 +215,13 @@ export default function Search() {
                                                                     key={key}
                                                                     place={item.name.en}
                                                                     trip={item.trips}
+                                                                    onPress={() => {
+                                                                        setDestinationInput(
+                                                                            item.name.en,
+                                                                        );
+                                                                        setClickDestination(true);
+                                                                        setDestinationData(item);
+                                                                    }}
                                                                 ></StationTab>
                                                             ))}
                                                         </>
@@ -217,6 +243,25 @@ export default function Search() {
                                                                 key={key}
                                                                 place={item.name.en}
                                                                 address={item.address.en}
+                                                                onPress={() => {
+                                                                    if (!clickDestination) {
+                                                                        setClickDestination(true);
+                                                                        setDestinationInput(
+                                                                            item.name.en,
+                                                                        );
+                                                                        setDestinationData(item);
+                                                                    } else if (searchDestination) {
+                                                                        setDestinationInput(
+                                                                            item.name.en,
+                                                                        );
+                                                                        setDestinationData(item);
+                                                                    } else {
+                                                                        setOriginInput(
+                                                                            item.name.en,
+                                                                        );
+                                                                        setOriginData(item);
+                                                                    }
+                                                                }}
                                                             ></PlaceTab>
                                                         ))}
                                                     </View>
@@ -227,14 +272,14 @@ export default function Search() {
                                         </>
                                     ) : (
                                         <>
-                                            {clickDestination === true ? (
+                                            {clickDestination ? (
                                                 <>
                                                     <ThemedText>
                                                         Clickdestination is true
                                                     </ThemedText>
                                                 </>
                                             ) : (
-                                                <ThemedText>Hello</ThemedText>
+                                                <></>
                                             )}
                                         </>
                                     )}
