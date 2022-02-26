@@ -42,6 +42,7 @@ export default function ThemedTextInput(props) {
             value={props.value}
             onChange={props.onChange}
             onPress={props.onPress}
+            autoFocus={props.autoFocus}
         >
             {props.children}
         </TextInput>

@@ -38,12 +38,11 @@ export default function Search() {
 
     const numberOfApi22Data = 4;
 
-    const debouncedValue = useDebounce(text, 200);
+    const debouncedtextValue = useDebounce(text, 200);
     const debouncedOriginValue = useDebounce(originInput, 200);
     const debouncedDestinationValue = useDebounce(destinationInput, 200);
-    let searchText = "";
 
-    async function simpleApi22Call() {
+    async function simpleApi22Call(searchText) {
         try {
             const result = await axios({
                 method: "get",
@@ -63,7 +62,7 @@ export default function Search() {
         }
     }
 
-    async function simpleApi21Call() {
+    async function simpleApi21Call(searchText) {
         try {
             const result = await axios({
                 method: "get",
@@ -82,37 +81,90 @@ export default function Search() {
             setError21(true);
         }
     }
-
-    useEffect(() => {
+    async function setsearchText() {
         if (clickDestination) {
             if (searchDestination) {
-                searchText = originInput;
+                setTextSearch(originInput);
             } else {
-                searchText = destinationInput;
+                setTextSearch(destinationInput);
             }
         } else {
-            searchText = text;
+            setTextSearch(text);
         }
-        if (searchDestination === "") {
+    }
+    useEffect(() => {
+        if (text === "") {
+            setApi22Result([]);
+        } else {
+            console.log("he");
+            setLoading(true);
+            simpleApi22Call(text);
+            setLoading(false);
+        }
+    }, [text]);
+    useEffect(() => {
+        setSearchDestination(false);
+        if (originInput === "") {
+            console.log("hello");
+
             setApi22Result([]);
         } else {
             setLoading(true);
-            simpleApi22Call();
+            simpleApi22Call(originInput);
             setLoading(false);
-            console.log(api22Result);
         }
-        console.log(api22Result);
-    }, [text, originInput, destinationInput]);
-
+    }, [originInput]);
     useEffect(() => {
-        if (clickDestination === "") {
+        setSearchDestination(true);
+        console.log(text);
+        console.log(destinationInput);
+        if (destinationInput === "") {
+            setApi22Result([]);
+        } else if (text !== "") {
+            console.log("hell");
             setApi21Result([]);
             setApi22Result([]);
         } else {
-            simpleApi21Call();
+            setLoading(true);
+            simpleApi22Call(destinationInput);
+            setLoading(false);
         }
-        console.log(api21Result);
-    }, [debouncedValue, debouncedOriginValue, debouncedDestinationValue]);
+    }, [destinationInput]);
+
+    useEffect(() => {
+        if (text === "") {
+            setApi21Result([]);
+            setApi22Result([]);
+        } else {
+            simpleApi21Call(text);
+        }
+    }, [debouncedtextValue]);
+    useEffect(() => {
+        if (originInput === "") {
+            setApi21Result([]);
+            setApi22Result([]);
+        } else {
+            simpleApi21Call(originInput);
+        }
+    }, [debouncedOriginValue]);
+    useEffect(() => {
+        if (destinationInput === "") {
+            setApi21Result([]);
+            setApi22Result([]);
+        } else if (text !== "") {
+            console.log("hel");
+            setApi21Result([]);
+            setApi22Result([]);
+            onChangeText("");
+        } else {
+            simpleApi21Call(destinationInput);
+        }
+    }, [debouncedDestinationValue]);
+
+    useEffect(() => {
+        setApi21Result([]);
+        setApi22Result([]);
+    }, [clickDestination]);
 
     const styles = StyleSheet.create({
         searchbox: {
@@ -169,6 +221,7 @@ export default function Search() {
                                 onPressOrigin={() => {
                                     setSearchDestination(false);
                                 }}
+                                autoFocus={true}
                             />
                         </>
                     ) : (
@@ -216,11 +269,25 @@ export default function Search() {
                                                                     place={item.name.en}
                                                                     trip={item.trips}
                                                                     onPress={() => {
-                                                                        setDestinationInput(
-                                                                            item.name.en,
-                                                                        );
-                                                                        setClickDestination(true);
-                                                                        setDestinationData(item);
+                                                                        if (
+                                                                            !clickDestination ||
+                                                                            searchDestination
+                                                                        ) {
+                                                                            setDestinationInput(
+                                                                                item.name.en,
+                                                                            );
+                                                                            setClickDestination(
+                                                                                true,
+                                                                            );
+                                                                            setDestinationData(
+                                                                                item,
+                                                                            );
+                                                                        } else {
+                                                                            setOriginInput(
+                                                                                item.name.en,
+                                                                            );
+                                                                            setOriginData(item);
+                                                                        }
                                                                     }}
                                                                 ></StationTab>
                                                             ))}
@@ -274,9 +341,25 @@ export default function Search() {
                                         <>
                                             {clickDestination ? (
                                                 <>
-                                                    <ThemedText>
-                                                        Clickdestination is true
-                                                    </ThemedText>
+                                                    <PlaceTab
+                                                        place="Your Location"
+                                                        address="Somewhere over the rainbow"
+                                                        onPress={() => {
+                                                            if (searchDestination) {
+                                                                setDestinationInput(
+                                                                    "Your Location",
+                                                                );
+                                                                setDestinationData([
+                                                                    { name: "my-location" },
+                                                                ]);
+                                                            } else {
+                                                                setOriginInput("Your Location");
+                                                                setOriginData([
+                                                                    { name: "my-location" },
+                                                                ]);
+                                                            }
+                                                        }}
+                                                    />
                                                 </>
                                             ) : (
                                                 <></>
