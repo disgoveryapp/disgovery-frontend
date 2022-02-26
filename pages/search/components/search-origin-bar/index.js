@@ -75,6 +75,7 @@ export default function SearchOriginBar(props) {
                                 value={props.value}
                                 onChange={props.onChange}
                                 onPress={props.onPressOrigin}
+                                autoFocus={props.autoFocus}
                             />
                             <View>
                                 {props.value ? (
