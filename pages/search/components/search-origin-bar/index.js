@@ -7,12 +7,9 @@ import CloseIcon from "../../../../assets/svgs/close-icon";
 import { useTheme } from "@react-navigation/native";
 import ArrowIcon24 from "../../../../assets/svgs/arrow-forward-24px";
 import SwapIcon from "../../../../assets/svgs/swap-icon";
-import { useKeyboard } from "../check-keyboard";
 
 export default function SearchOriginBar(props) {
     const { colors } = useTheme();
-
-    const isKeyBoardOpen = useKeyboard();
 
     const clearText = () => props.onChangeText("");
     const clearTextLocation = () => props.onChangeTextLocation("");
@@ -81,7 +78,7 @@ export default function SearchOriginBar(props) {
                                 autoFocus={props.autoFocus}
                             />
                             <View>
-                                {props.value && isKeyBoardOpen ? (
+                                {props.value ? (
                                     <TouchableOpacity onPress={() => clearText()}>
                                         <CloseIcon />
                                     </TouchableOpacity>
@@ -107,7 +104,7 @@ export default function SearchOriginBar(props) {
                                 onPress={props.onPressDestination}
                             />
                             <View>
-                                {props.valueLocation && isKeyBoardOpen ? (
+                                {props.valueLocation ? (
                                     <TouchableOpacity onPress={() => clearTextLocation()}>
                                         <CloseIcon />
                                     </TouchableOpacity>
