@@ -12,8 +12,8 @@ import { useKeyboard } from "../check-keyboard";
 export default function SearchOriginBar(props) {
     const { colors } = useTheme();
     const isKeyboardOpen = useKeyboard();
-    const [isTabOneOpen, setTabOne] = useState(false);
-    const [isTabTwoOpen, setTabTwo] = useState(false);
+    const [isTabOneOpen, setTabOne] = useState(true);
+    const [isTabTwoOpen, setTabTwo] = useState(true);
 
     const clearText = () => props.onChangeText("");
     const clearTextLocation = () => props.onChangeTextLocation("");
@@ -90,7 +90,10 @@ export default function SearchOriginBar(props) {
                                 onChangeText={props.onChangeText}
                                 value={props.value}
                                 onChange={props.onChange}
-                                onPress={props.onPressOrigin}
+                                onPress={() => {
+                                    props.onPressOrigin;
+                                    tabOne();
+                                }}
                                 autoFocus={props.autoFocus}
                             />
                             <View>
@@ -117,7 +120,10 @@ export default function SearchOriginBar(props) {
                                 onChangeText={props.onChangeTextLocation}
                                 value={props.valueLocation}
                                 onChange={props.onChange}
-                                onPress={props.onPressDestination}
+                                onPress={() => {
+                                    props.onPressDestination;
+                                    tabTwo();
+                                }}
                             />
                             <View>
                                 {props.valueLocation && isKeyboardOpen && isTabTwoOpen ? (
