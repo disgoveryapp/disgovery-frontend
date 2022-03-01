@@ -90,8 +90,7 @@ export default function SearchOriginBar(props) {
                                 onChangeText={props.onChangeText}
                                 value={props.value}
                                 onChange={props.onChange}
-                                onPress={() => {
-                                    props.onPressOrigin;
+                                onPressIn={() => {
                                     tabOne();
                                 }}
                                 autoFocus={props.autoFocus}
@@ -120,8 +119,7 @@ export default function SearchOriginBar(props) {
                                 onChangeText={props.onChangeTextLocation}
                                 value={props.valueLocation}
                                 onChange={props.onChange}
-                                onPress={() => {
-                                    props.onPressDestination;
+                                onPressIn={() => {
                                     tabTwo();
                                 }}
                             />
