@@ -121,7 +121,7 @@ export default function Search() {
         if (destinationInput === "") {
             setApi22Result([]);
         } else if (text !== "") {
-            console.log("hell");
+            setSearchDestination(false);
             setApi21Result([]);
             setApi22Result([]);
         } else {
@@ -215,12 +215,6 @@ export default function Search() {
                                 value={originInput}
                                 onChangeTextLocation={setDestinationInput}
                                 valueLocation={destinationInput}
-                                onPressDestination={() => {
-                                    setSearchDestination(true);
-                                }}
-                                onPressOrigin={() => {
-                                    setSearchDestination(false);
-                                }}
                                 autoFocus={true}
                             />
                         </>
