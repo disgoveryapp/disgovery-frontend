@@ -37,6 +37,7 @@ export default function SearchBar(props) {
                     onChangeText={props.onChangeText}
                     value={props.value}
                     onChange={props.onChange}
+                    autoFocus
                 />
             </View>
             <View>
