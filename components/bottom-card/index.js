@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Dimensions, StyleSheet, View } from "react-native";
 import Animated, {
     Easing,
@@ -26,10 +26,20 @@ export const BOTTOM_CARD_CONTENT_PADDING = CARD_HEIGHT + endingPosition;
 
 const BottomCard = (props) => {
     const translateY = useSharedValue(startingPosition);
-    const childrenOpacity = useSharedValue(1);
 
     const { colors } = useTheme();
     const navigation = useNavigation();
+
+    useEffect(() => {
+        const unsubscribe = navigation.addListener("focus", () => {
+            translateY.value = withTiming(startingPosition, {
+                duration: 500,
+                easing: Easing.out(Easing.exp),
+            });
+        });
+
+        return unsubscribe;
+    }, [navigation]);
 
     const panGestureEvent = useAnimatedGestureHandler({
         onStart: (event, context) => {
