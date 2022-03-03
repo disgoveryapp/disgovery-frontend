@@ -771,7 +771,7 @@ function TripDetails(props) {
                                     <ThemedText style={styles.unableToLoadTheTripText}>
                                         Unable to load the trip
                                     </ThemedText>
-                                    <TouchableOpacity>
+                                    <TouchableOpacity onPress={() => props.navigation.pop()}>
                                         <ThemedText style={styles.goBackText}>Go back</ThemedText>
                                     </TouchableOpacity>
                                 </View>
