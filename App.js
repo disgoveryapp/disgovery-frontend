@@ -17,6 +17,7 @@ import { Text, useColorScheme, View } from "react-native";
 import { darkTheme, lightTheme } from "./themes/themes";
 
 import Home from "./pages/home";
+import TripDetails from "./pages/trip-details";
 
 export default function App() {
     const scheme = useColorScheme();
@@ -43,7 +44,8 @@ export default function App() {
                             headerShown: false,
                         }}
                     >
-                        <Stack.Screen name="Home" component={Home} />
+                        {/* <Stack.Screen name="Home" component={Home} /> */}
+                        <Stack.Screen name="TripDetails" component={TripDetails} />
                     </Stack.Navigator>
                 </NavigationContainer>
             </>

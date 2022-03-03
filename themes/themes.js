@@ -10,6 +10,8 @@ export const darkTheme = {
         primary: "#7EC13A",
         flatlist_line: "#EE2929",
         flatlist_transport: "#ffffff",
+        middle_grey: "#7B7B7B",
+        white: "#fff",
     },
 };
 
@@ -25,5 +27,7 @@ export const lightTheme = {
         primary: "#7EC13A",
         flatlist_line: "#ffffff",
         flatlist_transport: "#EE2929",
+        middle_grey: "#7B7B7B",
+        white: "#fff",
     },
 };
