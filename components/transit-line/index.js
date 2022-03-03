@@ -21,7 +21,7 @@ function TransitLine(props) {
         lineNameText: {
             color: props.text_color ? `#${props.line.text_color}` : colors.white,
             fontWeight: "600",
-            fontSize: 16,
+            fontSize: props.fontSize || 16,
         },
     });
 
@@ -45,6 +45,7 @@ TransitLine.propTypes = {
         text_color: PropTypes.string,
     }),
     type: PropTypes.oneOf(["short", "long"]),
+    fontSize: PropTypes.number,
 };
 
 export default TransitLine;

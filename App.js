@@ -17,7 +17,9 @@ import { Text, useColorScheme, View } from "react-native";
 import { darkTheme, lightTheme } from "./themes/themes";
 
 import Home from "./pages/home";
+
 import TripDetails from "./pages/trip-details";
+import Search from "./pages/search";
 
 export default function App() {
     const scheme = useColorScheme();
