@@ -1,10 +1,12 @@
 import React, { useCallback, useEffect, useImperativeHandle } from "react";
 import { Dimensions, StyleSheet, View } from "react-native";
 import Animated, {
+    Easing,
     useAnimatedGestureHandler,
     useAnimatedStyle,
     useSharedValue,
     withSpring,
+    withTiming,
 } from "react-native-reanimated";
 import { GestureHandlerRootView, PanGestureHandler } from "react-native-gesture-handler";
 import { useTheme } from "@react-navigation/native";
@@ -16,6 +18,10 @@ const endingPosition = -SCREEN_HEIGHT / 3;
 const BottomCard = (props) => {
     const translateY = useSharedValue(startingPosition);
     const { colors } = useTheme();
+
+    useEffect(() => {
+        if (props.transitionToSearch) performTransitionToSearch();
+    }, [props.transitionToSearch]);
 
     const panGestureEvent = useAnimatedGestureHandler({
         onStart: (event, context) => {
@@ -49,6 +55,13 @@ const BottomCard = (props) => {
             borderRadius: 22,
         },
     });
+
+    function performTransitionToSearch() {
+        translateY.value = withTiming(0, {
+            duration: 200,
+            easing: Easing.inOut,
+        });
+    }
 
     return (
         <GestureHandlerRootView>
