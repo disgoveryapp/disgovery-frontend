@@ -34,12 +34,6 @@ export default function App() {
         Barlow_800ExtraBold_Italic,
     });
 
-    const forFade = ({ current }) => ({
-        cardStyle: {
-            opacity: current.progress,
-        },
-    });
-
     const Stack = createNativeStackNavigator();
 
     if (!fontLoaded) return <AppLoading />;
