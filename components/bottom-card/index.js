@@ -1,33 +1,42 @@
-import React, { useCallback, useEffect, useImperativeHandle } from "react";
+import React from "react";
 import { Dimensions, StyleSheet, View } from "react-native";
 import Animated, {
     Easing,
+    Extrapolate,
+    interpolate,
+    runOnJS,
     useAnimatedGestureHandler,
     useAnimatedStyle,
+    useDerivedValue,
     useSharedValue,
     withSpring,
     withTiming,
 } from "react-native-reanimated";
 import { GestureHandlerRootView, PanGestureHandler } from "react-native-gesture-handler";
-import { useTheme } from "@react-navigation/native";
+import { useNavigation, useTheme } from "@react-navigation/native";
+import SearchBox from "../search-box";
+import BottomCardFlatList from "../bottom-card-flat-list";
 
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get("window");
 const startingPosition = 0;
 const endingPosition = -SCREEN_HEIGHT / 3;
+const CARD_HEIGHT = SCREEN_HEIGHT * 3;
+
+export const BOTTOM_CARD_CONTENT_PADDING = CARD_HEIGHT + endingPosition;
 
 const BottomCard = (props) => {
     const translateY = useSharedValue(startingPosition);
-    const { colors } = useTheme();
+    const childrenOpacity = useSharedValue(1);
 
-    useEffect(() => {
-        if (props.transitionToSearch) performTransitionToSearch();
-    }, [props.transitionToSearch]);
+    const { colors } = useTheme();
+    const navigation = useNavigation();
 
     const panGestureEvent = useAnimatedGestureHandler({
         onStart: (event, context) => {
             context.translateY = translateY.value;
         },
         onActive: (event, context) => {
+            console.log(event.translationY);
             translateY.value = Math.max(endingPosition, event.translationY + context.translateY);
         },
         onEnd: () => {
@@ -50,23 +59,66 @@ const BottomCard = (props) => {
     const styles = StyleSheet.create({
         card: {
             width: SCREEN_WIDTH,
-            height: (SCREEN_HEIGHT * 2) / 3,
+            height: CARD_HEIGHT,
             backgroundColor: colors.background,
             borderRadius: 22,
         },
+        children: {
+            width: SCREEN_WIDTH,
+            height: "100%",
+            marginTop: -35,
+            zIndex: 4,
+        },
+        searchbox: {
+            width: "100%",
+            paddingHorizontal: 15,
+            bottom: 25,
+            zIndex: 5,
+        },
+    });
+
+    function navigateToSearch() {
+        navigation.navigate("Search");
+    }
+
+    const flatlistOpacity = useDerivedValue(() =>
+        interpolate(translateY.value, [0, -SCREEN_HEIGHT / 3, -SCREEN_HEIGHT - 1], [1, 1, 0], {
+            extrapolateLeft: Extrapolate.CLAMP,
+            extrapolateRight: Extrapolate.CLAMP,
+        }),
+    );
+
+    const flatlistStyle = useAnimatedStyle(() => {
+        return {
+            opacity: flatlistOpacity.value,
+        };
     });
 
     function performTransitionToSearch() {
-        translateY.value = withTiming(0, {
-            duration: 200,
-            easing: Easing.inOut,
-        });
+        translateY.value = withTiming(
+            -SCREEN_HEIGHT,
+            {
+                duration: 500,
+                easing: Easing.out(Easing.exp),
+            },
+            (finished) => {
+                "worklet";
+                if (finished) runOnJS(navigateToSearch)();
+            },
+        );
     }
 
     return (
         <GestureHandlerRootView>
             <PanGestureHandler onGestureEvent={panGestureEvent}>
-                <Animated.View style={[styles.card, rStyle]}>{props.children}</Animated.View>
+                <Animated.View style={[styles.card, rStyle]}>
+                    <View style={styles.searchbox}>
+                        <SearchBox onPress={() => performTransitionToSearch()} />
+                    </View>
+                    <Animated.View style={[styles.children, flatlistStyle]}>
+                        <BottomCardFlatList nearbyStations={props.nearbyStations} />
+                    </Animated.View>
+                </Animated.View>
             </PanGestureHandler>
         </GestureHandlerRootView>
     );

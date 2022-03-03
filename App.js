@@ -34,6 +34,12 @@ export default function App() {
         Barlow_800ExtraBold_Italic,
     });
 
+    const forFade = ({ current }) => ({
+        cardStyle: {
+            opacity: current.progress,
+        },
+    });
+
     const Stack = createNativeStackNavigator();
 
     if (!fontLoaded) return <AppLoading />;
@@ -48,6 +54,11 @@ export default function App() {
                     >
                         <Stack.Screen name="Home" component={Home} />
                         <Stack.Screen name="TripDetails" component={TripDetails} />
+                        <Stack.Screen
+                            name="Search"
+                            component={Search}
+                            options={{ animation: "fade" }}
+                        />
                     </Stack.Navigator>
                 </NavigationContainer>
             </>

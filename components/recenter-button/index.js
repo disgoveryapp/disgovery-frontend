@@ -19,7 +19,7 @@ export default function RecenterButton(props) {
             marginRight: 15,
             marginTop: 0,
             marginBottom: "auto",
-            zIndex: 2,
+            zIndex: 1,
         },
     });
 

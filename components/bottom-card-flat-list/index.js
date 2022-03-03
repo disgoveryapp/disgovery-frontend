@@ -25,6 +25,7 @@ import { API_URL } from "../../configs/configs";
 import ThemedTextMarquee from "../themed-text-marquee";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { ScrollView } from "react-native-gesture-handler";
+import { BOTTOM_CARD_CONTENT_PADDING } from "../bottom-card";
 
 const SCREEN_WIDTH = Dimensions.get("screen").width;
 const SCREEN_HEIGHT = Dimensions.get("screen").height;
@@ -33,25 +34,27 @@ export default function BottomCardFlatList(props) {
     const navigation = useNavigation();
     const { colors } = useTheme();
 
-    console.log(props.nearbyStations);
-    if (!props.nearbyStations) return;
+    if (!props.nearbyStations) return <></>;
 
-    const renderItem = (item) => {
+    const renderItem = (item, renderDivider) => {
         console.log(item);
 
         if (item.lines.length > 0) {
             console.log(item.lines[0].name);
 
             return (
-                <Item
-                    trip_id={item.lines[0].trip_id}
-                    origin_id={item.uid}
-                    name={item.lines[0].destination.name}
-                    time={item.lines[0].arriving_in}
-                    line={item.lines[0]}
-                    type={item.lines[0].id}
-                    color={`#${item.lines[0].color}`}
-                />
+                <>
+                    <Item
+                        trip_id={item.lines[0].trip_id}
+                        origin_id={item.uid}
+                        name={item.lines[0].destination.name}
+                        time={item.lines[0].arriving_in}
+                        line={item.lines[0]}
+                        type={item.lines[0].id}
+                        color={`#${item.lines[0].color}`}
+                    />
+                    {renderDivider && <ItemDivider />}
+                </>
             );
         }
     };
@@ -262,17 +265,17 @@ export default function BottomCardFlatList(props) {
             <ScrollView
                 contentContainerStyle={{
                     paddingHorizontal: 5,
-                    paddingTop: 10,
-                    paddingBottom: "60%",
+                    paddingTop: 15,
+                    paddingBottom: BOTTOM_CARD_CONTENT_PADDING,
                 }}
             >
                 {Object.keys(props.nearbyStations).map((key) => {
                     return (
                         <>
-                            {renderItem(props.nearbyStations[key])}
-                            {props.nearbyStations[key] !==
-                                props.nearbyStations[props.nearbyStations.length - 1] && (
-                                <ItemDivider />
+                            {renderItem(
+                                props.nearbyStations[key],
+                                props.nearbyStations[key] !==
+                                    props.nearbyStations[props.nearbyStations.length - 1],
                             )}
                         </>
                     );

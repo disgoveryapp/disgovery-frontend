@@ -26,6 +26,7 @@ export default function Home() {
     const { colors } = useTheme();
     const mapRef = useRef();
     let firstRun = true;
+
     const [mapsIsRecentered, setMapsIsRecentered] = useState(false);
     const [location, setLocation] = useState(null);
     const [mapCurrentLocationRegion, setMapCurrentLocationRegion] = useState({});
@@ -47,20 +48,9 @@ export default function Home() {
             width: "100%",
             height: "100%",
         },
-        searchbox: {
-            width: "100%",
-            paddingHorizontal: 15,
-            bottom: 25,
-        },
-        flatlistcontainer: {
-            flex: 1,
-            bottom: 30,
-        },
         bottomcard: {
-            top: SCREEN_HEIGHT * (3 / 5),
-            justifyContent: "center",
-            alignItems: "center",
-            flexDirection: "column",
+            top: SCREEN_HEIGHT * (8.75 / 3),
+            zIndex: 5,
         },
     });
 
@@ -160,14 +150,7 @@ export default function Home() {
             ></MapView>
             <RecenterButton recentered={mapsIsRecentered} onPress={recenter} />
             <View style={styles.bottomcard}>
-                <BottomCard>
-                    <View style={styles.searchbox}>
-                        <SearchBox />
-                    </View>
-                    <View style={styles.flatlistcontainer}>
-                        <BottomCardFlatList nearbyStations={nearbyStations} />
-                    </View>
-                </BottomCard>
+                <BottomCard nearbyStations={nearbyStations} />
             </View>
         </View>
     );

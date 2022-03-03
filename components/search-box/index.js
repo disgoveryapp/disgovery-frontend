@@ -5,7 +5,7 @@ import SearchIcon from "../../assets/svgs/search-icon";
 import StarBorderIcon from "../../assets/svgs/star-border-icon";
 import { useTheme } from "@react-navigation/native";
 
-const SearchBox = () => {
+const SearchBox = (props) => {
     const { colors } = useTheme();
 
     const styles = StyleSheet.create({
@@ -34,7 +34,7 @@ const SearchBox = () => {
     });
 
     return (
-        <TouchableOpacity style={styles.container}>
+        <TouchableOpacity style={styles.container} onPress={props.onPress || function () {}}>
             <View style={styles.placeholderContainer}>
                 <SearchIcon />
                 <ThemedText style={styles.placeholder}>Search destination</ThemedText>
