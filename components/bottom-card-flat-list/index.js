@@ -23,13 +23,14 @@ import RedLineIcon from "../../assets/svgs/RedLine-icon";
 import axios from "axios";
 import { API_URL } from "../../configs/configs";
 import ThemedTextMarquee from "../themed-text-marquee";
-import { useTheme } from "@react-navigation/native";
+import { useNavigation, useTheme } from "@react-navigation/native";
 import { ScrollView } from "react-native-gesture-handler";
 
 const SCREEN_WIDTH = Dimensions.get("screen").width;
 const SCREEN_HEIGHT = Dimensions.get("screen").height;
 
 export default function BottomCardFlatList(props) {
+    const navigation = useNavigation();
     const { colors } = useTheme();
 
     console.log(props.nearbyStations);
@@ -43,6 +44,8 @@ export default function BottomCardFlatList(props) {
 
             return (
                 <Item
+                    trip_id={item.lines[0].trip_id}
+                    origin_id={item.uid}
                     name={item.lines[0].destination.name}
                     time={item.lines[0].arriving_in}
                     line={item.lines[0]}
@@ -57,8 +60,13 @@ export default function BottomCardFlatList(props) {
         return <View style={styles.divider} />;
     };
 
-    const Item = ({ name, time, line, type, color }) => (
-        <TouchableOpacity style={styles.lower_container}>
+    const Item = ({ name, time, line, type, color, origin_id, trip_id }) => (
+        <TouchableOpacity
+            style={styles.lower_container}
+            onPress={() =>
+                navigation.navigate("TripDetails", { origin_id: origin_id, trip_id: trip_id })
+            }
+        >
             <View
                 style={{
                     display: "flex",
@@ -259,7 +267,15 @@ export default function BottomCardFlatList(props) {
                 }}
             >
                 {Object.keys(props.nearbyStations).map((key) => {
-                    return <>{renderItem(props.nearbyStations[key])}</>;
+                    return (
+                        <>
+                            {renderItem(props.nearbyStations[key])}
+                            {props.nearbyStations[key] !==
+                                props.nearbyStations[props.nearbyStations.length - 1] && (
+                                <ItemDivider />
+                            )}
+                        </>
+                    );
                 })}
             </ScrollView>
         </SafeAreaView>

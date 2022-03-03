@@ -32,9 +32,6 @@ import { LinearGradient } from "expo-linear-gradient";
 import ArrowIcon24 from "../../assets/svgs/arrow-forward-24px";
 import ArrowIcon from "../../assets/svgs/arrow_forward-icon";
 
-const TRIP = "BTS_SUKHUMVIT_WD_E15_N24";
-const ORIGIN = "BTS_N9";
-
 const MARGIN_BETWEEN_STATION = 25;
 const MARGIN_BETWEEN_STATION_TITLE_AND_CIRCLE = 10;
 const STATION_CIRCLE_DIAMETER = 17;
@@ -64,6 +61,9 @@ dayjs.updateLocale("en", {
 
 function TripDetails(props) {
     const { colors } = useTheme();
+
+    const TRIP_ID = props.route.params.trip_id;
+    const ORIGIN_ID = props.route.params.origin_id;
 
     const mapRef = useRef(null);
 
@@ -115,7 +115,7 @@ function TripDetails(props) {
     function fetchTripDetails() {
         setLoading(true);
         axios
-            .get(`${configs.API_URL}/trip/${TRIP}?origin=${ORIGIN}`)
+            .get(`${configs.API_URL}/trip/${TRIP_ID}?origin=${ORIGIN_ID}`)
             .then((response) => {
                 let responseData = response.data.data;
                 let approximateTime = false;
@@ -626,7 +626,7 @@ function TripDetails(props) {
             <View>
                 <View style={styles.backButtonContainer}>
                     <SafeAreaView edges={["top"]} />
-                    <BackButton />
+                    <BackButton onPress={props.navigation.pop} />
                 </View>
 
                 <MapView

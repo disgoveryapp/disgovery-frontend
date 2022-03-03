@@ -44,7 +44,7 @@ export default function App() {
                             headerShown: false,
                         }}
                     >
-                        {/* <Stack.Screen name="Home" component={Home} /> */}
+                        <Stack.Screen name="Home" component={Home} />
                         <Stack.Screen name="TripDetails" component={TripDetails} />
                     </Stack.Navigator>
                 </NavigationContainer>
