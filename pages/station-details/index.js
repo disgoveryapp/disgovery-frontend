@@ -11,6 +11,7 @@ import axios from "axios";
 import { configs } from "../../configs/configs";
 import NavigateBotton from "../../components/navigate-button";
 import BackButton from "../../components/back-button";
+import StationDetail from "../../components/station-details";
 
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -167,7 +168,8 @@ export default function StationDetails() {
                 <BottomCard>
                     <View style={styles.navigateButtonContainer}>
                         <NavigateBotton/>
-                    </View> 
+                    </View>
+                    <StationDetail/> 
                 </BottomCard>
             </View>
         </View>
