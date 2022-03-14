@@ -129,6 +129,16 @@ export default function Search() {
             backgroundColor: colors.background,
             borderTopLeftRadius: 22,
             borderTopRightRadius: 22,
+
+            shadowColor: colors.shadow,
+            shadowOffset: {
+                width: 0,
+                height: 5,
+            },
+            shadowOpacity: 0.34,
+            shadowRadius: 6.27,
+
+            elevation: 10,
         },
         flatList: {
             height: "100%",

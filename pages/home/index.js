@@ -23,7 +23,7 @@ const INITIAL_MAP_REGION = {
 };
 
 export default function Home() {
-    const { colors } = useTheme();
+    const { dark, colors } = useTheme();
     const mapRef = useRef();
     let firstRun = true;
 
@@ -62,6 +62,10 @@ export default function Home() {
             firstRun = false;
         }
     }, []);
+
+    useEffect(() => {
+        mapRef._updateStyle;
+    }, [colors]);
 
     async function fetchNewLocation() {
         let { status } = await Location.requestForegroundPermissionsAsync().catch(() => {});
@@ -131,7 +135,6 @@ export default function Home() {
     }
 
     function onMapRegionChangeComplete(region) {
-        console.log(region);
         fetchNearbyStations(region);
     }
 
@@ -143,7 +146,7 @@ export default function Home() {
                 style={styles.maps}
                 initialRegion={INITIAL_MAP_REGION}
                 provider="google"
-                customMapStyle={googleMapsStyling}
+                customMapStyle={dark ? googleMapsStyling.dark : googleMapsStyling.light}
                 onTouchStart={() => setMapsIsRecentered(false)}
                 onRegionChangeComplete={(region) => onMapRegionChangeComplete(region)}
                 showsUserLocation

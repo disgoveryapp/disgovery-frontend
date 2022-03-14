@@ -60,7 +60,7 @@ dayjs.updateLocale("en", {
 });
 
 function TripDetails(props) {
-    const { colors } = useTheme();
+    const { dark, colors } = useTheme();
 
     const TRIP_ID = props.route.params.trip_id;
     const ORIGIN_ID = props.route.params.origin_id;
@@ -632,7 +632,7 @@ function TripDetails(props) {
                     ref={mapRef}
                     style={styles.topMap}
                     provider={PROVIDER_GOOGLE}
-                    customMapStyle={googleMapsStyling}
+                    customMapStyle={dark ? googleMapsStyling.dark : googleMapsStyling.light}
                     initialRegion={configs.INITIAL_MAP_REGION}
                     mapPadding={{ bottom: 0.05 * Dimensions.get("screen").height }}
                 >
