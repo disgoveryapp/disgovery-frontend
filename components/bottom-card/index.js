@@ -73,7 +73,7 @@ const BottomCard = (props) => {
             borderRadius: 22,
         },
         children: {
-            width: SCREEN_WIDTH,
+            width: "100%",
             height: "100%",
             marginTop: -35,
             zIndex: 4,

@@ -30,7 +30,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { decode } from "@googlemaps/polyline-codec";
 import { LinearGradient } from "expo-linear-gradient";
 import ArrowIcon24 from "../../assets/svgs/arrow-forward-24px";
-import ArrowIcon from "../../assets/svgs/arrow_forward-icon";
+import ArrowIcon from "../../assets/svgs/arrow-forward-18px";
 
 const MARGIN_BETWEEN_STATION = 25;
 const MARGIN_BETWEEN_STATION_TITLE_AND_CIRCLE = 10;
