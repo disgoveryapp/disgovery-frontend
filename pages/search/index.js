@@ -256,6 +256,7 @@ export default function Search() {
                                         paddingBottom: 35,
                                         marginTop: CLOSE_ON_SCROLL_TO,
                                     }}
+                                    keyboardDismissMode="interactive"
                                     scrollEventThrottle={16}
                                     onScroll={onScroll}
                                     onScrollBeginDrag={onScrollBeginDrag}
