@@ -46,7 +46,6 @@ const BottomCard = (props) => {
             context.translateY = translateY.value;
         },
         onActive: (event, context) => {
-            console.log(event.translationY);
             translateY.value = Math.max(endingPosition, event.translationY + context.translateY);
         },
         onEnd: () => {
@@ -122,9 +121,9 @@ const BottomCard = (props) => {
         <GestureHandlerRootView>
             <PanGestureHandler onGestureEvent={panGestureEvent}>
                 <Animated.View style={[styles.card, rStyle]}>
-                    <View style={styles.searchbox}>
+                    <Animated.View style={[styles.searchbox, flatlistStyle]}>
                         <SearchBox onPress={() => performTransitionToSearch()} />
-                    </View>
+                    </Animated.View>
                     <Animated.View style={[styles.children, flatlistStyle]}>
                         <BottomCardFlatList nearbyStations={props.nearbyStations} />
                     </Animated.View>
