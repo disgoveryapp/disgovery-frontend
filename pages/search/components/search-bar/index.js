@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { StyleSheet, View, TextInput, TouchableOpacity } from "react-native";
+import React, { useState, useEffect } from "react";
+import { StyleSheet, View, TextInput, TouchableOpacity, Animated } from "react-native";
 import ThemedText from "../../../../components/themed-text";
 import ThemedTextInput from "../../../../components/themed-text-input";
 import SearchIcon from "../../../../assets/svgs/search-icon";
