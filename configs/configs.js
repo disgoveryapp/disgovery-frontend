@@ -8,7 +8,7 @@ export const configs = {
     },
 };
 
-export const pSBC = (p, c0, c1, l) => {
+export function pSBC(p, c0, c1, l) {
     let r,
         g,
         b,
@@ -94,4 +94,4 @@ export const pSBC = (p, c0, c1, l) => {
                 .toString(16)
                 .slice(1, f ? undefined : -2)
         );
-};
+}
