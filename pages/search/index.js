@@ -21,6 +21,7 @@ import BadConnectionComponent from "./components/bad-connection";
 import * as Haptics from "expo-haptics";
 import ExpandDownIcon18px from "../../assets/svgs/expand-down-icon-18px";
 import PlaceIcon from "../../assets/svgs/place-icon";
+import RouteIcon from "../../assets/svgs/route-icon";
 
 const CLOSE_ON_SCROLL_TO = -100;
 const CLOSE_ON_VELOCITY = -3;
@@ -43,10 +44,21 @@ export default function Search() {
     const [closable, setClosable] = useState(true);
 
     const [pullDownToCloseString, setPullDownToCloseString] = useState(PULL_TO_CLOSE_STRING);
+    const [mode, setMode] = useState("");
+
+    const TRY_SEARCHING_COMPONENTS = {
+        stationsAndPlaces: {
+            icon: <PlaceIcon fill={colors.subtitle} />,
+            string: "Try searching for stations, places, or destinations",
+        },
+        lines: {
+            icon: <RouteIcon fill={colors.subtitle} />,
+            string: "Try searching for bus or train lines",
+        },
+    };
+
     const navigation = useNavigation();
-
     const numberOfApi22Data = 4;
-
     const debouncedValue = useDebounce(text, 200);
 
     useEffect(() => {
@@ -227,6 +239,10 @@ export default function Search() {
         }
     }
 
+    function changeMode(mode) {
+        setMode(mode);
+    }
+
     const pullDownToCloseIconRotation = scrollY.interpolate({
         inputRange: [CLOSE_ON_SCROLL_TO, 0],
         outputRange: ["180deg", "0deg"],
@@ -258,6 +274,7 @@ export default function Search() {
                         placeholder="Search destination"
                         onChangeText={onChangeText}
                         value={text}
+                        onModeChange={changeMode}
                     />
                 </View>
 
@@ -338,11 +355,16 @@ export default function Search() {
                                         <>
                                             <View style={styles.trySearchingContainer}>
                                                 <View style={styles.trySearchingIconsContainer}>
-                                                    <PlaceIcon fill={colors.subtitle} />
+                                                    {mode ? (
+                                                        TRY_SEARCHING_COMPONENTS[mode].icon
+                                                    ) : (
+                                                        <></>
+                                                    )}
                                                 </View>
                                                 <ThemedText style={styles.trySearchingText}>
-                                                    Try searching for stations, places, or
-                                                    destinations
+                                                    {mode
+                                                        ? TRY_SEARCHING_COMPONENTS[mode].string
+                                                        : ""}
                                                 </ThemedText>
                                             </View>
                                         </>
