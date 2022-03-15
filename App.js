@@ -51,7 +51,7 @@ export default function App() {
                         <Stack.Screen
                             name="Search"
                             component={Search}
-                            options={{ animation: "fade" }}
+                            options={{ animation: "fade", gestureEnabled: false }}
                         />
                     </Stack.Navigator>
                 </NavigationContainer>
