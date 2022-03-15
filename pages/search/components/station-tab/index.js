@@ -17,7 +17,6 @@ function StationTab(props) {
     const { colors } = useTheme();
     const tripname = [];
     const triptype = [];
-    const tripdata = props.trip;
 
     const styles = StyleSheet.create({
         container: {
@@ -77,9 +76,9 @@ function StationTab(props) {
 
     return (
         <>
-            {tripdata !== undefined && tripdata !== null ? (
+            {props.trip !== undefined && props.trip !== null ? (
                 <>
-                    {tripdata.map((item, key) => (
+                    {props.trip.map((item, key) => (
                         <View key={key}>
                             {(() => {
                                 if (!triptype.includes(item.type)) {
@@ -131,60 +130,62 @@ function StationTab(props) {
                                                                 numberOfLines={1}
                                                             >
                                                                 <>
-                                                                    {tripdata.map((item2, key) => (
-                                                                        <>
-                                                                            {(() => {
-                                                                                if (
-                                                                                    !tripname.includes(
-                                                                                        item2
-                                                                                            .route_name
-                                                                                            .long_name,
-                                                                                    ) &&
-                                                                                    item.type ===
-                                                                                        item2.type
-                                                                                ) {
-                                                                                    tripname.push(
-                                                                                        item2
-                                                                                            .route_name
-                                                                                            .long_name,
-                                                                                    );
-                                                                                    return (
-                                                                                        <View
-                                                                                            style={
-                                                                                                styles.transportnamecontainer
-                                                                                            }
-                                                                                        >
-                                                                                            <TransitLine
-                                                                                                key={
-                                                                                                    key
-                                                                                                }
-                                                                                                line={{
-                                                                                                    id: item2.route_id,
-                                                                                                    name: {
-                                                                                                        short_name:
-                                                                                                            item2
-                                                                                                                .route_name
-                                                                                                                .short_name,
-                                                                                                        long_name:
-                                                                                                            item2
-                                                                                                                .route_name
-                                                                                                                .long_name,
-                                                                                                    },
-                                                                                                    color: item2.color,
-                                                                                                }}
+                                                                    {props.trip.map(
+                                                                        (item2, key) => (
+                                                                            <>
+                                                                                {(() => {
+                                                                                    if (
+                                                                                        !tripname.includes(
+                                                                                            item2
+                                                                                                .route_name
+                                                                                                .long_name,
+                                                                                        ) &&
+                                                                                        item.type ===
+                                                                                            item2.type
+                                                                                    ) {
+                                                                                        tripname.push(
+                                                                                            item2
+                                                                                                .route_name
+                                                                                                .long_name,
+                                                                                        );
+                                                                                        return (
+                                                                                            <View
                                                                                                 style={
-                                                                                                    styles.transportnamesubcontainer
+                                                                                                    styles.transportnamecontainer
                                                                                                 }
-                                                                                                fontSize={
-                                                                                                    14
-                                                                                                }
-                                                                                            />
-                                                                                        </View>
-                                                                                    );
-                                                                                }
-                                                                            })()}
-                                                                        </>
-                                                                    ))}
+                                                                                            >
+                                                                                                <TransitLine
+                                                                                                    key={
+                                                                                                        key
+                                                                                                    }
+                                                                                                    line={{
+                                                                                                        id: item2.route_id,
+                                                                                                        name: {
+                                                                                                            short_name:
+                                                                                                                item2
+                                                                                                                    .route_name
+                                                                                                                    .short_name,
+                                                                                                            long_name:
+                                                                                                                item2
+                                                                                                                    .route_name
+                                                                                                                    .long_name,
+                                                                                                        },
+                                                                                                        color: item2.color,
+                                                                                                    }}
+                                                                                                    style={
+                                                                                                        styles.transportnamesubcontainer
+                                                                                                    }
+                                                                                                    fontSize={
+                                                                                                        14
+                                                                                                    }
+                                                                                                />
+                                                                                            </View>
+                                                                                        );
+                                                                                    }
+                                                                                })()}
+                                                                            </>
+                                                                        ),
+                                                                    )}
                                                                 </>
                                                             </ThemedText>
                                                         </View>
