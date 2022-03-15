@@ -223,7 +223,7 @@ export default function Search() {
     }
 
     function onScrollBeginDrag(event) {
-        setClosable(event.nativeEvent.contentOffset.y === 0);
+        setClosable(event.nativeEvent.contentOffset.y <= 10);
     }
 
     function onScrollEndDrag(event) {
