@@ -101,7 +101,6 @@ export default function Search() {
             setLoading(true);
             simpleApi22Call();
             setLoading(false);
-            console.log(api22Result);
         }
     }, [text]);
 
