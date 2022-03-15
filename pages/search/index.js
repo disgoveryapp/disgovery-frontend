@@ -54,8 +54,6 @@ export default function Search() {
     const debouncedOriginValue = useDebounce(originInput, 200);
     const debouncedDestinationValue = useDebounce(destinationInput, 200);
 
-    async function simpleApi22Call(searchText) {
-
     const [hapticPlayed, setHapticPlayed] = useState(false);
     const [closable, setClosable] = useState(true);
 
@@ -74,7 +72,6 @@ export default function Search() {
     };
 
     const navigation = useNavigation();
-    const numberOfApi22Data = 4;
     const debouncedValue = useDebounce(text, 200);
 
     useEffect(() => {
@@ -82,7 +79,7 @@ export default function Search() {
         else setPullDownToCloseString(RELEASE_TO_CLOSE_STRING);
     }, [hapticPlayed]);
 
-    async function simpleApi22Call() {
+    async function simpleApi22Call(searchText) {
         try {
             const result = await axios({
                 method: "get",
@@ -541,6 +538,3 @@ export default function Search() {
         </>
     );
 }
-/*
-{item.name.en}
-*/
