@@ -133,7 +133,7 @@ export default function SearchBar(props) {
     function animateHelperText() {
         Animated.timing(fullSearchSelectorContainerOpacityRef.current, {
             toValue: 0,
-            duration: 200,
+            duration: 150,
             useNativeDriver: true,
         }).start(({ finished }) => {
             if (finished) {
@@ -142,13 +142,13 @@ export default function SearchBar(props) {
                 Animated.sequence([
                     Animated.timing(collapsedHelperTextOpacityRef.current, {
                         toValue: 1,
-                        duration: 200,
+                        duration: 150,
                         useNativeDriver: true,
                     }),
                     Animated.timing(collapsedHelperTextOpacityRef.current, {
                         toValue: 0,
-                        duration: 200,
-                        delay: 2000,
+                        duration: 150,
+                        delay: 500,
                         useNativeDriver: true,
                     }),
                 ]).start(({ finished }) => {
@@ -157,7 +157,7 @@ export default function SearchBar(props) {
 
                         Animated.timing(fullSearchSelectorContainerOpacityRef.current, {
                             toValue: 1,
-                            duration: 200,
+                            duration: 150,
                             useNativeDriver: true,
                         }).start();
                     }
