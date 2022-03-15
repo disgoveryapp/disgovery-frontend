@@ -1,12 +1,35 @@
-import React, { useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import React, { useState, useEffect, useRef } from "react";
+import { StyleSheet, Animated, TouchableOpacity, View, Easing } from "react-native";
 import ThemedText from "../../components/themed-text";
 import SearchIcon from "../../assets/svgs/search-icon";
 import StarBorderIcon from "../../assets/svgs/star-border-icon";
-import { useTheme } from "@react-navigation/native";
+import { useTheme, useNavigation } from "@react-navigation/native";
+
+const PLACEHOLDER_ANIMATION_TEXT = ["stations", "places", "destinations"];
 
 const SearchBox = (props) => {
+    let placeholderAnimationIteration = 0;
+
+    const placeholderTextOpacity = new Animated.Value(1);
+    const placeholderTextOpacityRef = useRef(placeholderTextOpacity);
+    const [placeholderAnimationText, setPlaceholderAnimationText] = useState(
+        PLACEHOLDER_ANIMATION_TEXT[placeholderAnimationIteration],
+    );
+
     const { colors } = useTheme();
+    const navigation = useNavigation();
+
+    useEffect(() => {
+        playPlaceholderAnimationText();
+    }, []);
+
+    useEffect(() => {
+        const unsubscribe = navigation.addListener("focus", () => {
+            _restartPlaceholderAnimationText();
+        });
+
+        return unsubscribe;
+    }, [navigation]);
 
     const styles = StyleSheet.create({
         container: {
@@ -36,21 +59,61 @@ const SearchBox = (props) => {
             alignItems: "center",
         },
         placeholder: {
-            fontWeight: "500",
-            fontSize: 16,
+            fontWeight: "600",
+            fontSize: 18,
             marginLeft: 5,
             color: colors.text,
         },
     });
 
+    function _restartPlaceholderAnimationText() {
+        placeholderAnimationIteration = 0;
+        setPlaceholderAnimationText(PLACEHOLDER_ANIMATION_TEXT[placeholderAnimationIteration]);
+        playPlaceholderAnimationText();
+    }
+
+    function playPlaceholderAnimationText() {
+        Animated.timing(placeholderTextOpacityRef.current, {
+            toValue: 0,
+            duration: 500,
+            delay: 1000,
+            useNativeDriver: true,
+        }).start(({ finished }) => {
+            if (finished) {
+                placeholderAnimationIteration++;
+                setPlaceholderAnimationText(
+                    PLACEHOLDER_ANIMATION_TEXT[placeholderAnimationIteration],
+                );
+
+                Animated.timing(placeholderTextOpacityRef.current, {
+                    toValue: 1,
+                    duration: 500,
+                    delay: 100,
+                    useNativeDriver: true,
+                }).start(({ finished }) => {
+                    if (finished) {
+                        if (
+                            PLACEHOLDER_ANIMATION_TEXT[placeholderAnimationIteration] !==
+                            PLACEHOLDER_ANIMATION_TEXT[PLACEHOLDER_ANIMATION_TEXT.length - 1]
+                        )
+                            playPlaceholderAnimationText();
+                    }
+                });
+            }
+        });
+    }
+
     return (
         <TouchableOpacity style={styles.container} onPress={props.onPress || function () {}}>
             <View style={styles.placeholderContainer}>
-                <SearchIcon />
-                <ThemedText style={styles.placeholder}>Search destination</ThemedText>
+                <ThemedText style={styles.placeholder}>Search</ThemedText>
+                <Animated.View style={{ opacity: placeholderTextOpacityRef.current }}>
+                    <ThemedText style={styles.placeholder}>{placeholderAnimationText}</ThemedText>
+                </Animated.View>
             </View>
+            <SearchIcon />
 
-            <StarBorderIcon />
+            {/* <StarBorderIcon /> */}
         </TouchableOpacity>
     );
 };
