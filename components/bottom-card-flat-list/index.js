@@ -12,6 +12,7 @@ import ExpandDownIcon from "../../assets/svgs/expand-down-icon";
 import TramIcon from "../../assets/svgs/tram-icon";
 import RailIcon from "../../assets/svgs/rail-icon";
 import BoatIcon from "../../assets/svgs/boat-icon";
+import SvgAnimatedLinearGradient from "react-native-svg-animated-linear-gradient/src";
 
 const SCREEN_WIDTH = Dimensions.get("screen").width;
 
@@ -482,24 +483,79 @@ export default function BottomCardFlatList(props) {
 
     return (
         <SafeAreaView style={{ width: "100%" }}>
-            <ScrollView
-                contentContainerStyle={{
-                    paddingTop: 15,
-                    paddingBottom: BOTTOM_CARD_CONTENT_PADDING,
-                }}
-                showsHorizontalScrollIndicator={false}
-            >
-                {Object.keys(nearbyTrips).map((key) => {
-                    return (
-                        <>
-                            {renderItem(
-                                nearbyTrips[key],
-                                nearbyTrips[key] !== nearbyTrips[nearbyTrips.length - 1],
-                            )}
-                        </>
-                    );
-                })}
-            </ScrollView>
+            {!props.loading && (
+                <ScrollView
+                    contentContainerStyle={{
+                        paddingTop: 15,
+                        paddingBottom: BOTTOM_CARD_CONTENT_PADDING,
+                    }}
+                    showsHorizontalScrollIndicator={false}
+                >
+                    {Object.keys(nearbyTrips).map((key) => {
+                        return (
+                            <>
+                                {renderItem(
+                                    nearbyTrips[key],
+                                    nearbyTrips[key] !== nearbyTrips[nearbyTrips.length - 1],
+                                )}
+                            </>
+                        );
+                    })}
+                </ScrollView>
+            )}
+
+            {props.loading && (
+                <>
+                    <View style={{ marginTop: 35, marginHorizontal: 15 }}>
+                        <SvgAnimatedLinearGradient
+                            width={0.8 * SCREEN_WIDTH}
+                            height={20}
+                            primaryColor={colors.background}
+                            secondaryColor={colors.upper_background}
+                        />
+
+                        <SvgAnimatedLinearGradient
+                            style={{ marginTop: 10 }}
+                            width={0.4 * SCREEN_WIDTH}
+                            height={26}
+                            primaryColor={colors.background}
+                            secondaryColor={colors.upper_background}
+                        />
+
+                        <SvgAnimatedLinearGradient
+                            style={{ marginTop: 10 }}
+                            width={0.5 * SCREEN_WIDTH}
+                            height={20}
+                            primaryColor={colors.background}
+                            secondaryColor={colors.upper_background}
+                        />
+
+                        <SvgAnimatedLinearGradient
+                            style={{ marginTop: 40 }}
+                            width={0.8 * SCREEN_WIDTH}
+                            height={20}
+                            primaryColor={colors.background}
+                            secondaryColor={colors.upper_background}
+                        />
+
+                        <SvgAnimatedLinearGradient
+                            style={{ marginTop: 10 }}
+                            width={0.4 * SCREEN_WIDTH}
+                            height={26}
+                            primaryColor={colors.background}
+                            secondaryColor={colors.upper_background}
+                        />
+
+                        <SvgAnimatedLinearGradient
+                            style={{ marginTop: 10 }}
+                            width={0.5 * SCREEN_WIDTH}
+                            height={20}
+                            primaryColor={colors.background}
+                            secondaryColor={colors.upper_background}
+                        />
+                    </View>
+                </>
+            )}
         </SafeAreaView>
     );
 }

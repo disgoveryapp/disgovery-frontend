@@ -125,7 +125,10 @@ const BottomCard = (props) => {
                         <SearchBox onPress={() => performTransitionToSearch()} />
                     </Animated.View>
                     <Animated.View style={[styles.children, flatlistStyle]}>
-                        <BottomCardFlatList nearbyStations={props.nearbyStations} />
+                        <BottomCardFlatList
+                            nearbyStations={props.nearbyStations}
+                            loading={props.loading}
+                        />
                     </Animated.View>
                 </Animated.View>
             </PanGestureHandler>

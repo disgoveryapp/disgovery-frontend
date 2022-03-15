@@ -27,6 +27,7 @@ export default function Home() {
     const mapRef = useRef();
     let firstRun = true;
 
+    const [loading, setLoading] = useState(false);
     const [mapsIsRecentered, setMapsIsRecentered] = useState(false);
     const [location, setLocation] = useState(null);
     const [mapCurrentLocationRegion, setMapCurrentLocationRegion] = useState({});
@@ -114,6 +115,7 @@ export default function Home() {
     }
 
     function fetchNearbyStations(region) {
+        setLoading(true);
         axios
             .get(
                 `${configs.API_URL}/station/nearby?lat=${region.latitude}&lng=${
@@ -125,10 +127,12 @@ export default function Home() {
             )
             .then((response) => {
                 setNearbyStations(response.data.data);
+                setLoading(false);
             })
             .catch((error) => {
                 console.log(error);
                 setNearbyStations([]);
+                setLoading(false);
             });
     }
 
@@ -151,7 +155,7 @@ export default function Home() {
             ></MapView>
             <RecenterButton recentered={mapsIsRecentered} onPress={recenter} />
             <View style={styles.bottomcard}>
-                <BottomCard nearbyStations={nearbyStations} />
+                <BottomCard nearbyStations={nearbyStations} loading={loading} />
             </View>
         </View>
     );
