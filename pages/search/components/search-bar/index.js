@@ -4,9 +4,13 @@ import ThemedText from "../../../../components/themed-text";
 import ThemedTextInput from "../../../../components/themed-text-input";
 import SearchIcon from "../../../../assets/svgs/search-icon";
 import CloseIcon from "../../../../assets/svgs/close-icon";
+import ArrowBackwardIcon from "../../../../assets/svgs/arrow-backward-24px";
+import { useNavigation } from "@react-navigation/native";
 
 export default function SearchBar(props) {
     const clearText = () => props.onChangeText("");
+    const navigation = useNavigation();
+
     const styles = StyleSheet.create({
         container: {
             width: "auto",
@@ -18,7 +22,9 @@ export default function SearchBar(props) {
         },
         body: {
             flex: 1,
+            display: "flex",
             flexDirection: "row",
+            alignItems: "center",
         },
         textinput: {
             flex: 1,
@@ -27,10 +33,16 @@ export default function SearchBar(props) {
         },
     });
 
+    function goBack() {
+        navigation.pop();
+    }
+
     return (
         <View style={styles.container}>
             <View style={styles.body}>
-                <SearchIcon />
+                <TouchableOpacity onPress={goBack}>
+                    <ArrowBackwardIcon />
+                </TouchableOpacity>
                 <ThemedTextInput
                     placeholder={props.placeholder}
                     style={styles.textinput}

@@ -34,14 +34,14 @@ const SearchBox = (props) => {
     const styles = StyleSheet.create({
         container: {
             width: "100%",
-            height: 44,
+            height: 50,
             backgroundColor: colors.upper_background,
             borderRadius: 12,
             display: "flex",
             flexDirection: "row",
             justifyContent: "space-between",
             alignItems: "center",
-            padding: 10,
+            paddingHorizontal: 15,
 
             shadowColor: colors.shadow,
             shadowOffset: {

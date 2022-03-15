@@ -20,6 +20,7 @@ import { configs } from "../../configs/configs";
 import BadConnectionComponent from "./components/bad-connection";
 import * as Haptics from "expo-haptics";
 import ExpandDownIcon18px from "../../assets/svgs/expand-down-icon-18px";
+import PlaceIcon from "../../assets/svgs/place-icon";
 
 const CLOSE_ON_SCROLL_TO = -100;
 const CLOSE_ON_VELOCITY = -3;
@@ -175,6 +176,27 @@ export default function Search() {
             fontSize: 14,
             color: colors.subtitle,
         },
+        trySearchingContainer: {
+            width: "100%",
+            height: "90%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+        },
+        trySearchingIconsContainer: {
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+        },
+        trySearchingText: {
+            width: "75%",
+            textAlign: "center",
+            fontSize: 16,
+            fontWeight: "500",
+            marginTop: 10,
+            color: colors.subtitle,
+        },
     });
 
     function onScroll(event) {
@@ -314,7 +336,17 @@ export default function Search() {
                                             )}
                                         </>
                                     ) : (
-                                        <></>
+                                        <>
+                                            <View style={styles.trySearchingContainer}>
+                                                <View style={styles.trySearchingIconsContainer}>
+                                                    <PlaceIcon fill={colors.subtitle} />
+                                                </View>
+                                                <ThemedText style={styles.trySearchingText}>
+                                                    Try searching for stations, places, or
+                                                    destinations
+                                                </ThemedText>
+                                            </View>
+                                        </>
                                     )}
                                 </ScrollView>
                             ) : (
