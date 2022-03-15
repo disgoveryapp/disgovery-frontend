@@ -32,6 +32,7 @@ export default function ThemedTextInput(props) {
 
     return (
         <TextInput
+            ref={props.ref || null}
             style={{
                 color: props.color || colors.text,
                 fontFamily: fontFamily === "" ? undefined : fontFamily,
@@ -42,7 +43,7 @@ export default function ThemedTextInput(props) {
             value={props.value}
             onChange={props.onChange}
             onPressIn={props.onPressIn}
-            autoFocus={props.autoFocus}
+            autoFocus={props.autoFocus || false}
         >
             {props.children}
         </TextInput>

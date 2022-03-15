@@ -46,8 +46,13 @@ export default function App() {
                             headerShown: false,
                         }}
                     >
-                        {/* <Stack.Screen name="Home" component={Home} /> */}
-                        <Stack.Screen name="Search" component={Search} />
+                        <Stack.Screen name="Home" component={Home} />
+                        <Stack.Screen name="TripDetails" component={TripDetails} />
+                        <Stack.Screen
+                            name="Search"
+                            component={Search}
+                            options={{ animation: "fade", gestureEnabled: false }}
+                        />
                     </Stack.Navigator>
                 </NavigationContainer>
             </>

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { SafeAreaView, StyleSheet, Text, View } from "react-native";
+import { SafeAreaView, StyleSheet, Text, View, Dimensions } from "react-native";
 import ThemedText from "../../components/themed-text";
 import { useTheme } from "@react-navigation/native";
 import MapView, { Polyline } from "react-native-maps";
@@ -7,8 +7,13 @@ import { decode } from "@googlemaps/polyline-codec";
 import { googleMapsStyling } from "../../maps/google-maps-styling";
 import * as Location from "expo-location";
 import RecenterButton from "../../components/recenter-button";
-import AccountModal from "../../components/account-modal";
-import ThemedTextMarquee from "../../components/themed-text-marquee";
+import BottomCard from "../../components/bottom-card";
+import SearchBox from "../../components/search-box";
+import BottomCardFlatList from "../../components/bottom-card-flat-list";
+import axios from "axios";
+import { configs } from "../../configs/configs";
+
+const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get("window");
 
 const INITIAL_MAP_REGION = {
     latitude: 13.764889,
@@ -18,12 +23,17 @@ const INITIAL_MAP_REGION = {
 };
 
 export default function Home() {
-    const { colors } = useTheme();
+    const { dark, colors } = useTheme();
     const mapRef = useRef();
+    let firstRun = true;
+
+    const [loading, setLoading] = useState(false);
     const [mapsIsRecentered, setMapsIsRecentered] = useState(false);
     const [location, setLocation] = useState(null);
     const [mapCurrentLocationRegion, setMapCurrentLocationRegion] = useState({});
     const [locationErrorMessage, setLocationErrorMessage] = useState(null);
+
+    const [nearbyStations, setNearbyStations] = useState([]);
 
     const styles = StyleSheet.create({
         container: {
@@ -32,10 +42,6 @@ export default function Home() {
             justifyContent: "center",
             alignItems: "center",
         },
-        text: {
-            fontSize: 32,
-            fontWeight: "bold",
-        },
         maps: {
             position: "absolute",
             top: 0,
@@ -43,26 +49,24 @@ export default function Home() {
             width: "100%",
             height: "100%",
         },
-        searchbox: {
-            flex: 1,
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "flex-end",
-            paddingHorizontal: 12,
-        },
-        accountbox: {
-            position: "absolute",
-            right: 0,
-            bottom: 25,
-            alignItems: "flex-end",
+        bottomcard: {
+            top: SCREEN_HEIGHT * (8.75 / 3),
+            zIndex: 5,
         },
     });
 
     useEffect(() => {
-        (async () => {
-            recenter();
-        })().catch(() => {});
+        if (firstRun) {
+            (async () => {
+                recenter();
+            })().catch(() => {});
+            firstRun = false;
+        }
     }, []);
+
+    useEffect(() => {
+        mapRef._updateStyle;
+    }, [colors]);
 
     async function fetchNewLocation() {
         let { status } = await Location.requestForegroundPermissionsAsync().catch(() => {});
@@ -74,6 +78,7 @@ export default function Home() {
         let location = await Location.getCurrentPositionAsync({
             accuracy: Location.Accuracy.BestForNavigation,
         }).catch(() => {});
+
         setLocation(location);
         setMapCurrentLocationRegion({
             latitude: location.coords.latitude,
@@ -109,23 +114,49 @@ export default function Home() {
         return decodedPolyline;
     }
 
+    function fetchNearbyStations(region) {
+        setLoading(true);
+        axios
+            .get(
+                `${configs.API_URL}/station/nearby?lat=${region.latitude}&lng=${
+                    region.longitude
+                }&radius=${region.latitudeDelta * 111045}`,
+                {
+                    timeout: 10000,
+                },
+            )
+            .then((response) => {
+                setNearbyStations(response.data.data);
+                setLoading(false);
+            })
+            .catch((error) => {
+                console.log(error);
+                setNearbyStations([]);
+                setLoading(false);
+            });
+    }
+
+    function onMapRegionChangeComplete(region) {
+        fetchNearbyStations(region);
+    }
+
     return (
         <View style={styles.container}>
-            <ThemedTextMarquee style={{ fontSize: 40, fontWeight: "bold" }}>
-                Please mind the gap between the train and the platform. This is Aldgate. This is a
-                Circle line train via Liverpool Street and King’s Cross St. Pancras
-            </ThemedTextMarquee>
-            {/* <SafeAreaView />
+            <SafeAreaView />
             <MapView
                 ref={mapRef}
                 style={styles.maps}
                 initialRegion={INITIAL_MAP_REGION}
                 provider="google"
-                customMapStyle={googleMapsStyling}
+                customMapStyle={dark ? googleMapsStyling.dark : googleMapsStyling.light}
                 onTouchStart={() => setMapsIsRecentered(false)}
+                onRegionChangeComplete={(region) => onMapRegionChangeComplete(region)}
                 showsUserLocation
             ></MapView>
-            <RecenterButton recentered={mapsIsRecentered} onPress={recenter} /> */}
+            <RecenterButton recentered={mapsIsRecentered} onPress={recenter} />
+            <View style={styles.bottomcard}>
+                <BottomCard nearbyStations={nearbyStations} loading={loading} />
+            </View>
         </View>
     );
 }

@@ -2,17 +2,17 @@ import { useTheme } from "@react-navigation/native";
 import * as React from "react";
 import Svg, { Path } from "react-native-svg";
 
-const ArrowIcon24 = (props) => {
+const ArrowIcon = (props) => {
     const { colors } = useTheme();
 
     return (
-        <Svg width={24} height={24} fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+        <Svg width={18} height={18} fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
             <Path
-                d="m12 4-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8-8-8Z"
+                d="M9 3 7.942 4.058l4.185 4.192H3v1.5h9.127l-4.185 4.193L9 15l6-6-6-6Z"
                 fill={props.fill || colors.subtitle}
             />
         </Svg>
     );
 };
 
-export default ArrowIcon24;
+export default ArrowIcon;

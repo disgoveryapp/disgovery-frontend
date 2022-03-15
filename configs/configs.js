@@ -1,5 +1,5 @@
 export const configs = {
-    API_URL: "http://localhost:3000",
+    API_URL: "http://192.168.1.8:3000",
     INITIAL_MAP_REGION: {
         latitude: 13.764889,
         longitude: 100.538266,
@@ -8,7 +8,7 @@ export const configs = {
     },
 };
 
-export const pSBC = (p, c0, c1, l) => {
+export function pSBC(p, c0, c1, l) {
     let r,
         g,
         b,
@@ -94,4 +94,4 @@ export const pSBC = (p, c0, c1, l) => {
                 .toString(16)
                 .slice(1, f ? undefined : -2)
         );
-};
+}

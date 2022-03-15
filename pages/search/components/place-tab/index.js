@@ -19,7 +19,7 @@ function PlaceTab(props) {
             flexDirection: "row",
             justifyContent: "flex-start",
             alignItems: "center",
-            borderBottomColor: "grey",
+            borderBottomColor: colors.divider,
             borderBottomWidth: 1,
         },
         placeholderContainer: {
@@ -45,7 +45,7 @@ function PlaceTab(props) {
             justifyContent: "flex-start",
             alignItems: "center",
             padding: 15,
-            borderBottomColor: "grey",
+            borderBottomColor: colors.divider,
             borderBottomWidth: 1,
         },
         datacontainer: {

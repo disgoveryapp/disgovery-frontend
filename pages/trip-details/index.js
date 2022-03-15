@@ -30,10 +30,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { decode } from "@googlemaps/polyline-codec";
 import { LinearGradient } from "expo-linear-gradient";
 import ArrowIcon24 from "../../assets/svgs/arrow-forward-24px";
-import ArrowIcon from "../../assets/svgs/arrow_forward-icon";
-
-const TRIP = "BTS_SUKHUMVIT_WD_E15_N24";
-const ORIGIN = "BTS_N9";
+import ArrowIcon from "../../assets/svgs/arrow-forward-18px";
 
 const MARGIN_BETWEEN_STATION = 25;
 const MARGIN_BETWEEN_STATION_TITLE_AND_CIRCLE = 10;
@@ -63,7 +60,10 @@ dayjs.updateLocale("en", {
 });
 
 function TripDetails(props) {
-    const { colors } = useTheme();
+    const { dark, colors } = useTheme();
+
+    const TRIP_ID = props.route.params.trip_id;
+    const ORIGIN_ID = props.route.params.origin_id;
 
     const mapRef = useRef(null);
 
@@ -115,7 +115,7 @@ function TripDetails(props) {
     function fetchTripDetails() {
         setLoading(true);
         axios
-            .get(`${configs.API_URL}/trip/${TRIP}?origin=${ORIGIN}`)
+            .get(`${configs.API_URL}/trip/${TRIP_ID}?origin=${ORIGIN_ID}`)
             .then((response) => {
                 let responseData = response.data.data;
                 let approximateTime = false;
@@ -558,8 +558,7 @@ function TripDetails(props) {
                                             width: 15,
                                             height: origin
                                                 ? nextStationLineHeights[iteration] +
-                                                  MARGIN_BETWEEN_STATION +
-                                                  PLATFORM_FONT_SIZE
+                                                  MARGIN_BETWEEN_STATION
                                                 : nextStationLineHeights[iteration] +
                                                   MARGIN_BETWEEN_STATION,
                                             top: STATION_CIRCLE_DIAMETER / 2,
@@ -626,14 +625,14 @@ function TripDetails(props) {
             <View>
                 <View style={styles.backButtonContainer}>
                     <SafeAreaView edges={["top"]} />
-                    <BackButton />
+                    <BackButton onPress={props.navigation.pop} />
                 </View>
 
                 <MapView
                     ref={mapRef}
                     style={styles.topMap}
                     provider={PROVIDER_GOOGLE}
-                    customMapStyle={googleMapsStyling}
+                    customMapStyle={dark ? googleMapsStyling.dark : googleMapsStyling.light}
                     initialRegion={configs.INITIAL_MAP_REGION}
                     mapPadding={{ bottom: 0.05 * Dimensions.get("screen").height }}
                 >
@@ -772,7 +771,7 @@ function TripDetails(props) {
                                     <ThemedText style={styles.unableToLoadTheTripText}>
                                         Unable to load the trip
                                     </ThemedText>
-                                    <TouchableOpacity>
+                                    <TouchableOpacity onPress={() => props.navigation.pop()}>
                                         <ThemedText style={styles.goBackText}>Go back</ThemedText>
                                     </TouchableOpacity>
                                 </View>
