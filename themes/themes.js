@@ -13,6 +13,7 @@ export const darkTheme = {
         middle_grey: "#7B7B7B",
         white: "#fff",
         shadow: "#000",
+        divider: "#444444",
     },
 };
 
@@ -31,5 +32,6 @@ export const lightTheme = {
         middle_grey: "#7B7B7B",
         white: "#fff",
         shadow: "#000",
+        divider: "#e0e0e0",
     },
 };

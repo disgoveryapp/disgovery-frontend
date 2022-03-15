@@ -390,7 +390,7 @@ export default function BottomCardFlatList(props) {
         },
         divider: {
             height: 1,
-            backgroundColor: colors.upper_background,
+            backgroundColor: colors.divider,
         },
         iconContainer: {
             width: "30%",
@@ -440,6 +440,16 @@ export default function BottomCardFlatList(props) {
             flexDirection: "row",
             marginTop: 10,
             marginBottom: 15,
+
+            shadowColor: colors.shadow,
+            shadowOffset: {
+                width: 0,
+                height: 5,
+            },
+            shadowOpacity: 0.34,
+            shadowRadius: 4.27,
+
+            elevation: 10,
         },
         otherOriginContainer: {
             width: "auto",

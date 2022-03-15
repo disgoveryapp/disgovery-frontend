@@ -28,7 +28,7 @@ function StationTab(props) {
             flexDirection: "row",
             justifyContent: "space-between",
             alignItems: "center",
-            borderBottomColor: "grey",
+            borderBottomColor: colors.divider,
             borderBottomWidth: 1,
         },
         placeholderContainer: {
