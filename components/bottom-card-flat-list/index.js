@@ -1,16 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { TouchableOpacity, SafeAreaView, View, StyleSheet, Dimensions } from "react-native";
 import ThemedText from "../themed-text";
-import ArrowIcon from "../../assets/svgs/arrow-forward-18px";
 import BusIcon from "../../assets/svgs/bus-icon";
-import BTSIcon from "../../assets/svgs/BTS-icon";
-import ShipIcon from "../../assets/svgs/ship-icon";
-import ARLIcon from "../../assets/svgs/ARL-icon";
-import BRTIcon from "../../assets/svgs/BRT-icon";
 import SubwayIcon from "../../assets/svgs/subway-icon";
-import MLineIcon from "../../assets/svgs/MLine-icon";
-import RedLineIcon from "../../assets/svgs/RedLine-icon";
-import ThemedTextMarquee from "../themed-text-marquee";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { ScrollView } from "react-native-gesture-handler";
 import { BOTTOM_CARD_CONTENT_PADDING } from "../bottom-card";
@@ -405,7 +397,6 @@ export default function BottomCardFlatList(props) {
         },
         transitLine: {
             marginRight: 3,
-            marginLeft: 7,
         },
         firstLine: {
             display: "flex",
@@ -472,6 +463,7 @@ export default function BottomCardFlatList(props) {
             height: 24,
             backgroundColor: colors.text,
             borderRadius: 6,
+            marginRight: 7,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
