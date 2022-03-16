@@ -269,111 +269,11 @@ export default function Search() {
         <>
             <View style={styles.container}>
                 <SafeAreaView />
-                <View style={styles.searchbox}>
-                    <Searchbar
-                        placeholder="Search destination"
-                        onChangeText={onChangeText}
-                        value={text}
-                        onModeChange={changeMode}
-                    />
-                </View>
+                <View style={styles.searchbox}></View>
 
                 <TouchableOpacity onPress={() => onChangeText}></TouchableOpacity>
 
-                <View style={styles.scrollView}>
-                    {!loading && (
-                        <>
-                            {!(error21 && error22) ? (
-                                <ScrollView
-                                    style={styles.scrollView}
-                                    showsHorizontalScrollIndicator={false}
-                                    showsVerticalScrollIndicator={false}
-                                    contentContainerStyle={{
-                                        paddingBottom: 35,
-                                        marginTop: CLOSE_ON_SCROLL_TO,
-                                    }}
-                                    keyboardDismissMode="interactive"
-                                    scrollEventThrottle={16}
-                                    onScroll={onScroll}
-                                    onScrollBeginDrag={onScrollBeginDrag}
-                                    onScrollEndDrag={onScrollEndDrag}
-                                >
-                                    <PullDownToClose />
-                                    {(api22Result !== undefined &&
-                                        api22Result !== null &&
-                                        api22Result.length !== 0) ||
-                                    (api21Result !== undefined &&
-                                        api21Result !== null &&
-                                        api21Result.length !== 0) ? (
-                                        <>
-                                            {api22Result !== undefined &&
-                                            api22Result !== null &&
-                                            api22Result.length !== 0 ? (
-                                                <>
-                                                    <ThemedText style={styles.topictext}>
-                                                        Stations
-                                                    </ThemedText>
-                                                    <View style={styles.tabbarcontainer}>
-                                                        <>
-                                                            {api22Result.map((item, key) => (
-                                                                <StationTab
-                                                                    key={key}
-                                                                    place={item.name.en}
-                                                                    trip={item.trips}
-                                                                ></StationTab>
-                                                            ))}
-                                                        </>
-                                                    </View>
-                                                </>
-                                            ) : (
-                                                <></>
-                                            )}
-                                            {api21Result !== undefined &&
-                                            api21Result !== null &&
-                                            api21Result.length !== 0 ? (
-                                                <View>
-                                                    <ThemedText style={styles.topictext}>
-                                                        Places
-                                                    </ThemedText>
-                                                    <View style={styles.tabbarcontainer}>
-                                                        {api21Result.map((item, key) => (
-                                                            <PlaceTab
-                                                                key={key}
-                                                                place={item.name.en}
-                                                                address={item.address.en}
-                                                            ></PlaceTab>
-                                                        ))}
-                                                    </View>
-                                                </View>
-                                            ) : (
-                                                <></>
-                                            )}
-                                        </>
-                                    ) : (
-                                        <>
-                                            <View style={styles.trySearchingContainer}>
-                                                <View style={styles.trySearchingIconsContainer}>
-                                                    {mode ? (
-                                                        TRY_SEARCHING_COMPONENTS[mode].icon
-                                                    ) : (
-                                                        <></>
-                                                    )}
-                                                </View>
-                                                <ThemedText style={styles.trySearchingText}>
-                                                    {mode
-                                                        ? TRY_SEARCHING_COMPONENTS[mode].string
-                                                        : ""}
-                                                </ThemedText>
-                                            </View>
-                                        </>
-                                    )}
-                                </ScrollView>
-                            ) : (
-                                <BadConnectionComponent />
-                            )}
-                        </>
-                    )}
-                </View>
+                <View style={styles.scrollView}></View>
             </View>
         </>
     );

@@ -7,7 +7,7 @@ import CloseIcon from "../../../../assets/svgs/close-icon";
 import { useTheme } from "@react-navigation/native";
 import ArrowIcon24 from "../../../../assets/svgs/arrow-forward-24px";
 import SwapIcon from "../../../../assets/svgs/swap-icon";
-import { useKeyboard } from "../check-keyboard";
+import { useKeyboard } from "../../../search/components/check-keyboard";
 
 export default function SearchOriginBar(props) {
     const { colors } = useTheme();
