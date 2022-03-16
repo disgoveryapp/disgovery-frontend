@@ -71,14 +71,22 @@ function PlaceTab(props) {
                             }
                         })()}
                     </View>
-                    <View style={styles.datacontainer}>
-                        <ThemedTextMarquee style={styles.title} numberOfLines={1}>
-                            {props.place}
-                        </ThemedTextMarquee>
-                        <ThemedText style={styles.subtitle} numberOfLines={1}>
-                            {props.address}
-                        </ThemedText>
-                    </View>
+                    {props.address ? (
+                        <View style={styles.datacontainer}>
+                            <ThemedTextMarquee style={styles.title} numberOfLines={1}>
+                                {props.place}
+                            </ThemedTextMarquee>
+                            <ThemedText style={styles.subtitle} numberOfLines={1}>
+                                {props.address}
+                            </ThemedText>
+                        </View>
+                    ) : (
+                        <View style={styles.datacontainer}>
+                            <ThemedTextMarquee style={styles.title} numberOfLines={1}>
+                                {props.place}
+                            </ThemedTextMarquee>
+                        </View>
+                    )}
                 </View>
             </TouchableOpacity>
         </View>
