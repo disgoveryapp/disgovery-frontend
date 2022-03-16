@@ -21,6 +21,7 @@ export default function SearchOriginBar(props) {
         const temp = props.value;
         props.onChangeText(props.valueLocation);
         props.onChangeTextLocation(temp);
+        props.setFlip(true);
     }
     function tabOne() {
         if (isTabTwoOpen == true) {
@@ -92,6 +93,7 @@ export default function SearchOriginBar(props) {
                                 onChange={props.onChange}
                                 onPressIn={() => {
                                     tabOne();
+                                    props.onPressOriginIn();
                                 }}
                                 autoFocus={props.autoFocus}
                             />
@@ -121,6 +123,7 @@ export default function SearchOriginBar(props) {
                                 onChange={props.onChange}
                                 onPressIn={() => {
                                     tabTwo();
+                                    props.onPressDestinationIn();
                                 }}
                             />
                             <View>

@@ -286,8 +286,6 @@ export default function Search() {
                     />
                 </View>
 
-                <TouchableOpacity onPress={() => onChangeText}></TouchableOpacity>
-
                 <View style={styles.scrollView}>
                     {!loading && (
                         <>
@@ -331,7 +329,7 @@ export default function Search() {
                                                                     onPress={() => {
                                                                         setDestination_data(item);
                                                                         navigateToSearchOriginPage(
-                                                                            text,
+                                                                            item.name.en,
                                                                             destination_data,
                                                                         );
                                                                     }}
@@ -359,7 +357,7 @@ export default function Search() {
                                                                 onPress={() => {
                                                                     setDestination_data(item);
                                                                     navigateToSearchOriginPage(
-                                                                        text,
+                                                                        item.name.en,
                                                                         destination_data,
                                                                     );
                                                                 }}
