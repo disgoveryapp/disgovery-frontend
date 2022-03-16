@@ -11,24 +11,21 @@ import {
 } from "react-native";
 import ThemedText from "../../components/themed-text";
 import { useNavigation, useTheme } from "@react-navigation/native";
-import Searchbar from "./components/search-bar";
 import axios from "axios";
-import PlaceTab from "./components/place-tab";
 import { useDebounce } from "use-lodash-debounce";
-import StationTab from "./components/station-tab";
 import { configs } from "../../configs/configs";
-import BadConnectionComponent from "./components/bad-connection";
 import * as Haptics from "expo-haptics";
 import ExpandDownIcon18px from "../../assets/svgs/expand-down-icon-18px";
 import PlaceIcon from "../../assets/svgs/place-icon";
 import RouteIcon from "../../assets/svgs/route-icon";
+import SearchOriginBar from "./components/search-origin-bar";
 
 const CLOSE_ON_SCROLL_TO = -100;
 const CLOSE_ON_VELOCITY = -3;
 const PULL_TO_CLOSE_STRING = "Pull down to close";
 const RELEASE_TO_CLOSE_STRING = "Release to close";
 
-export default function Search() {
+export default function SearchOrigin() {
     const { colors } = useTheme();
 
     const scrollY = new Animated.Value(0);
@@ -152,22 +149,6 @@ export default function Search() {
 
             elevation: 10,
         },
-        flatList: {
-            height: "100%",
-        },
-        item: {
-            padding: 10,
-            fontSize: 18,
-            height: 44,
-        },
-        topictext: {
-            color: colors.subtitle,
-            paddingHorizontal: 15,
-            fontWeight: "600",
-        },
-        tabbarcontainer: {
-            paddingBottom: 12,
-        },
         pullDownToCloseContainer: {
             width: "100%",
             display: "flex",
@@ -269,9 +250,9 @@ export default function Search() {
         <>
             <View style={styles.container}>
                 <SafeAreaView />
-                <View style={styles.searchbox}></View>
-
-                <TouchableOpacity onPress={() => onChangeText}></TouchableOpacity>
+                <View style={styles.searchbox}>
+                    <SearchOriginBar />
+                </View>
 
                 <View style={styles.scrollView}></View>
             </View>

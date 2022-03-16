@@ -42,6 +42,7 @@ export default function Search() {
 
     const [hapticPlayed, setHapticPlayed] = useState(false);
     const [closable, setClosable] = useState(true);
+    const [destination_data, setDestination_data] = useState({});
 
     const [pullDownToCloseString, setPullDownToCloseString] = useState(PULL_TO_CLOSE_STRING);
     const [mode, setMode] = useState("");
@@ -239,6 +240,13 @@ export default function Search() {
         }
     }
 
+    function navigateToSearchOriginPage(destination_name, destination_data) {
+        navigation.navigate("SearchOrigin", {
+            destination_name: destination_name,
+            destination_data: destination_data,
+        });
+    }
+
     function changeMode(mode) {
         setMode(mode);
     }
@@ -320,7 +328,14 @@ export default function Search() {
                                                                     key={key}
                                                                     place={item.name.en}
                                                                     trip={item.trips}
-                                                                ></StationTab>
+                                                                    onPress={() => {
+                                                                        setDestination_data(item);
+                                                                        navigateToSearchOriginPage(
+                                                                            text,
+                                                                            destination_data,
+                                                                        );
+                                                                    }}
+                                                                />
                                                             ))}
                                                         </>
                                                     </View>
@@ -341,7 +356,14 @@ export default function Search() {
                                                                 key={key}
                                                                 place={item.name.en}
                                                                 address={item.address.en}
-                                                            ></PlaceTab>
+                                                                onPress={() => {
+                                                                    setDestination_data(item);
+                                                                    navigateToSearchOriginPage(
+                                                                        text,
+                                                                        destination_data,
+                                                                    );
+                                                                }}
+                                                            />
                                                         ))}
                                                     </View>
                                                 </View>

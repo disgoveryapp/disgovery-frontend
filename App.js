@@ -20,6 +20,7 @@ import Home from "./pages/home";
 
 import TripDetails from "./pages/trip-details";
 import Search from "./pages/search";
+import SearchOrigin from "./pages/search-origin";
 
 export default function App() {
     const scheme = useColorScheme();
@@ -51,6 +52,11 @@ export default function App() {
                         <Stack.Screen
                             name="Search"
                             component={Search}
+                            options={{ animation: "fade", gestureEnabled: false }}
+                        />
+                        <Stack.Screen
+                            name="SearchOrigin"
+                            component={SearchOrigin}
                             options={{ animation: "fade", gestureEnabled: false }}
                         />
                     </Stack.Navigator>
