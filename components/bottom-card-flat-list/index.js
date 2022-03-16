@@ -36,8 +36,8 @@ export default function BottomCardFlatList(props) {
                     tempNearbyTrips[props.nearbyStations[key].lines[0].trip_id].origins = [
                         ...tempNearbyTrips[props.nearbyStations[key].lines[0].trip_id].origins,
                         {
-                            name: props.nearbyStations[key].name,
-                            id: props.nearbyStations[key].uid,
+                            name: props.nearbyStations[key].name.en,
+                            id: props.nearbyStations[key].id,
                             code: props.nearbyStations[key].code,
                             distance: props.nearbyStations[key].distance,
                             arriving_in: props.nearbyStations[key].lines[0].arriving_in,
@@ -50,13 +50,13 @@ export default function BottomCardFlatList(props) {
                 } else {
                     tempNearbyTrips[props.nearbyStations[key].lines[0].trip_id] = {
                         trip_id: props.nearbyStations[key].lines[0].trip_id,
-                        route_name: props.nearbyStations[key].lines[0].name,
-                        route_color: props.nearbyStations[key].lines[0].color,
+                        route_name: props.nearbyStations[key].lines[0].route_name,
+                        route_color: props.nearbyStations[key].lines[0].route_color,
                         route_type: props.nearbyStations[key].lines[0].route_type,
                         origins: [
                             {
-                                name: props.nearbyStations[key].name,
-                                id: props.nearbyStations[key].uid,
+                                name: props.nearbyStations[key].name.en,
+                                id: props.nearbyStations[key].id,
                                 code: props.nearbyStations[key].code,
                                 distance: props.nearbyStations[key].distance,
                                 arriving_in: props.nearbyStations[key].lines[0].arriving_in,
@@ -65,9 +65,9 @@ export default function BottomCardFlatList(props) {
                             },
                         ],
                         destination: {
-                            name: props.nearbyStations[key].lines[0].destination.name,
+                            name: props.nearbyStations[key].lines[0].destination.name.en,
                             code: props.nearbyStations[key].lines[0].destination.code,
-                            id: props.nearbyStations[key].lines[0].destination.uid,
+                            id: props.nearbyStations[key].lines[0].destination.id,
                         },
                     };
                 }
