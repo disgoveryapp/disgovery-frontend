@@ -4,16 +4,18 @@ import ThemedText from "../../../../components/themed-text";
 import ThemedTextInput from "../../../../components/themed-text-input";
 import SearchIcon from "../../../../assets/svgs/search-icon";
 import CloseIcon from "../../../../assets/svgs/close-icon";
-import { useTheme } from "@react-navigation/native";
+import { useNavigation, useTheme } from "@react-navigation/native";
 import ArrowIcon24 from "../../../../assets/svgs/arrow-forward-24px";
 import SwapIcon from "../../../../assets/svgs/swap-icon";
 import { useKeyboard } from "../../../search/components/check-keyboard";
+import ArrowBackwardIcon from "../../../../assets/svgs/arrow-backward-24px";
 
 export default function SearchOriginBar(props) {
     const { colors } = useTheme();
     const isKeyboardOpen = useKeyboard();
     const [isTabOneOpen, setTabOne] = useState(true);
     const [isTabTwoOpen, setTabTwo] = useState(false);
+    const navigation = useNavigation();
 
     const clearText = () => props.onChangeText("");
     const clearTextLocation = () => props.onChangeTextLocation("");
@@ -75,6 +77,9 @@ export default function SearchOriginBar(props) {
             paddingHorizontal: 8,
         },
     });
+    function goBack() {
+        navigation.pop();
+    }
 
     return (
         <View style={styles.outerContainer}>
@@ -82,7 +87,9 @@ export default function SearchOriginBar(props) {
                 <View style={styles.container}>
                     <View style={styles.body}>
                         <View style={{ marginRight: 6 }}>
-                            <SearchIcon fill={colors.subtitle} />
+                            <TouchableOpacity onPress={goBack}>
+                                <ArrowBackwardIcon fill={colors.subtitle} />
+                            </TouchableOpacity>
                         </View>
                         <View style={styles.textContainer}>
                             <ThemedTextInput
