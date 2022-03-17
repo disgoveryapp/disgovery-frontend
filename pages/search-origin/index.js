@@ -52,7 +52,7 @@ export default function SearchOrigin(props) {
     const [error21, setError21] = useState(false);
     const [error22, setError22] = useState(false);
     const [loading, setLoading] = useState(false);
-
+    const ErrorMessage = "ERR_UNESCAPED_CHARACTERS";
     const [hapticPlayed, setHapticPlayed] = useState(false);
     const [closable, setClosable] = useState(true);
 
