@@ -135,7 +135,7 @@ export default function SearchOrigin(props) {
     }, [destinationInput]);
 
     useEffect(() => {
-        if (text === "" || text === "My Location") {
+        if (text === "" || text === "My Location" || onFlip) {
             setApi22Result([]);
         } else {
             setLoading(true);
@@ -145,9 +145,10 @@ export default function SearchOrigin(props) {
     }, [text]);
 
     useEffect(() => {
-        if (text === "" || text === "My Location") {
+        if (text === "" || text === "My Location" || onFlip) {
             setApi21Result([]);
             setApi22Result([]);
+            setFlip(false);
         } else {
             simpleApi21Call();
         }
@@ -267,7 +268,9 @@ export default function SearchOrigin(props) {
                                                                                 item.name.en,
                                                                             );
                                                                             setOriginData(item);
-                                                                        } else {
+                                                                        } else if (
+                                                                            isSearchDestination
+                                                                        ) {
                                                                             setDestinationInput(
                                                                                 item.name.en,
                                                                             );
