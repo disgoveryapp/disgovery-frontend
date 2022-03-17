@@ -12,6 +12,7 @@ import { configs } from "../../configs/configs";
 import NavigateBotton from "../../components/navigate-button";
 import BackButton from "../../components/back-button";
 import { color } from "react-native/Libraries/Components/View/ReactNativeStyleAttributes";
+import ScheduleList from "../../components/shedule-list";
 
 const STATION = "BTS_N9";
 
@@ -28,9 +29,11 @@ export default function StationDetails() {
     const { colors } = useTheme();
     const mapRef = useRef();
     const [stationDetails, setStationDetails] = useState(undefined);
+    const [schedulesDetails, setSchedulesDetails] = useState([]);
 
     useEffect(() => {
         fetchStationDetails();
+        fetchScheduleDetails(stationDetails);
     }, []);
 
     async function recenter(latitude, longitude) {
@@ -41,8 +44,7 @@ export default function StationDetails() {
     }
 
     function fetchStationDetails() {
-        axios
-            .get(`${configs.API_URL}/station/id/${STATION}`)
+        axios.get(`${configs.API_URL}/station/id/${STATION}`)
             .then((response) => {
                 let responseData = response.data.data;
                 console.log(response.data.data);
@@ -54,11 +56,39 @@ export default function StationDetails() {
                 );
                 
             })
-            .catch((error) => {
-                console.log("An error occured while getting station details " + error);
-                setStationDetails("error");
+            .catch(function (error) {
+                if (error.response) {
+                  console.log(error.response.data);
+                  console.log(error.response.status);
+                  console.log(error.response.headers);
+                } else if (error.request) {
+                  console.log(error.request);
+                } else {
+                  console.log('Error', error.message);
+                }
             });
     }
+
+    function fetchScheduleDetails(stationDetails) {
+        axios.get(`${configs.API_URL}/nearby?lat=${stationDetails.coordinates.lat}&lng=${stationDetails.coordinates.lng}`)
+            .then((response) => {
+                let responseData = response.data.data;
+                console.log(response.data.data);
+                setSchedulesDetails(responseData);              
+            })
+            .catch(function (error) {
+                if (error.response) {
+                  console.log(error.response.data);
+                  console.log(error.response.status);
+                  console.log(error.response.headers);
+                } else if (error.request) {
+                  console.log(error.request);
+                } else {
+                  console.log('Error', error.message);
+                }
+            });
+    }
+
 
     const styles = StyleSheet.create({
         container: {
@@ -147,7 +177,10 @@ export default function StationDetails() {
                     <View style={styles.navigateButtonContainer}>
                         <NavigateBotton/>
                         {StationIcon}
-                    </View> 
+                    </View>
+                    <View style={styles.scheduleListcontainer}>
+                        <ScheduleList schedulesDetails={schedulesDetails} />
+                    </View>
                 </BottomCard>
             </View>
         </View>
