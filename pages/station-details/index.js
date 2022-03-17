@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { SafeAreaView, StyleSheet, View, Dimensions, ScrollView } from "react-native";
 import { useTheme } from "@react-navigation/native";
-import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
+import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { googleMapsStyling } from "../../maps/google-maps-styling";
 import axios from "axios";
 import { configs } from "../../configs/configs";
@@ -42,13 +42,16 @@ dayjs.updateLocale("en", {
 });
 
 export default function StationDetails(props) {
-    const { colors } = useTheme();
+    const { dark, colors } = useTheme();
     const mapRef = useRef();
+
     const [loading, setLoading] = useState(true);
     const [loadError, setLoadError] = useState(false);
     const [stationData, setStationData] = useState({});
     const [routesAvailable, setRoutesAvailable] = useState([]);
     const [routesScrollViewScrollable, setRoutesScrollViewScrollable] = useState(false);
+
+    const [marker, setMarker] = useState({ latitude: 0, longitude: 0 });
 
     useEffect(() => {
         fetchStationDetails();
@@ -142,19 +145,74 @@ export default function StationDetails(props) {
         nextDepartures: {
             marginVertical: 7,
         },
+        stationSignAndNavigateButtonContainer: {
+            marginTop: -70,
+        },
+        stationSignContainer: {
+            width: 60,
+            height: 60,
+            borderRadius: 100,
+            backgroundColor: colors.white,
+            marginBottom: 10,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+
+            shadowColor: "#000",
+            shadowOffset: {
+                width: 0,
+                height: 5,
+            },
+            shadowOpacity: 0.34,
+            shadowRadius: 6.27,
+
+            elevation: 10,
+        },
+        stationSignText: {
+            color: "black",
+            fontWeight: "600",
+            fontSize: 24,
+        },
+        marker: {
+            width: 20,
+            height: 20,
+            borderRadius: 30,
+            borderWidth: 2.5,
+        },
     });
+
+    async function recenter(latitude, longitude, latitudeDelta, longitudeDelta) {
+        mapRef.current.animateToRegion({
+            latitude: latitude,
+            longitude: longitude,
+            latitudeDelta: latitudeDelta || 0.005,
+            longitudeDelta: longitudeDelta || 0.005,
+        });
+    }
 
     function fetchStationDetails() {
         setLoading(true);
 
         axios
             .get(`${configs.API_URL}/station/id/${STATION_ID}`)
-            .then((response) => {
+            .then(async (response) => {
                 if (response.data.status) {
                     if (response.data.status.status !== 200) setLoadError(true);
                     else {
                         setStationData(response.data.data);
                         formatRoutesAvailable(response.data.data);
+
+                        if (response.data.data.coordinates) {
+                            await recenter(
+                                parseFloat(response.data.data.coordinates.lat),
+                                parseFloat(response.data.data.coordinates.lng),
+                            );
+
+                            setMarker({
+                                latitude: parseFloat(response.data.data.coordinates.lat),
+                                longitude: parseFloat(response.data.data.coordinates.lng),
+                            });
+                        }
                     }
                 }
 
@@ -187,6 +245,10 @@ export default function StationDetails(props) {
         setRoutesScrollViewScrollable(event.nativeEvent.layout.width >= SCREEN_WIDTH - 80);
     }
 
+    function onMarkerPressed(lat, lng) {
+        recenter(lat, lng);
+    }
+
     return (
         <View>
             <View style={styles.backButtonContainer}>
@@ -198,15 +260,51 @@ export default function StationDetails(props) {
                 ref={mapRef}
                 style={styles.topMap}
                 provider={PROVIDER_GOOGLE}
-                customMapStyle={googleMapsStyling}
+                customMapStyle={dark ? googleMapsStyling.dark : googleMapsStyling.light}
                 initialRegion={configs.INITIAL_MAP_REGION}
                 mapPadding={{ bottom: 0.05 * Dimensions.get("screen").height }}
                 showsUserLocation
-            ></MapView>
+            >
+                {!loading && !!stationData.coordinates && (
+                    <Marker
+                        coordinate={marker}
+                        anchor={{ x: 0.5, y: 0.5 }}
+                        tappable
+                        onPress={() => onMarkerPressed(marker.latitude, marker.longitude)}
+                    >
+                        <View
+                            style={{
+                                ...styles.marker,
+                                backgroundColor: colors.white,
+                                borderColor: colors.middle_grey,
+                            }}
+                        />
+                    </Marker>
+                )}
+            </MapView>
 
             <View style={styles.bottomCard}>
                 {!loading && (
                     <>
+                        {!!stationData.code && (
+                            <View style={styles.stationSignAndNavigateButtonContainer}>
+                                <View
+                                    style={{
+                                        ...styles.stationSignContainer,
+                                        borderWidth: 5,
+                                        borderColor:
+                                            routesAvailable.length !== 0
+                                                ? `#${routesAvailable[0].color}`
+                                                : colors.subtitle,
+                                    }}
+                                >
+                                    <ThemedText style={styles.stationSignText}>
+                                        {stationData.code}
+                                    </ThemedText>
+                                </View>
+                            </View>
+                        )}
+
                         <ScrollView
                             showsVerticalScrollIndicator={false}
                             contentContainerStyle={{
