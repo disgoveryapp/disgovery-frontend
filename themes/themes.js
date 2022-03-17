@@ -12,6 +12,8 @@ export const darkTheme = {
         white: "#fff",
         flatlist_line: "#EE2929",
         flatlist_transport: "#ffffff",
+        linear_gradient_primary: "#282828",
+        linear_gradient_secondary: "#444444",
     },
 };
 
@@ -29,5 +31,7 @@ export const lightTheme = {
         white: "#fff",
         flatlist_line: "#ffffff",
         flatlist_transport: "#EE2929",
+        linear_gradient_primary: "#eee",
+        linear_gradient_secondary: "#ccc",
     },
 };

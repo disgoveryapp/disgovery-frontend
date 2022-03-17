@@ -1,62 +1,28 @@
 import React, { useEffect, useRef, useState } from "react";
-import { SafeAreaView, StyleSheet, Text, View, Dimensions } from "react-native";
-import ThemedText from "../../components/themed-text";
+import { SafeAreaView, StyleSheet, View, Dimensions, ScrollView } from "react-native";
 import { useTheme } from "@react-navigation/native";
-import MapView, { Polyline } from "react-native-maps";
-import { decode } from "@googlemaps/polyline-codec";
+import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import { googleMapsStyling } from "../../maps/google-maps-styling";
-import * as Location from "expo-location";
-import BottomCard from "../../components/bottom-card";
 import axios from "axios";
 import { configs } from "../../configs/configs";
-import NavigateBotton from "../../components/navigate-button";
 import BackButton from "../../components/back-button";
-import StationDetail from "../../components/station-details";
+import SvgAnimatedLinearGradient from "react-native-svg-animated-linear-gradient/src";
+import ThemedTextMarquee from "../../components/themed-text-marquee";
 
-const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get("window");
+const STATION_ID = "BTS_N9";
 
-const INITIAL_MAP_REGION = {
-    latitude: 13.764889,
-    longitude: 100.538266,
-    latitudeDelta: 0.035,
-    longitudeDelta: 0.035,
-};
-
-export default function StationDetails() {
+export default function StationDetails(props) {
     const { colors } = useTheme();
     const mapRef = useRef();
-    let firstRun = true;
-    const [mapsIsRecentered, setMapsIsRecentered] = useState(false);
-    const [location, setLocation] = useState(null);
-    const [mapCurrentLocationRegion, setMapCurrentLocationRegion] = useState({});
-    const [locationErrorMessage, setLocationErrorMessage] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [loadError, setLoadError] = useState(false);
+    const [stationData, setStationData] = useState({});
 
-    const [nearbyStations, setNearbyStations] = useState([]);
+    useEffect(() => {
+        fetchStationDetails();
+    }, []);
 
     const styles = StyleSheet.create({
-        container: {
-            backgroundColor: colors.background,
-            flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
-        },
-        maps: {
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-        },
-        bottomCard: {
-            top: SCREEN_HEIGHT * (3.5 / 5),
-            justifyContent: "center",
-            alignItems: "center",
-            flexDirection: "column",
-        },
-        navigateButtonContainer:{
-            bottom: 50,
-            left: 325,
-        },
         backButtonContainer: {
             position: "absolute",
             top: 0,
@@ -64,113 +30,104 @@ export default function StationDetails() {
             paddingHorizontal: 15,
             zIndex: 10,
         },
+        topMap: {
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: 0.35 * Dimensions.get("screen").height,
+        },
+        bottomCard: {
+            height: 0.7 * Dimensions.get("screen").height,
+            marginTop: 0.3 * Dimensions.get("screen").height,
+            paddingHorizontal: 15,
+            backgroundColor: colors.background,
+            borderTopLeftRadius: 22,
+            borderTopRightRadius: 22,
+
+            shadowColor: "#000",
+            shadowOffset: {
+                width: 0,
+                height: 5,
+            },
+            shadowOpacity: 0.34,
+            shadowRadius: 6.27,
+
+            elevation: 10,
+        },
+        title: {
+            fontWeight: "600",
+            fontSize: 24,
+            marginTop: 10,
+        },
     });
 
-    useEffect(() => {
-        if (firstRun) {
-            (async () => {
-                recenter();
-            })().catch(() => {});
-            firstRun = false;
-        }
-    }, []);
-
-    async function fetchNewLocation() {
-        let { status } = await Location.requestForegroundPermissionsAsync().catch(() => {});
-        if (status !== "granted") {
-            setLocationErrorMessage("Location permission is denied");
-            return;
-        }
-
-        let location = await Location.getCurrentPositionAsync({
-            accuracy: Location.Accuracy.BestForNavigation,
-        }).catch(() => {});
-
-        setLocation(location);
-        setMapCurrentLocationRegion({
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
-            latitudeDelta: 0.005,
-            longitudeDelta: 0.005,
-        });
-
-        return {
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
-            latitudeDelta: 0.005,
-            longitudeDelta: 0.005,
-        };
-    }
-
-    async function recenter() {
-        mapRef.current.animateToRegion(
-            (await fetchNewLocation().catch(() => {})) || INITIAL_MAP_REGION,
-        );
-        setMapsIsRecentered(true);
-    }
-
-    function decodePolyline() {
-        const decoded = decode(polyline, 5);
-        console.log(decoded);
-        let decodedPolyline = [];
-
-        decoded.forEach((element) => {
-            decodedPolyline.push({ latitude: element[0], longitude: element[1] });
-        });
-
-        return decodedPolyline;
-    }
-
-    function fetchNearbyStations(region) {
+    function fetchStationDetails() {
+        setLoading(true);
         axios
-            .get(
-                `${configs.API_URL}/station/nearby?lat=${region.latitude}&lng=${
-                    region.longitude
-                }&radius=${region.latitudeDelta * 111045}`,
-                {
-                    timeout: 10000,
-                },
-            )
+            .get(`${configs.API_URL}/station/id/${STATION_ID}`)
             .then((response) => {
-                console.log("fetched");
-                setNearbyStations(response.data.data);
-                console.log(response.data.data);
+                if (response.data.status) {
+                    if (response.data.status.status !== 200) setLoadError(true);
+                    else {
+                        setStationData(response.data.data);
+                        console.log(response.data.data);
+                    }
+                }
+
+                setLoading(false);
             })
             .catch((error) => {
-                console.log(error);
-                setNearbyStations([]);
+                if (error) setLoadError(true);
+                setLoading(false);
             });
     }
 
-    function onMapRegionChangeComplete(region) {
-        console.log(region);
-        fetchNearbyStations(region);
-    }
-
     return (
-        <View style={styles.container}>
+        <View>
             <View style={styles.backButtonContainer}>
                 <SafeAreaView edges={["top"]} />
                 <BackButton />
             </View>
+
             <MapView
                 ref={mapRef}
-                style={styles.maps}
-                initialRegion={INITIAL_MAP_REGION}
-                provider="google"
+                style={styles.topMap}
+                provider={PROVIDER_GOOGLE}
                 customMapStyle={googleMapsStyling}
-                onTouchStart={() => setMapsIsRecentered(false)}
-                onRegionChangeComplete={(region) => onMapRegionChangeComplete(region)}
+                initialRegion={configs.INITIAL_MAP_REGION}
+                mapPadding={{ bottom: 0.05 * Dimensions.get("screen").height }}
                 showsUserLocation
             ></MapView>
-            
+
             <View style={styles.bottomCard}>
-                <BottomCard>
-                    <View style={styles.navigateButtonContainer}>
-                        <NavigateBotton/>
-                    </View>
-                    <StationDetail/> 
-                </BottomCard>
+                {!loading && (
+                    <>
+                        <ScrollView
+                            showsVerticalScrollIndicator={false}
+                            contentContainerStyle={{
+                                paddingBottom: 50,
+                                paddingTop: 15,
+                            }}
+                        >
+                            <ThemedTextMarquee style={styles.title}>
+                                {stationData.name.en}
+                            </ThemedTextMarquee>
+                        </ScrollView>
+                    </>
+                )}
+
+                {loading && (
+                    <>
+                        <SvgAnimatedLinearGradient
+                            style={{ marginTop: 30 }}
+                            width={0.8 * Dimensions.get("screen").width}
+                            height={40}
+                            primaryColor={colors.linear_gradient_primary}
+                            secondaryColor={colors.linear_gradient_secondary}
+                        ></SvgAnimatedLinearGradient>
+                    </>
+                )}
             </View>
         </View>
     );
