@@ -93,7 +93,7 @@ export default function SearchOrigin(props) {
 
             setError22(false);
 
-            if (result.data.data === undefined && result.data.data === null) {
+            if (result.data.data === undefined || result.data.data === null) {
                 setApi22Result([]);
             } else {
                 setApi22Result(result.data.data);
@@ -113,7 +113,11 @@ export default function SearchOrigin(props) {
 
             setError21(false);
 
-            if (result.data === undefined && result.data === null) {
+            if (
+                result.data === undefined ||
+                result.data === null ||
+                result.data.code === ErrorMessage
+            ) {
                 setApi21Result([]);
             } else {
                 setApi21Result(result.data);
