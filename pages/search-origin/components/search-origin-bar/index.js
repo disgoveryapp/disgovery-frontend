@@ -13,7 +13,7 @@ export default function SearchOriginBar(props) {
     const { colors } = useTheme();
     const isKeyboardOpen = useKeyboard();
     const [isTabOneOpen, setTabOne] = useState(true);
-    const [isTabTwoOpen, setTabTwo] = useState(true);
+    const [isTabTwoOpen, setTabTwo] = useState(false);
 
     const clearText = () => props.onChangeText("");
     const clearTextLocation = () => props.onChangeTextLocation("");
