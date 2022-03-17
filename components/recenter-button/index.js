@@ -19,7 +19,17 @@ export default function RecenterButton(props) {
             marginRight: 15,
             marginTop: 0,
             marginBottom: "auto",
-            zIndex: 2,
+            zIndex: 1,
+
+            shadowColor: colors.shadow,
+            shadowOffset: {
+                width: 0,
+                height: 5,
+            },
+            shadowOpacity: 0.34,
+            shadowRadius: 6.27,
+
+            elevation: 10,
         },
     });
 

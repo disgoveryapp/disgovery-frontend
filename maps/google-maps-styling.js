@@ -1,4 +1,4 @@
-export const googleMapsStyling = [
+const googleMapsStylingDark = [
     {
         elementType: "geometry",
         stylers: [
@@ -193,3 +193,17 @@ export const googleMapsStyling = [
         ],
     },
 ];
+
+const googleMapsStylingLight = {
+    featureType: "administrative.neighborhood",
+    stylers: [
+        {
+            visibility: "off",
+        },
+    ],
+};
+
+export const googleMapsStyling = {
+    dark: googleMapsStylingDark,
+    light: googleMapsStylingLight,
+};
