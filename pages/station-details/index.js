@@ -11,6 +11,9 @@ import axios from "axios";
 import { configs } from "../../configs/configs";
 import NavigateBotton from "../../components/navigate-button";
 import BackButton from "../../components/back-button";
+import { color } from "react-native/Libraries/Components/View/ReactNativeStyleAttributes";
+
+const STATION = "BTS_N9";
 
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -24,13 +27,38 @@ const INITIAL_MAP_REGION = {
 export default function StationDetails() {
     const { colors } = useTheme();
     const mapRef = useRef();
-    let firstRun = true;
-    const [mapsIsRecentered, setMapsIsRecentered] = useState(false);
-    const [location, setLocation] = useState(null);
-    const [mapCurrentLocationRegion, setMapCurrentLocationRegion] = useState({});
-    const [locationErrorMessage, setLocationErrorMessage] = useState(null);
+    const [stationDetails, setStationDetails] = useState(undefined);
 
-    const [nearbyStations, setNearbyStations] = useState([]);
+    useEffect(() => {
+        fetchStationDetails();
+    }, []);
+
+    async function recenter(latitude, longitude) {
+        mapRef.current.animateToRegion({
+            latitude: latitude,
+            longitude: longitude,
+        });
+    }
+
+    function fetchStationDetails() {
+        axios
+            .get(`${configs.API_URL}/station/id/${STATION}`)
+            .then((response) => {
+                let responseData = response.data.data;
+                console.log(response.data.data);
+                setStationDetails(responseData);
+
+                recenter(
+                    responseData.coordinates.lat,
+                    responseData.coordinates.lng,
+                );
+                
+            })
+            .catch((error) => {
+                console.log("An error occured while getting station details " + error);
+                setStationDetails("error");
+            });
+    }
 
     const styles = StyleSheet.create({
         container: {
@@ -63,88 +91,43 @@ export default function StationDetails() {
             paddingHorizontal: 15,
             zIndex: 10,
         },
+        StationIdOuterContainer: {
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: `#${stationDetails.line.color}`,
+            width: 48,
+            height: 48,
+            borderRadius: 24,
+            bottom: 44,
+            right: 310,
+        },
+        StationIdContainer: {
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: colors.white,
+            width: 36,
+            height: 36,
+            borderRadius: 18,
+        },
+        StationIdText: {
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            fontSize: 23,
+        },
     });
 
-    useEffect(() => {
-        if (firstRun) {
-            (async () => {
-                recenter();
-            })().catch(() => {});
-            firstRun = false;
-        }
-    }, []);
-
-    async function fetchNewLocation() {
-        let { status } = await Location.requestForegroundPermissionsAsync().catch(() => {});
-        if (status !== "granted") {
-            setLocationErrorMessage("Location permission is denied");
-            return;
-        }
-
-        let location = await Location.getCurrentPositionAsync({
-            accuracy: Location.Accuracy.BestForNavigation,
-        }).catch(() => {});
-
-        setLocation(location);
-        setMapCurrentLocationRegion({
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
-            latitudeDelta: 0.005,
-            longitudeDelta: 0.005,
-        });
-
-        return {
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
-            latitudeDelta: 0.005,
-            longitudeDelta: 0.005,
-        };
-    }
-
-    async function recenter() {
-        mapRef.current.animateToRegion(
-            (await fetchNewLocation().catch(() => {})) || INITIAL_MAP_REGION,
-        );
-        setMapsIsRecentered(true);
-    }
-
-    function decodePolyline() {
-        const decoded = decode(polyline, 5);
-        console.log(decoded);
-        let decodedPolyline = [];
-
-        decoded.forEach((element) => {
-            decodedPolyline.push({ latitude: element[0], longitude: element[1] });
-        });
-
-        return decodedPolyline;
-    }
-
-    function fetchNearbyStations(region) {
-        axios
-            .get(
-                `${configs.API_URL}/station/nearby?lat=${region.latitude}&lng=${
-                    region.longitude
-                }&radius=${region.latitudeDelta * 111045}`,
-                {
-                    timeout: 10000,
-                },
-            )
-            .then((response) => {
-                console.log("fetched");
-                setNearbyStations(response.data.data);
-                console.log(response.data.data);
-            })
-            .catch((error) => {
-                console.log(error);
-                setNearbyStations([]);
-            });
-    }
-
-    function onMapRegionChangeComplete(region) {
-        console.log(region);
-        fetchNearbyStations(region);
-    }
+    const StationIcon = (
+        <View style={styles.StationIdOuterContainer}>
+            <View style={styles.StationIdContainer}>
+                <ThemedText style={styles.StationIdText}>
+                    {stationDetails.id}
+                </ThemedText>
+            </View>
+        </View>
+    );
 
     return (
         <View style={styles.container}>
@@ -157,16 +140,13 @@ export default function StationDetails() {
                 style={styles.maps}
                 initialRegion={INITIAL_MAP_REGION}
                 provider="google"
-                customMapStyle={googleMapsStyling}
-                onTouchStart={() => setMapsIsRecentered(false)}
-                onRegionChangeComplete={(region) => onMapRegionChangeComplete(region)}
-                showsUserLocation
             ></MapView>
             
             <View style={styles.bottomCard}>
                 <BottomCard>
                     <View style={styles.navigateButtonContainer}>
                         <NavigateBotton/>
+                        {StationIcon}
                     </View> 
                 </BottomCard>
             </View>
