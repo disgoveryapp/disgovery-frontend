@@ -22,6 +22,7 @@ import * as Haptics from "expo-haptics";
 import ExpandDownIcon18px from "../../assets/svgs/expand-down-icon-18px";
 import PlaceIcon from "../../assets/svgs/place-icon";
 import RouteIcon from "../../assets/svgs/route-icon";
+import LineTab from "./components/line-tab";
 
 const CLOSE_ON_SCROLL_TO = -100;
 const CLOSE_ON_VELOCITY = -3;
@@ -390,7 +391,7 @@ export default function Search() {
                             <>
                                 {api23Result.map((item, key) => (
                                     <>
-                                        <ThemedText>{item.name.long_name}</ThemedText>
+                                        <LineTab />
                                     </>
                                 ))}
                             </>
