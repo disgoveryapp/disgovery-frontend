@@ -69,13 +69,7 @@ export default function SearchOrigin(props) {
     const [pullDownToCloseString, setPullDownToCloseString] = useState(PULL_TO_CLOSE_STRING);
     const [mode, setMode] = useState("");
 
-    const [location, setLocation] = useState({
-        latitude: 13.764889,
-        longitude: 100.538266,
-        latitudeDelta: 0.035,
-        longitudeDelta: 0.035,
-    });
-    const [mapCurrentLocationRegion, setMapCurrentLocationRegion] = useState({});
+    const [currentLocation, setCurrentLocation] = useState(null);
     const [locationErrorMessage, setLocationErrorMessage] = useState(null);
 
     const TRY_SEARCHING_COMPONENTS = {
@@ -133,10 +127,7 @@ export default function SearchOrigin(props) {
     useEffect(() => {
         if (firstRun) {
             (async () => {
-                console.log(location);
-                setLocation(await fetchNewLocation());
-                console.log("hi");
-                console.log(location);
+                await fetchNewLocation();
             })().catch(() => {
                 console.log("welcome");
             });
@@ -218,6 +209,27 @@ export default function SearchOrigin(props) {
             simpleApi21Call();
         }
     }, [debouncedValue]);
+
+    async function fetchNewLocation() {
+        setCurrentLocation(await expoFetchNewLocation());
+    }
+
+    async function expoFetchNewLocation() {
+        let { status } = await Location.requestForegroundPermissionsAsync().catch(() => {});
+        if (status !== "granted") {
+            setLocationErrorMessage("Location permission is denied");
+            return;
+        }
+
+        let location = await Location.getCurrentPositionAsync({
+            accuracy: Location.Accuracy.BestForNavigation,
+        }).catch(() => {});
+
+        return {
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
+        };
+    }
 
     const styles = StyleSheet.create({
         searchbox: {
