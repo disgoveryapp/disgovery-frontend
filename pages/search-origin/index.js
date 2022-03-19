@@ -69,7 +69,10 @@ export default function SearchOrigin(props) {
     const [pullDownToCloseString, setPullDownToCloseString] = useState(PULL_TO_CLOSE_STRING);
     const [mode, setMode] = useState("");
 
-    const [currentLocation, setCurrentLocation] = useState(null);
+    const [currentLocation, setCurrentLocation] = useState({
+        latitude: 13.764889,
+        longitude: 100.538266,
+    });
     const [locationErrorMessage, setLocationErrorMessage] = useState(null);
 
     const TRY_SEARCHING_COMPONENTS = {
@@ -91,34 +94,6 @@ export default function SearchOrigin(props) {
         navigation.navigate("SearchOrigin", {});
     }
 
-    async function fetchNewLocation() {
-        let { status } = await Location.requestForegroundPermissionsAsync().catch(() => {});
-        if (status !== "granted") {
-            setLocationErrorMessage("Location permission is denied");
-            return;
-        }
-
-        let location = await Location.getCurrentPositionAsync({
-            accuracy: Location.Accuracy.BestForNavigation,
-        }).catch(() => {});
-        console.log("hello");
-        setLocation(location);
-        console.log("hello2");
-        setMapCurrentLocationRegion({
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
-            latitudeDelta: 0.005,
-            longitudeDelta: 0.005,
-        });
-
-        return {
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
-            latitudeDelta: 0.005,
-            longitudeDelta: 0.005,
-        };
-    }
-
     useEffect(() => {
         if (!hapticPlayed) setPullDownToCloseString(PULL_TO_CLOSE_STRING);
         else setPullDownToCloseString(RELEASE_TO_CLOSE_STRING);
@@ -128,9 +103,7 @@ export default function SearchOrigin(props) {
         if (firstRun) {
             (async () => {
                 await fetchNewLocation();
-            })().catch(() => {
-                console.log("welcome");
-            });
+            })().catch(() => {});
             firstRun = false;
         }
     }, []);
@@ -404,17 +377,21 @@ export default function SearchOrigin(props) {
                                         <>
                                             <PlaceTab
                                                 place="My Location"
-                                                address="hello"
+                                                address={
+                                                    currentLocation.latitude +
+                                                    " , " +
+                                                    currentLocation.longitude
+                                                }
                                                 onPress={() => {
                                                     if (isSearchOrigin) {
                                                         setOriginInput("My Location");
                                                         setOriginData(
-                                                            location || INITIAL_MAP_REGION,
+                                                            currentLocation || INITIAL_MAP_REGION,
                                                         );
                                                     } else if (isSearchDestination) {
                                                         setDestinationInput("My Location");
                                                         setDestinationData(
-                                                            location || INITIAL_MAP_REGION,
+                                                            currentLocation || INITIAL_MAP_REGION,
                                                         );
                                                     }
                                                 }}
