@@ -21,11 +21,21 @@ import RouteIcon from "../../assets/svgs/route-icon";
 import SearchOriginBar from "./components/search-origin-bar";
 import PlaceTab from "../search/components/place-tab";
 import StationTab from "../search/components/station-tab";
+import * as Location from "expo-location";
 
 const CLOSE_ON_SCROLL_TO = -100;
 const CLOSE_ON_VELOCITY = -3;
 const PULL_TO_CLOSE_STRING = "Pull down to close";
 const RELEASE_TO_CLOSE_STRING = "Release to close";
+
+const INITIAL_MAP_REGION = {
+    latitude: 13.764889,
+    longitude: 100.538266,
+    latitudeDelta: 0.035,
+    longitudeDelta: 0.035,
+};
+
+let firstRun = true;
 
 export default function SearchOrigin(props) {
     const { colors } = useTheme();
@@ -59,6 +69,15 @@ export default function SearchOrigin(props) {
     const [pullDownToCloseString, setPullDownToCloseString] = useState(PULL_TO_CLOSE_STRING);
     const [mode, setMode] = useState("");
 
+    const [location, setLocation] = useState({
+        latitude: 13.764889,
+        longitude: 100.538266,
+        latitudeDelta: 0.035,
+        longitudeDelta: 0.035,
+    });
+    const [mapCurrentLocationRegion, setMapCurrentLocationRegion] = useState({});
+    const [locationErrorMessage, setLocationErrorMessage] = useState(null);
+
     const TRY_SEARCHING_COMPONENTS = {
         stationsAndPlaces: {
             icon: <PlaceIcon fill={colors.subtitle} />,
@@ -78,10 +97,52 @@ export default function SearchOrigin(props) {
         navigation.navigate("SearchOrigin", {});
     }
 
+    async function fetchNewLocation() {
+        let { status } = await Location.requestForegroundPermissionsAsync().catch(() => {});
+        if (status !== "granted") {
+            setLocationErrorMessage("Location permission is denied");
+            return;
+        }
+
+        let location = await Location.getCurrentPositionAsync({
+            accuracy: Location.Accuracy.BestForNavigation,
+        }).catch(() => {});
+        console.log("hello");
+        setLocation(location);
+        console.log("hello2");
+        setMapCurrentLocationRegion({
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
+            latitudeDelta: 0.005,
+            longitudeDelta: 0.005,
+        });
+
+        return {
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
+            latitudeDelta: 0.005,
+            longitudeDelta: 0.005,
+        };
+    }
+
     useEffect(() => {
         if (!hapticPlayed) setPullDownToCloseString(PULL_TO_CLOSE_STRING);
         else setPullDownToCloseString(RELEASE_TO_CLOSE_STRING);
     }, [hapticPlayed]);
+
+    useEffect(() => {
+        if (firstRun) {
+            (async () => {
+                console.log(location);
+                setLocation(await fetchNewLocation());
+                console.log("hi");
+                console.log(location);
+            })().catch(() => {
+                console.log("welcome");
+            });
+            firstRun = false;
+        }
+    }, []);
 
     async function simpleApi22Call() {
         try {
@@ -331,14 +392,18 @@ export default function SearchOrigin(props) {
                                         <>
                                             <PlaceTab
                                                 place="My Location"
-                                                address="Somewhere over the rainbow"
+                                                address="hello"
                                                 onPress={() => {
                                                     if (isSearchOrigin) {
                                                         setOriginInput("My Location");
-                                                        setOriginData({});
+                                                        setOriginData(
+                                                            location || INITIAL_MAP_REGION,
+                                                        );
                                                     } else if (isSearchDestination) {
                                                         setDestinationInput("My Location");
-                                                        setDestinationData({});
+                                                        setDestinationData(
+                                                            location || INITIAL_MAP_REGION,
+                                                        );
                                                     }
                                                 }}
                                             />
@@ -355,3 +420,4 @@ export default function SearchOrigin(props) {
         </>
     );
 }
+//location.latitude + " , " + location.longitude
