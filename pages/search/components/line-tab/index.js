@@ -52,7 +52,7 @@ function LineTab(props) {
             alignItems: "center",
             justifyContent: "center",
             height: 21,
-            backgroundColor: "#1E4F6F", //use props
+            backgroundColor: props.color, //use props
             borderRadius: 6,
             paddingLeft: 6,
             paddingRight: 6,
