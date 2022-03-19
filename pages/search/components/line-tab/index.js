@@ -52,7 +52,7 @@ function LineTab(props) {
             alignItems: "center",
             justifyContent: "center",
             height: 21,
-            backgroundColor: props.color, //use props
+            backgroundColor: props.color ? `#${props.color}` : colors.upper_background, //use props
             borderRadius: 6,
             paddingLeft: 6,
             paddingRight: 6,
@@ -91,13 +91,13 @@ function LineTab(props) {
                         {(() => {
                             if (props.type === "0" || props.type === "5") {
                                 return <TramIcon />;
-                            } else if (item.type === "1") {
+                            } else if (props.type === "1") {
                                 return <SubwayIcon />;
                             } else if (props.type === "2" || props.type === "12") {
                                 return <RailIcon />;
                             } else if (props.type === "3" || props.type === "11") {
                                 return <BusIcon />;
-                            } else if (item.type === "4") {
+                            } else if (props.type === "4") {
                                 return <BoatIcon />;
                             } else {
                                 return <PlaceIcon fill={colors.background} />;

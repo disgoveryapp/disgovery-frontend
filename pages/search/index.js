@@ -395,7 +395,7 @@ export default function Search() {
                                             type={item.type}
                                             route_name={item.name.long_name}
                                             near_station={item.stations[0].name.en}
-                                            color="#dedede"
+                                            color={item.color}
                                             distance="400 m"
                                         />
                                     </>
