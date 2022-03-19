@@ -88,17 +88,31 @@ function LineTab(props) {
             <View style={styles.topContainer}>
                 <View style={styles.dataContainer}>
                     <View style={styles.iconContainer}>
-                        <SubwayIcon />
+                        {(() => {
+                            if (props.type === "0" || props.type === "5") {
+                                return <TramIcon />;
+                            } else if (item.type === "1") {
+                                return <SubwayIcon />;
+                            } else if (props.type === "2" || props.type === "12") {
+                                return <RailIcon />;
+                            } else if (props.type === "3" || props.type === "11") {
+                                return <BusIcon />;
+                            } else if (item.type === "4") {
+                                return <BoatIcon />;
+                            } else {
+                                return <PlaceIcon fill={colors.background} />;
+                            }
+                        })()}
                     </View>
                     <View style={styles.titleContainer}>
-                        <ThemedText style={styles.title}>MRT Blue Line</ThemedText>
+                        <ThemedText style={styles.title}>{props.route_name}</ThemedText>
                     </View>
                 </View>
-                <ThemedText style={styles.distance}>1.4 km</ThemedText>
+                <ThemedText style={styles.distance}>{props.distance}</ThemedText>
             </View>
             <View style={styles.bottomContainer}>
                 <ThemedText style={styles.nearestSubtitle}>Nearest to you: </ThemedText>
-                <ThemedText style={styles.locationSubtitle}>Phahon Yothin</ThemedText>
+                <ThemedText style={styles.locationSubtitle}>{props.near_station}</ThemedText>
             </View>
         </TouchableOpacity>
     );
