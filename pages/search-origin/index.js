@@ -23,18 +23,6 @@ import PlaceTab from "../search/components/place-tab";
 import StationTab from "../search/components/station-tab";
 import * as Location from "expo-location";
 
-const CLOSE_ON_SCROLL_TO = -100;
-const CLOSE_ON_VELOCITY = -3;
-const PULL_TO_CLOSE_STRING = "Pull down to close";
-const RELEASE_TO_CLOSE_STRING = "Release to close";
-
-const INITIAL_MAP_REGION = {
-    latitude: 13.764889,
-    longitude: 100.538266,
-    latitudeDelta: 0.035,
-    longitudeDelta: 0.035,
-};
-
 let firstRun = true;
 
 export default function SearchOrigin(props) {
@@ -63,11 +51,6 @@ export default function SearchOrigin(props) {
     const [error22, setError22] = useState(false);
     const [loading, setLoading] = useState(false);
     const ErrorMessage = "ERR_UNESCAPED_CHARACTERS";
-    const [hapticPlayed, setHapticPlayed] = useState(false);
-    const [closable, setClosable] = useState(true);
-
-    const [pullDownToCloseString, setPullDownToCloseString] = useState(PULL_TO_CLOSE_STRING);
-    const [mode, setMode] = useState("");
 
     const [currentLocation, setCurrentLocation] = useState({
         latitude: 13.764889,
@@ -75,29 +58,16 @@ export default function SearchOrigin(props) {
     });
     const [locationErrorMessage, setLocationErrorMessage] = useState(null);
 
-    const TRY_SEARCHING_COMPONENTS = {
-        stationsAndPlaces: {
-            icon: <PlaceIcon fill={colors.subtitle} />,
-            string: "Try searching for stations, places, or destinations",
-        },
-        lines: {
-            icon: <RouteIcon fill={colors.subtitle} />,
-            string: "Try searching for bus or train lines",
-        },
-    };
-
     const navigation = useNavigation();
     const numberOfApi22Data = 4;
     const debouncedValue = useDebounce(text, 200);
 
-    function navigateToSearchPage() {
-        navigation.navigate("SearchOrigin", {});
-    }
-
-    useEffect(() => {
-        if (!hapticPlayed) setPullDownToCloseString(PULL_TO_CLOSE_STRING);
-        else setPullDownToCloseString(RELEASE_TO_CLOSE_STRING);
-    }, [hapticPlayed]);
+    const INITIAL_MAP_REGION = {
+        latitude: 13.764889,
+        longitude: 100.538266,
+        latitudeDelta: 0.035,
+        longitudeDelta: 0.035,
+    };
 
     useEffect(() => {
         if (firstRun) {
