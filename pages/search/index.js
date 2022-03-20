@@ -23,11 +23,14 @@ import ExpandDownIcon18px from "../../assets/svgs/expand-down-icon-18px";
 import PlaceIcon from "../../assets/svgs/place-icon";
 import RouteIcon from "../../assets/svgs/route-icon";
 import LineTab from "./components/line-tab";
+import * as Location from "expo-location";
 
 const CLOSE_ON_SCROLL_TO = -100;
 const CLOSE_ON_VELOCITY = -3;
 const PULL_TO_CLOSE_STRING = "Pull down to close";
 const RELEASE_TO_CLOSE_STRING = "Release to close";
+
+let firstRun = true;
 
 export default function Search() {
     const { colors } = useTheme();
@@ -52,6 +55,12 @@ export default function Search() {
     const [pullDownToCloseString, setPullDownToCloseString] = useState(PULL_TO_CLOSE_STRING);
     const [mode, setMode] = useState("");
 
+    const [currentLocation, setCurrentLocation] = useState({
+        latitude: 13.764889,
+        longitude: 100.538266,
+    });
+    const [locationErrorMessage, setLocationErrorMessage] = useState(null);
+
     const TRY_SEARCHING_COMPONENTS = {
         stationsAndPlaces: {
             icon: <PlaceIcon fill={colors.subtitle} />,
@@ -66,6 +75,36 @@ export default function Search() {
     const navigation = useNavigation();
     const numberOfApi22Data = 4;
     const debouncedValue = useDebounce(text, 200);
+
+    useEffect(() => {
+        if (firstRun) {
+            (async () => {
+                await fetchNewLocation();
+            })().catch(() => {});
+            firstRun = false;
+        }
+    }, []);
+
+    async function fetchNewLocation() {
+        setCurrentLocation(await expoFetchNewLocation());
+    }
+
+    async function expoFetchNewLocation() {
+        let { status } = await Location.requestForegroundPermissionsAsync().catch(() => {});
+        if (status !== "granted") {
+            setLocationErrorMessage("Location permission is denied");
+            return;
+        }
+
+        let location = await Location.getCurrentPositionAsync({
+            accuracy: Location.Accuracy.BestForNavigation,
+        }).catch(() => {});
+
+        return {
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
+        };
+    }
 
     useEffect(() => {
         if (!hapticPlayed) setPullDownToCloseString(PULL_TO_CLOSE_STRING);
@@ -382,6 +421,7 @@ export default function Search() {
             </>
         );
     }
+
     function LinesScrollView() {
         return (
             <>
@@ -394,9 +434,9 @@ export default function Search() {
                                         <LineTab
                                             type={item.type}
                                             route_name={item.name.long_name}
-                                            near_station={item.stations[0].name.en}
                                             color={item.color}
-                                            distance="400 m"
+                                            currentLocation={currentLocation}
+                                            stationData={item.stations}
                                         />
                                     </>
                                 ))}
