@@ -12,6 +12,64 @@ import { color } from "react-native-elements/dist/helpers";
 
 function LineTab(props) {
     const { colors } = useTheme();
+    const [nearestStation, setNearestStation] = useState({ en: null, th: null });
+    const [nearestDistance, setNearestDistance] = useState(null);
+
+    function getDistanceFromLatLonInm(lat1, lon1, lat2, lon2) {
+        let R = 6371; // Radius of the earth in km
+        let dLat = deg2rad(lat2 - lat1); // deg2rad below
+        let dLon = deg2rad(lon2 - lon1);
+        let a =
+            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(deg2rad(lat1)) *
+                Math.cos(deg2rad(lat2)) *
+                Math.sin(dLon / 2) *
+                Math.sin(dLon / 2);
+        let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        let d = R * c; // Distance in km
+
+        return d;
+    }
+
+    function getDistanceText(d) {
+        let result = "";
+        if (d >= 1) {
+            result = round(d, 0.1) + " km";
+        } else {
+            result = round(d * 1000, 50) + " m";
+        }
+
+        return result;
+    }
+
+    function round(value, step) {
+        step || (step = 1.0);
+        let inv = 1.0 / step;
+        return Math.round(value * inv);
+    }
+
+    function deg2rad(deg) {
+        return deg * (Math.PI / 180);
+    }
+    function findShortestRoute() {
+        let data = props.stationData;
+        let nearStation = {};
+        let nearDistance = null;
+        for (let i = 0; i < data.length; i++) {
+            let thisDistance = getDistanceFromLatLonInm(
+                props.currentLocation.latitude,
+                props.currentLocation.longitude,
+                data[i].coordinates.lat,
+                data[i].coordinates.long,
+            );
+            if (thisDistance < nearDistance || i === 0) {
+                nearDistance = thisDistance;
+                nearStation = data[i].name;
+            }
+        }
+        setNearestDistance(nearDistance);
+        setNearestStation(nearStation);
+    }
 
     const styles = StyleSheet.create({
         container: {
@@ -82,39 +140,43 @@ function LineTab(props) {
             color: colors.text,
         },
     });
-
     return (
-        <TouchableOpacity style={styles.container} onPress={props.onPress}>
-            <View style={styles.topContainer}>
-                <View style={styles.dataContainer}>
-                    <View style={styles.iconContainer}>
-                        {(() => {
-                            if (props.type === "0" || props.type === "5") {
-                                return <TramIcon />;
-                            } else if (props.type === "1") {
-                                return <SubwayIcon />;
-                            } else if (props.type === "2" || props.type === "12") {
-                                return <RailIcon />;
-                            } else if (props.type === "3" || props.type === "11") {
-                                return <BusIcon />;
-                            } else if (props.type === "4") {
-                                return <BoatIcon />;
-                            } else {
-                                return <PlaceIcon fill={colors.background} />;
-                            }
-                        })()}
+        <>
+            <TouchableOpacity style={styles.container} onPress={props.onPress}>
+                <View style={styles.topContainer}>
+                    <View style={styles.dataContainer}>
+                        <View style={styles.iconContainer}>
+                            {(() => {
+                                findShortestRoute();
+                                if (props.type === "0" || props.type === "5") {
+                                    return <TramIcon />;
+                                } else if (props.type === "1") {
+                                    return <SubwayIcon />;
+                                } else if (props.type === "2" || props.type === "12") {
+                                    return <RailIcon />;
+                                } else if (props.type === "3" || props.type === "11") {
+                                    return <BusIcon />;
+                                } else if (props.type === "4") {
+                                    return <BoatIcon />;
+                                } else {
+                                    return <PlaceIcon fill={colors.background} />;
+                                }
+                            })()}
+                        </View>
+                        <View style={styles.titleContainer}>
+                            <ThemedText style={styles.title}>{props.route_name}</ThemedText>
+                        </View>
                     </View>
-                    <View style={styles.titleContainer}>
-                        <ThemedText style={styles.title}>{props.route_name}</ThemedText>
-                    </View>
+                    <ThemedText style={styles.distance}>
+                        {getDistanceText(nearestDistance)}
+                    </ThemedText>
                 </View>
-                <ThemedText style={styles.distance}>{props.distance}</ThemedText>
-            </View>
-            <View style={styles.bottomContainer}>
-                <ThemedText style={styles.nearestSubtitle}>Nearest to you: </ThemedText>
-                <ThemedText style={styles.locationSubtitle}>{props.near_station}</ThemedText>
-            </View>
-        </TouchableOpacity>
+                <View style={styles.bottomContainer}>
+                    <ThemedText style={styles.nearestSubtitle}>Nearest to you: </ThemedText>
+                    <ThemedText style={styles.locationSubtitle}>{nearestStation.en}</ThemedText>
+                </View>
+            </TouchableOpacity>
+        </>
     );
 }
 
