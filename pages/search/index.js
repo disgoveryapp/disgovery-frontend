@@ -434,7 +434,7 @@ export default function Search() {
                                     <>
                                         <LineTab
                                             type={item.type}
-                                            route_name={item.name.long_name}
+                                            route_name={item.name}
                                             color={item.color}
                                             currentLocation={currentLocation}
                                             stationData={item.stations}

@@ -9,6 +9,7 @@ import TramIcon from "../../../../assets/svgs/tram-icon";
 import BoatIcon from "../../../../assets/svgs/boat-icon";
 import RailIcon from "../../../../assets/svgs/rail-icon";
 import { color } from "react-native-elements/dist/helpers";
+import TransitLine from "../../../../components/transit-line";
 
 function LineTab(props) {
     const { colors } = useTheme();
@@ -85,13 +86,12 @@ function LineTab(props) {
     const styles = StyleSheet.create({
         container: {
             width: "100%",
-            height: 71,
+            height: 84,
             display: "flex",
             flexDirection: "column",
             justifyContent: "flex-start",
             alignItems: "flex-start",
-            paddingHorizontal: 15,
-            paddingVertical: 12,
+            padding: 15,
             borderBottomColor: colors.divider,
             borderBottomWidth: 1,
         },
@@ -108,13 +108,14 @@ function LineTab(props) {
             alignItems: "center",
         },
         iconContainer: {
-            width: 27,
-            height: 27,
+            width: 24,
+            height: 24,
             borderRadius: 6,
             backgroundColor: colors.text,
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
+            marginRight: 8,
         },
         titleContainer: {
             display: "flex",
@@ -173,9 +174,16 @@ function LineTab(props) {
                                 }
                             })()}
                         </View>
-                        <View style={styles.titleContainer}>
-                            <ThemedText style={styles.title}>{props.route_name}</ThemedText>
-                        </View>
+                        <TransitLine
+                            line={{
+                                name: {
+                                    short_name: props.route_name.short_name,
+                                    long_name: props.route_name.long_name,
+                                },
+                                color: props.color,
+                            }}
+                            fontSize={14}
+                        />
                     </View>
                     <ThemedText style={styles.distance}>
                         {getDistanceText(nearestDistance)}
