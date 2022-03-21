@@ -428,6 +428,7 @@ export default function Search() {
                 {api23Result !== undefined && api23Result !== null && api23Result.length !== 0 && (
                     <>
                         <View style={styles.tabbarcontainer}>
+                            <ThemedText style={styles.topictext}>Lines</ThemedText>
                             <>
                                 {api23Result.map((item, key) => (
                                     <>

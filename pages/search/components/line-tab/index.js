@@ -32,37 +32,29 @@ function LineTab(props) {
         lon1 = parseFloat(lon1);
         lat2 = parseFloat(lat2);
         lon2 = parseFloat(lon2);
-        console.log(lat1, "LAT1");
-        console.log(lat2, "LAT2");
-        console.log(lon1, "LON1");
-        console.log(lon2, "LON2");
         let R = 6371; // Radius of the earth in km
         let dLat = deg2rad(lat2 - lat1); // deg2rad below
-        console.log(dLat, "LAT");
 
         let dLon = deg2rad(lon2 - lon1);
-        console.log(dLon, "LON");
         let a =
             Math.sin(dLat / 2) * Math.sin(dLat / 2) +
             Math.cos(deg2rad(lat1)) *
                 Math.cos(deg2rad(lat2)) *
                 Math.sin(dLon / 2) *
                 Math.sin(dLon / 2);
-        console.log(a);
         let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         let d = R * c; // Distance in km
-        console.log(d);
         return d;
     }
 
     function getDistanceText(d) {
         d = parseFloat(d);
-        console.log(d);
         let result = "";
         if (d >= 1) {
-            result = round(d, 0.1) + " km";
+            //result = d + " km";
+            result = round(d * 10, 1) / 10 + " km";
         } else {
-            result = round(d * 1000, 50) + " m";
+            result = round(d * 100, 1) * 10 + " m";
         }
 
         return result;
@@ -74,7 +66,7 @@ function LineTab(props) {
         let nearDistance = null;
 
         for (let i = 0; i < data.length; i++) {
-            let thisDistance = getDistanceFromLatLonInBtsm(
+            let thisDistance = getDistanceFromLatLonInm(
                 props.currentLocation.latitude,
                 props.currentLocation.longitude,
                 data[i].coordinates.lat,
