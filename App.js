@@ -17,6 +17,7 @@ import { Text, useColorScheme, View } from "react-native";
 import { darkTheme, lightTheme } from "./themes/themes";
 
 import Home from "./pages/home";
+
 import TripDetails from "./pages/trip-details";
 import StationDetails from "./pages/station-details";
 

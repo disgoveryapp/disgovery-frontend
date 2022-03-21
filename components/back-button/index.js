@@ -21,7 +21,7 @@ const BackButton = (props) => {
             paddingRight: 2,
             borderRadius: 60,
 
-            shadowColor: "#000",
+            shadowColor: colors.shadow,
             shadowOffset: {
                 width: 0,
                 height: 5,

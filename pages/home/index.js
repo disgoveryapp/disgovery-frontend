@@ -23,9 +23,11 @@ const INITIAL_MAP_REGION = {
 };
 
 export default function Home() {
-    const { colors } = useTheme();
+    const { dark, colors } = useTheme();
     const mapRef = useRef();
     let firstRun = true;
+
+    const [loading, setLoading] = useState(false);
     const [mapsIsRecentered, setMapsIsRecentered] = useState(false);
     const [location, setLocation] = useState(null);
     const [mapCurrentLocationRegion, setMapCurrentLocationRegion] = useState({});
@@ -47,20 +49,9 @@ export default function Home() {
             width: "100%",
             height: "100%",
         },
-        searchbox: {
-            width: "100%",
-            paddingHorizontal: 15,
-            bottom: 25,
-        },
-        flatlistcontainer: {
-            flex: 1,
-            bottom: 30,
-        },
         bottomcard: {
-            top: SCREEN_HEIGHT * (3 / 5),
-            justifyContent: "center",
-            alignItems: "center",
-            flexDirection: "column",
+            top: SCREEN_HEIGHT * (8.75 / 3),
+            zIndex: 5,
         },
     });
 
@@ -72,6 +63,10 @@ export default function Home() {
             firstRun = false;
         }
     }, []);
+
+    useEffect(() => {
+        mapRef._updateStyle;
+    }, [colors]);
 
     async function fetchNewLocation() {
         let { status } = await Location.requestForegroundPermissionsAsync().catch(() => {});
@@ -120,6 +115,7 @@ export default function Home() {
     }
 
     function fetchNearbyStations(region) {
+        setLoading(true);
         axios
             .get(
                 `${configs.API_URL}/station/nearby?lat=${region.latitude}&lng=${
@@ -130,18 +126,17 @@ export default function Home() {
                 },
             )
             .then((response) => {
-                console.log("fetched");
                 setNearbyStations(response.data.data);
-                console.log(response.data.data);
+                setLoading(false);
             })
             .catch((error) => {
                 console.log(error);
                 setNearbyStations([]);
+                setLoading(false);
             });
     }
 
     function onMapRegionChangeComplete(region) {
-        console.log(region);
         fetchNearbyStations(region);
     }
 
@@ -153,21 +148,14 @@ export default function Home() {
                 style={styles.maps}
                 initialRegion={INITIAL_MAP_REGION}
                 provider="google"
-                customMapStyle={googleMapsStyling}
+                customMapStyle={dark ? googleMapsStyling.dark : googleMapsStyling.light}
                 onTouchStart={() => setMapsIsRecentered(false)}
                 onRegionChangeComplete={(region) => onMapRegionChangeComplete(region)}
                 showsUserLocation
             ></MapView>
             <RecenterButton recentered={mapsIsRecentered} onPress={recenter} />
             <View style={styles.bottomcard}>
-                <BottomCard>
-                    <View style={styles.searchbox}>
-                        <SearchBox />
-                    </View>
-                    <View style={styles.flatlistcontainer}>
-                        <BottomCardFlatList nearbyStations={nearbyStations} />
-                    </View>
-                </BottomCard>
+                <BottomCard nearbyStations={nearbyStations} loading={loading} />
             </View>
         </View>
     );

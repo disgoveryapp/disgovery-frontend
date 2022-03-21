@@ -1,13 +1,15 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
-import ArrowIcon from "../../assets/svgs/arrow_forward-icon";
 import ThemedText from "../themed-text";
 import { useTheme } from "@react-navigation/native";
 import ThemedTextMarquee from "../themed-text-marquee";
 import ArrowIcon24 from "../../assets/svgs/arrow-forward-24px";
+import PropTypes from "prop-types";
+import ArrowIcon from "../../assets/svgs/arrow-forward-18px";
 
 function OriginToDestinationTitle(props) {
     const { colors } = useTheme();
+    const size = props.size || "large";
 
     function secondToRoundedMinuteString(second) {
         let minute = Math.round(parseInt(second) / 60);
@@ -23,7 +25,7 @@ function OriginToDestinationTitle(props) {
             flexDirection: "row",
         },
         originDestinationContainer: {
-            width: "80%",
+            width: props.time ? "80%" : "100%",
         },
         destination: {
             display: "flex",
@@ -35,7 +37,7 @@ function OriginToDestinationTitle(props) {
             flex: 1,
         },
         destinationText: {
-            fontSize: 24,
+            fontSize: size === "small" ? 20 : 24,
             fontWeight: "600",
         },
         origin: {
@@ -44,14 +46,15 @@ function OriginToDestinationTitle(props) {
             alignItems: "baseline",
         },
         originFromText: {
-            fontSize: 18,
+            fontSize: size === "small" ? 16 : 18,
             color: colors.subtitle,
-            fontWeight: "600",
+            fontWeight: size === "small" ? "500" : "600",
+            marginLeft: size === "small" ? 22 : 0,
         },
         originText: {
             flex: 1,
             fontSize: 18,
-            fontWeight: "600",
+            fontWeight: size === "small" ? "500" : "600",
         },
         originMarqueeContainer: {
             flex: 1,
@@ -62,7 +65,7 @@ function OriginToDestinationTitle(props) {
         time: {},
         timeText: {
             textAlign: "right",
-            fontSize: 22,
+            fontSize: size === "small" ? 18 : 22,
             fontWeight: "600",
         },
         subTimeText: {
@@ -76,7 +79,7 @@ function OriginToDestinationTitle(props) {
         <View style={{ ...props.style, ...styles.container }}>
             <View style={styles.originDestinationContainer}>
                 <View style={styles.destination}>
-                    <ArrowIcon24 />
+                    {size === "small" ? <ArrowIcon /> : <ArrowIcon24 />}
                     <View style={styles.destinationMarqueeContainer}>
                         <ThemedTextMarquee style={styles.destinationText}>
                             {props.destination}
@@ -85,25 +88,44 @@ function OriginToDestinationTitle(props) {
                 </View>
 
                 <View style={styles.origin}>
-                    <ThemedText style={styles.originFromText}>from </ThemedText>
-                    <View style={styles.originMarqueeContainer}>
-                        <ThemedTextMarquee style={styles.originText}>
-                            {props.origin}
-                        </ThemedTextMarquee>
-                    </View>
+                    {!!props.origin && (
+                        <>
+                            <ThemedText style={styles.originFromText}>from </ThemedText>
+                            <View style={styles.originMarqueeContainer}>
+                                <ThemedTextMarquee style={styles.originText}>
+                                    {props.origin}
+                                </ThemedTextMarquee>
+                            </View>
+                        </>
+                    )}
+
+                    {!!props.subtitle && (
+                        <>
+                            <ThemedText style={styles.originFromText}>{props.subtitle}</ThemedText>
+                        </>
+                    )}
                 </View>
             </View>
 
-            <View style={styles.timeContainer}>
-                <View style={styles.time}>
-                    <ThemedText style={styles.timeText}>
-                        {secondToRoundedMinuteString(props.time)}
-                    </ThemedText>
-                    <ThemedText style={styles.subTimeText}>{props.subTime}</ThemedText>
+            {props.time && (
+                <View style={styles.timeContainer}>
+                    <View style={styles.time}>
+                        <ThemedText style={styles.timeText}>
+                            {secondToRoundedMinuteString(props.time)}
+                        </ThemedText>
+                        <ThemedText style={styles.subTimeText}>{props.subTime}</ThemedText>
+                    </View>
                 </View>
-            </View>
+            )}
         </View>
     );
 }
+
+OriginToDestinationTitle.propTypes = {
+    origin: PropTypes.string,
+    destination: PropTypes.string,
+    time: PropTypes.number,
+    size: PropTypes.oneOf(["large", "small"]),
+};
 
 export default OriginToDestinationTitle;
