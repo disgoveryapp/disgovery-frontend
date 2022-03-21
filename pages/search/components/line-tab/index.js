@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import ThemedText from "../../../../components/themed-text";
 import PlaceIcon from "../../../../assets/svgs/place-icon";
@@ -15,23 +15,49 @@ function LineTab(props) {
     const [nearestStation, setNearestStation] = useState({ en: null, th: null });
     const [nearestDistance, setNearestDistance] = useState(null);
 
+    useEffect(() => {
+        findShortestRoute();
+    }, []);
+    function round(value, step) {
+        step || (step = 1.0);
+        let inv = 1.0 / step;
+        return Math.round(value * inv);
+    }
+
+    function deg2rad(deg) {
+        return deg * (Math.PI / 180);
+    }
     function getDistanceFromLatLonInm(lat1, lon1, lat2, lon2) {
+        lat1 = parseFloat(lat1);
+        lon1 = parseFloat(lon1);
+        lat2 = parseFloat(lat2);
+        lon2 = parseFloat(lon2);
+        console.log(lat1, "LAT1");
+        console.log(lat2, "LAT2");
+        console.log(lon1, "LON1");
+        console.log(lon2, "LON2");
         let R = 6371; // Radius of the earth in km
         let dLat = deg2rad(lat2 - lat1); // deg2rad below
+        console.log(dLat, "LAT");
+
         let dLon = deg2rad(lon2 - lon1);
+        console.log(dLon, "LON");
         let a =
             Math.sin(dLat / 2) * Math.sin(dLat / 2) +
             Math.cos(deg2rad(lat1)) *
                 Math.cos(deg2rad(lat2)) *
                 Math.sin(dLon / 2) *
                 Math.sin(dLon / 2);
+        console.log(a);
         let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         let d = R * c; // Distance in km
-
+        console.log(d);
         return d;
     }
 
     function getDistanceText(d) {
+        d = parseFloat(d);
+        console.log(d);
         let result = "";
         if (d >= 1) {
             result = round(d, 0.1) + " km";
@@ -42,31 +68,24 @@ function LineTab(props) {
         return result;
     }
 
-    function round(value, step) {
-        step || (step = 1.0);
-        let inv = 1.0 / step;
-        return Math.round(value * inv);
-    }
-
-    function deg2rad(deg) {
-        return deg * (Math.PI / 180);
-    }
     function findShortestRoute() {
-        let data = props.stationData;
+        let data = props.stationData || [];
         let nearStation = {};
         let nearDistance = null;
+
         for (let i = 0; i < data.length; i++) {
-            let thisDistance = getDistanceFromLatLonInm(
+            let thisDistance = getDistanceFromLatLonInBtsm(
                 props.currentLocation.latitude,
                 props.currentLocation.longitude,
                 data[i].coordinates.lat,
-                data[i].coordinates.long,
+                data[i].coordinates.lng,
             );
             if (thisDistance < nearDistance || i === 0) {
                 nearDistance = thisDistance;
                 nearStation = data[i].name;
             }
         }
+
         setNearestDistance(nearDistance);
         setNearestStation(nearStation);
     }
@@ -147,7 +166,6 @@ function LineTab(props) {
                     <View style={styles.dataContainer}>
                         <View style={styles.iconContainer}>
                             {(() => {
-                                findShortestRoute();
                                 if (props.type === "0" || props.type === "5") {
                                     return <TramIcon />;
                                 } else if (props.type === "1") {
