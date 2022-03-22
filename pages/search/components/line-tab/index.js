@@ -182,7 +182,7 @@ function LineTab(props) {
                                 },
                                 color: props.color,
                             }}
-                            fontSize={14}
+                            fontSize={16}
                         />
                     </View>
                     <ThemedText style={styles.distance}>
