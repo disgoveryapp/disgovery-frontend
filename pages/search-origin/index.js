@@ -50,6 +50,7 @@ export default function SearchOrigin(props) {
     const [error21, setError21] = useState(false);
     const [error22, setError22] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [inputData, setInputData] = useState(true);
     const ErrorMessage = "ERR_UNESCAPED_CHARACTERS";
 
     const [currentLocation, setCurrentLocation] = useState({
@@ -123,10 +124,12 @@ export default function SearchOrigin(props) {
     }
 
     useEffect(() => {
+        setInputData(true);
         onChangeText(originInput);
     }, [originInput]);
 
     useEffect(() => {
+        setInputData(true);
         if (destinationInput === destinationName && destinationName !== "") {
         } else {
             onChangeText(destinationInput);
@@ -135,6 +138,7 @@ export default function SearchOrigin(props) {
 
     useEffect(() => {
         if (text === "" || text === "My Location" || onFlip) {
+            setInputData(false);
             setApi22Result([]);
         } else {
             setLoading(true);
@@ -217,7 +221,125 @@ export default function SearchOrigin(props) {
         tabbarcontainer: {
             paddingBottom: 12,
         },
+        trySearchingContainer: {
+            width: "100%",
+            height: "90%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            paddingVertical: 40,
+        },
+        trySearchingIconsContainer: {
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+        },
+        trySearchingText: {
+            width: "75%",
+            textAlign: "center",
+            fontSize: 16,
+            fontWeight: "500",
+            marginTop: 10,
+            color: colors.subtitle,
+        },
     });
+
+    function SearchData() {
+        return (
+            <>
+                {(api22Result !== undefined && api22Result !== null && api22Result.length !== 0) ||
+                (api21Result !== undefined && api21Result !== null && api21Result.length !== 0) ? (
+                    <>
+                        {api22Result !== undefined &&
+                        api22Result !== null &&
+                        api22Result.length !== 0 ? (
+                            <>
+                                <ThemedText style={styles.topictext}>Stations</ThemedText>
+                                <View style={styles.tabbarcontainer}>
+                                    <>
+                                        {api22Result.map((item, key) => (
+                                            <StationTab
+                                                key={key}
+                                                place={item.name.en}
+                                                trip={item.trips}
+                                                onPress={() => {
+                                                    if (isSearchOrigin) {
+                                                        setOriginInput(item.name.en);
+                                                        setOriginData(item);
+                                                    } else if (isSearchDestination) {
+                                                        setDestinationInput(item.name.en);
+                                                        setDestinationData(item);
+                                                    }
+                                                }}
+                                            />
+                                        ))}
+                                    </>
+                                </View>
+                            </>
+                        ) : (
+                            <></>
+                        )}
+                        {api21Result !== undefined &&
+                        api21Result !== null &&
+                        api21Result.length !== 0 ? (
+                            <View>
+                                <ThemedText style={styles.topictext}>Places</ThemedText>
+                                <View style={styles.tabbarcontainer}>
+                                    {api21Result.map((item, key) => (
+                                        <PlaceTab
+                                            key={key}
+                                            place={item.name.en}
+                                            address={item.address.en}
+                                            onPress={() => {
+                                                if (isSearchOrigin) {
+                                                    setOriginInput(item.name.en);
+                                                    setOriginData(item);
+                                                } else if (isSearchDestination) {
+                                                    setDestinationInput(item.name.en);
+                                                    setDestinationData(item);
+                                                }
+                                            }}
+                                        />
+                                    ))}
+                                </View>
+                            </View>
+                        ) : (
+                            <></>
+                        )}
+                    </>
+                ) : (
+                    <>
+                        <PlaceTab
+                            place="My Location"
+                            address={currentLocation.latitude + " , " + currentLocation.longitude}
+                            onPress={() => {
+                                if (isSearchOrigin) {
+                                    setOriginInput("My Location");
+                                    setOriginData(currentLocation || INITIAL_MAP_REGION);
+                                } else if (isSearchDestination) {
+                                    setDestinationInput("My Location");
+                                    setDestinationData(currentLocation || INITIAL_MAP_REGION);
+                                }
+                            }}
+                        />
+                    </>
+                )}
+            </>
+        );
+    }
+    function SearchSomething() {
+        return (
+            <View style={styles.trySearchingContainer}>
+                <View style={styles.trySearchingIconsContainer}>
+                    <PlaceIcon fill={colors.subtitle} />
+                </View>
+                <ThemedText style={styles.trySearchingText}>
+                    Try searching for stations, places, or destinations
+                </ThemedText>
+            </View>
+        );
+    }
 
     return (
         <>
@@ -261,113 +383,7 @@ export default function SearchOrigin(props) {
                                     keyboardDismissMode="interactive"
                                     scrollEventThrottle={16}
                                 >
-                                    {(api22Result !== undefined &&
-                                        api22Result !== null &&
-                                        api22Result.length !== 0) ||
-                                    (api21Result !== undefined &&
-                                        api21Result !== null &&
-                                        api21Result.length !== 0) ? (
-                                        <>
-                                            {api22Result !== undefined &&
-                                            api22Result !== null &&
-                                            api22Result.length !== 0 ? (
-                                                <>
-                                                    <ThemedText style={styles.topictext}>
-                                                        Stations
-                                                    </ThemedText>
-                                                    <View style={styles.tabbarcontainer}>
-                                                        <>
-                                                            {api22Result.map((item, key) => (
-                                                                <StationTab
-                                                                    key={key}
-                                                                    place={item.name.en}
-                                                                    trip={item.trips}
-                                                                    onPress={() => {
-                                                                        if (isSearchOrigin) {
-                                                                            setOriginInput(
-                                                                                item.name.en,
-                                                                            );
-                                                                            setOriginData(item);
-                                                                        } else if (
-                                                                            isSearchDestination
-                                                                        ) {
-                                                                            setDestinationInput(
-                                                                                item.name.en,
-                                                                            );
-                                                                            setDestinationData(
-                                                                                item,
-                                                                            );
-                                                                        }
-                                                                    }}
-                                                                />
-                                                            ))}
-                                                        </>
-                                                    </View>
-                                                </>
-                                            ) : (
-                                                <></>
-                                            )}
-                                            {api21Result !== undefined &&
-                                            api21Result !== null &&
-                                            api21Result.length !== 0 ? (
-                                                <View>
-                                                    <ThemedText style={styles.topictext}>
-                                                        Places
-                                                    </ThemedText>
-                                                    <View style={styles.tabbarcontainer}>
-                                                        {api21Result.map((item, key) => (
-                                                            <PlaceTab
-                                                                key={key}
-                                                                place={item.name.en}
-                                                                address={item.address.en}
-                                                                onPress={() => {
-                                                                    if (isSearchOrigin) {
-                                                                        setOriginInput(
-                                                                            item.name.en,
-                                                                        );
-                                                                        setOriginData(item);
-                                                                    } else if (
-                                                                        isSearchDestination
-                                                                    ) {
-                                                                        setDestinationInput(
-                                                                            item.name.en,
-                                                                        );
-                                                                        setDestinationData(item);
-                                                                    }
-                                                                }}
-                                                            />
-                                                        ))}
-                                                    </View>
-                                                </View>
-                                            ) : (
-                                                <></>
-                                            )}
-                                        </>
-                                    ) : (
-                                        <>
-                                            <PlaceTab
-                                                place="My Location"
-                                                address={
-                                                    currentLocation.latitude +
-                                                    " , " +
-                                                    currentLocation.longitude
-                                                }
-                                                onPress={() => {
-                                                    if (isSearchOrigin) {
-                                                        setOriginInput("My Location");
-                                                        setOriginData(
-                                                            currentLocation || INITIAL_MAP_REGION,
-                                                        );
-                                                    } else if (isSearchDestination) {
-                                                        setDestinationInput("My Location");
-                                                        setDestinationData(
-                                                            currentLocation || INITIAL_MAP_REGION,
-                                                        );
-                                                    }
-                                                }}
-                                            />
-                                        </>
-                                    )}
+                                    {inputData ? <SearchData /> : <SearchSomething />}
                                 </ScrollView>
                             ) : (
                                 <BadConnectionComponent />
