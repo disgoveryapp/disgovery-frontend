@@ -141,10 +141,15 @@ export default function Search() {
 
             setError22(false);
 
-            if (result.data.data === undefined || result.data.data === null) {
+            if (
+                result.data === undefined ||
+                result.data === null ||
+                result.data === [] ||
+                Object.keys(result.data).length === 0
+            ) {
                 setApi22Result([]);
             } else {
-                setApi22Result(result.data.data);
+                setApi22Result(result.data);
             }
         } catch (error) {
             setError22(true);
@@ -164,11 +169,14 @@ export default function Search() {
             if (
                 result.data === undefined ||
                 result.data === null ||
-                result.data.code === ErrorMessage
+                result.data.code === ErrorMessage ||
+                result.data === [] ||
+                Object.keys(result.data).length === 0
             ) {
                 setApi21Result([]);
             } else {
                 setApi21Result(result.data);
+                console.log(api21Result);
             }
         } catch (error) {
             setError21(true);
