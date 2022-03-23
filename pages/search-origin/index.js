@@ -52,6 +52,7 @@ export default function SearchOrigin(props) {
     const [loading, setLoading] = useState(false);
     const [inputData, setInputData] = useState(true);
     const ErrorMessage = "ERR_UNESCAPED_CHARACTERS";
+    const MyLocation = "My Location";
 
     const [currentLocation, setCurrentLocation] = useState({
         latitude: 13.764889,
@@ -69,6 +70,18 @@ export default function SearchOrigin(props) {
         latitudeDelta: 0.035,
         longitudeDelta: 0.035,
     };
+
+    function swapValue() {
+        const temp = originInput;
+        const temp2 = originData;
+        setOriginInput(destinationInput);
+        setOriginData(destinationData);
+        setDestinationInput(temp);
+        setDestinationData(temp2);
+        setInputData(false);
+        setApi21Result([]);
+        setApi22Result([]);
+    }
 
     useEffect(() => {
         if (firstRun) {
@@ -124,12 +137,10 @@ export default function SearchOrigin(props) {
     }
 
     useEffect(() => {
-        setInputData(true);
         onChangeText(originInput);
     }, [originInput]);
 
     useEffect(() => {
-        setInputData(true);
         if (destinationInput === destinationName && destinationName !== "") {
         } else {
             onChangeText(destinationInput);
@@ -137,9 +148,11 @@ export default function SearchOrigin(props) {
     }, [destinationInput]);
 
     useEffect(() => {
-        if (text === "" || text === "My Location" || onFlip) {
-            setInputData(false);
+        setInputData(true);
+        if (text === "" || text === MyLocation) {
+            setLoading(true);
             setApi22Result([]);
+            setLoading(false);
         } else {
             setLoading(true);
             simpleApi22Call();
@@ -148,10 +161,9 @@ export default function SearchOrigin(props) {
     }, [text]);
 
     useEffect(() => {
-        if (text === "" || text === "My Location" || onFlip) {
+        if (text === "" || text === MyLocation) {
             setApi21Result([]);
             setApi22Result([]);
-            setFlip(false);
         } else {
             simpleApi21Call();
         }
@@ -265,11 +277,17 @@ export default function SearchOrigin(props) {
                                                 trip={item.trips}
                                                 onPress={() => {
                                                     if (isSearchOrigin) {
-                                                        setOriginInput(item.name.en);
-                                                        setOriginData(item);
+                                                        if (item.name.en === destinationInput) {
+                                                        } else {
+                                                            setOriginInput(item.name.en);
+                                                            setOriginData(item);
+                                                        }
                                                     } else if (isSearchDestination) {
-                                                        setDestinationInput(item.name.en);
-                                                        setDestinationData(item);
+                                                        if (item.name.en === originInput) {
+                                                        } else {
+                                                            setDestinationInput(item.name.en);
+                                                            setDestinationData(item);
+                                                        }
                                                     }
                                                 }}
                                             />
@@ -293,11 +311,17 @@ export default function SearchOrigin(props) {
                                             address={item.address.en}
                                             onPress={() => {
                                                 if (isSearchOrigin) {
-                                                    setOriginInput(item.name.en);
-                                                    setOriginData(item);
+                                                    if (item.name.en === destinationInput) {
+                                                    } else {
+                                                        setOriginInput(item.name.en);
+                                                        setOriginData(item);
+                                                    }
                                                 } else if (isSearchDestination) {
-                                                    setDestinationInput(item.name.en);
-                                                    setDestinationData(item);
+                                                    if (item.name.en === originInput) {
+                                                    } else {
+                                                        setDestinationInput(item.name.en);
+                                                        setDestinationData(item);
+                                                    }
                                                 }
                                             }}
                                         />
@@ -311,15 +335,21 @@ export default function SearchOrigin(props) {
                 ) : (
                     <>
                         <PlaceTab
-                            place="My Location"
+                            place={MyLocation}
                             address={currentLocation.latitude + " , " + currentLocation.longitude}
                             onPress={() => {
                                 if (isSearchOrigin) {
-                                    setOriginInput("My Location");
-                                    setOriginData(currentLocation || INITIAL_MAP_REGION);
+                                    if (MyLocation === destinationInput) {
+                                    } else {
+                                        setOriginInput(MyLocation);
+                                        setOriginData(currentLocation || INITIAL_MAP_REGION);
+                                    }
                                 } else if (isSearchDestination) {
-                                    setDestinationInput("My Location");
-                                    setDestinationData(currentLocation || INITIAL_MAP_REGION);
+                                    if (MyLocation === originInput) {
+                                    } else {
+                                        setDestinationInput(MyLocation);
+                                        setDestinationData(currentLocation || INITIAL_MAP_REGION);
+                                    }
                                 }
                             }}
                         />
@@ -365,6 +395,7 @@ export default function SearchOrigin(props) {
                         }}
                         setFlip={setFlip}
                         autoFocus={true}
+                        swapValue={swapValue}
                     />
                 </View>
 

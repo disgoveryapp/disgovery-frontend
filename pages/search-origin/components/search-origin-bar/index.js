@@ -19,12 +19,12 @@ export default function SearchOriginBar(props) {
 
     const clearText = () => props.onChangeText("");
     const clearTextLocation = () => props.onChangeTextLocation("");
-    function swapValue() {
+    /*function swapValue() {
         props.setFlip(true);
         const temp = props.value;
         props.onChangeText(props.valueLocation);
         props.onChangeTextLocation(temp);
-    }
+    }*/
     function tabOne() {
         if (isTabTwoOpen == true) {
             setTabTwo(false);
@@ -146,7 +146,7 @@ export default function SearchOriginBar(props) {
                     </View>
                 </View>
             </View>
-            <TouchableOpacity onPress={() => swapValue()}>
+            <TouchableOpacity onPress={() => props.swapValue()}>
                 <SwapIcon />
             </TouchableOpacity>
         </View>
