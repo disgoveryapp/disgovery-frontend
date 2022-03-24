@@ -83,7 +83,7 @@ export default function SearchOrigin(props) {
         setInputData(false);
         setApi21Result([]);
         setApi22Result([]);
-        inputRef.current.focus();
+        inputRef.nativeEvent.blur();
     }
 
     useEffect(() => {
