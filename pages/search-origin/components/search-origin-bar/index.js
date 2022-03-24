@@ -124,7 +124,7 @@ export default function SearchOriginBar(props) {
                         </View>
                         <View style={styles.textContainer}>
                             <ThemedTextInput
-                                inputRef={props.ref}
+                                inputRef={props.inputRef}
                                 placeholder={props.placeholderLocation}
                                 style={styles.textinput}
                                 onChangeText={props.onChangeTextLocation}
