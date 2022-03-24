@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
     StyleSheet,
     View,
@@ -71,6 +71,8 @@ export default function SearchOrigin(props) {
         longitudeDelta: 0.035,
     };
 
+    const inputRef = useRef(null);
+
     function swapValue() {
         const temp = originInput;
         const temp2 = originData;
@@ -81,7 +83,7 @@ export default function SearchOrigin(props) {
         setInputData(false);
         setApi21Result([]);
         setApi22Result([]);
-        this.inputRef.focus();
+        inputRef.current.focus();
     }
 
     useEffect(() => {
@@ -384,7 +386,7 @@ export default function SearchOrigin(props) {
                 <SafeAreaView />
                 <View style={styles.searchbox}>
                     <SearchOriginBar
-                        ref={(el) => (this.inputRef = el)}
+                        ref={inputRef}
                         placeholder="Search Origin"
                         placeholderLocation="Search Destination"
                         onChangeText={setOriginInput}
