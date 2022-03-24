@@ -17,8 +17,6 @@ export default function SearchOriginBar(props) {
     const [isTabTwoOpen, setTabTwo] = useState(false);
     const navigation = useNavigation();
 
-    console.log(props.inputRef, "ref 2");
-
     const clearText = () => props.onChangeText("");
     const clearTextLocation = () => props.onChangeTextLocation("");
     /*function swapValue() {
