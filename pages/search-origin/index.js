@@ -81,6 +81,7 @@ export default function SearchOrigin(props) {
         setInputData(false);
         setApi21Result([]);
         setApi22Result([]);
+        this.inputRef.focus();
     }
 
     useEffect(() => {
@@ -103,14 +104,14 @@ export default function SearchOrigin(props) {
             setError22(false);
 
             if (
-                result.data === undefined ||
-                result.data === null ||
-                result.data === [] ||
-                Object.keys(result.data).length === 0
+                result.data.data === undefined ||
+                result.data.data === null ||
+                result.data.data === [] ||
+                Object.keys(result.data.data).length === 0
             ) {
                 setApi22Result([]);
             } else {
-                setApi22Result(result.data);
+                setApi22Result(result.data.data);
             }
         } catch (error) {
             setError22(true);
@@ -383,6 +384,7 @@ export default function SearchOrigin(props) {
                 <SafeAreaView />
                 <View style={styles.searchbox}>
                     <SearchOriginBar
+                        ref={(el) => (this.inputRef = el)}
                         placeholder="Search Origin"
                         placeholderLocation="Search Destination"
                         onChangeText={setOriginInput}
@@ -432,4 +434,3 @@ export default function SearchOrigin(props) {
         </>
     );
 }
-//location.latitude + " , " + location.longitude
