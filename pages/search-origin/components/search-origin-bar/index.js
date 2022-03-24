@@ -17,6 +17,8 @@ export default function SearchOriginBar(props) {
     const [isTabTwoOpen, setTabTwo] = useState(false);
     const navigation = useNavigation();
 
+    console.log(props.inputRef, "ref 2");
+
     const clearText = () => props.onChangeText("");
     const clearTextLocation = () => props.onChangeTextLocation("");
     /*function swapValue() {
@@ -93,7 +95,7 @@ export default function SearchOriginBar(props) {
                         </View>
                         <View style={styles.textContainer}>
                             <ThemedTextInput
-                                ref={props.ref}
+                                inputRef={props.inputRef}
                                 placeholder={props.placeholder}
                                 style={styles.textinput}
                                 onChangeText={props.onChangeText}
@@ -124,7 +126,7 @@ export default function SearchOriginBar(props) {
                         </View>
                         <View style={styles.textContainer}>
                             <ThemedTextInput
-                                ref={props.ref}
+                                inputRef={props.ref}
                                 placeholder={props.placeholderLocation}
                                 style={styles.textinput}
                                 onChangeText={props.onChangeTextLocation}

@@ -83,7 +83,8 @@ export default function SearchOrigin(props) {
         setInputData(false);
         setApi21Result([]);
         setApi22Result([]);
-        inputRef.nativeEvent.blur();
+
+        inputRef.current.blur();
     }
 
     useEffect(() => {
@@ -386,7 +387,7 @@ export default function SearchOrigin(props) {
                 <SafeAreaView />
                 <View style={styles.searchbox}>
                     <SearchOriginBar
-                        ref={inputRef}
+                        inputRef={inputRef}
                         placeholder="Search Origin"
                         placeholderLocation="Search Destination"
                         onChangeText={setOriginInput}
