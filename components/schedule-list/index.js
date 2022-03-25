@@ -18,7 +18,8 @@ function ScheduleList(props) {
             flexDirection: "row",
         },
         scheduleContainer: {
-            width: "80%",
+            flex: 1,
+            width: "100%",
         },
         destination: {
             display: "flex",
@@ -27,7 +28,7 @@ function ScheduleList(props) {
         },
         destinationMarqueeContainer: {
             paddingLeft: 5,
-            flex: 1,
+            width: "100%",
         },
         destinationText: {
             fontSize: 20,
@@ -43,23 +44,10 @@ function ScheduleList(props) {
             flex: 1,
             fontSize: 18,
             fontWeight: "500",
+            width: "100%",
         },
         scheduleMarqueeContainer: {
-            flex: 1,
-        },
-        timeContainer: {
-            flex: 1,
-        },
-        time: {},
-        timeText: {
-            textAlign: "right",
-            fontSize: 18,
-            fontWeight: "600",
-        },
-        subTimeText: {
-            textAlign: "right",
-            fontSize: 16,
-            color: colors.primary,
+            width: "100%",
         },
     });
 
@@ -75,7 +63,7 @@ function ScheduleList(props) {
                     </View>
                 </View>
 
-                <View style={styles.schedule}>
+                <View style={styles.scheduleContainer}>
                     {!!props.schedule && (
                         <>
                             <ThemedText style={styles.scheduleFromText}>from </ThemedText>

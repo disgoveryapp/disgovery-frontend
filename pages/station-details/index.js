@@ -47,7 +47,7 @@ dayjs.updateLocale("en", {
     },
 });
 
-const STATION_ID = "BRT_B5";
+const STATION_ID = "MRT_PP14";
 const SCREEN_WIDTH = Dimensions.get("screen").width;
 
 export default function StationDetails(props) {
@@ -456,7 +456,7 @@ export default function StationDetails(props) {
 
                                     {!loading &&
                                         stationData &&
-                                        !stationData.lines &&
+                                        stationData.lines &&
                                         stationData.lines.length !== 0 && (
                                             <>
                                                 <View style={styles.divider} />
