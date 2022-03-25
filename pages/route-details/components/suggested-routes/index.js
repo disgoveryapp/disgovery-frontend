@@ -3,7 +3,7 @@ import ThemedText from "../../../../components/themed-text";
 import { View, StyleSheet } from "react-native";
 import CloudOffIcon from "../../../../assets/svgs/cloud-off";
 
-export default function OverViewRoute(props) {
+export default function SuggestedRoutes(props) {
     const styles = StyleSheet.create({
         container: {
             width: "100%",
