@@ -15,9 +15,8 @@ import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
 import relativeTime from "dayjs/plugin/relativeTime";
 import updateLocale from "dayjs/plugin/updateLocale";
-
-const STATION_ID = "BTS_N9";
-const SCREEN_WIDTH = Dimensions.get("screen").width;
+import ScheduleList from "../../components/schedule-list";
+import NavigateBotton from "../../components/navigate-button";
 
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
@@ -45,16 +44,105 @@ export default function StationDetails(props) {
     const { dark, colors } = useTheme();
     const mapRef = useRef();
 
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(formatRoutesAvailable);
     const [loadError, setLoadError] = useState(false);
-    const [stationData, setStationData] = useState({});
+    //const [stationData, setStationData] = useState({});
     const [routesAvailable, setRoutesAvailable] = useState([]);
     const [routesScrollViewScrollable, setRoutesScrollViewScrollable] = useState(false);
 
     const [marker, setMarker] = useState({ latitude: 0, longitude: 0 });
-
+    const stationData = 
+    {
+    "name": {
+      "en": "Saphan Khwai",
+      "th": "สะพานควาย"
+    },
+    "id": "BTS_N7",
+    "code": "N7",
+    "lines": [
+      {
+        "route_id": "BTS_SUKHUMVIT",
+        "route_name": {
+          "short_name": "Sukhumvit",
+          "long_name": "BTS Sukhumvit Line"
+        },
+        "route_color": "7FBF3A",
+        "route_type": "0",
+        "route_feq": 5,
+        "route_lasttrain": "2022-03-25T17:34:38+07:00",
+        "trip_id": "BTS_SUKHUMVIT_WD_E23_N24",
+        "arriving_in": 40,
+        "destination": {
+          "id": "BTS_N24",
+          "name": {
+            "en": "Khu Khot",
+            "th": "คูคต"
+          },
+          "code": "N24"
+        }
+      },
+      {
+        "route_id": "BTS_SUKHUMVIT",
+        "route_name": {
+          "short_name": "Sukhumvit",
+          "long_name": "BTS Sukhumvit Line"
+        },
+        "route_color": "7FBF3A",
+        "route_type": "0",
+        "route_feq": 5,
+        "route_lasttrain": "2022-03-25T17:34:38+07:00",
+        "trip_id": "BTS_SUKHUMVIT_WD_N24_E23",
+        "arriving_in": 40,
+        "destination": {
+          "id": "BTS_E23",
+          "name": {
+            "en": "Kheha",
+            "th": "เคหะฯ"
+          },
+          "code": "E23"
+        }
+      },
+      {
+        "route_id": "BTS_SUKHUMVIT",
+        "route_name": {
+          "short_name": "Sukhumvit",
+          "long_name": "BTS Sukhumvit Line"
+        },
+        "route_color": "7FBF3A",
+        "route_type": "0",
+        "route_feq": 5,
+        "route_lasttrain": "2022-03-25T17:34:38+07:00",
+        "trip_id": "BTS_SUKHUMVIT_WD_E15_N24",
+        "arriving_in": 70,
+        "destination": {
+          "id": "BTS_N24",
+          "name": {
+            "en": "Khu Khot",
+            "th": "คูคต"
+          },
+          "code": "N24"
+        }
+      }
+    ],
+    "transfers": [],
+    "routes": [
+      {
+        "route_id": "BTS_SUKHUMVIT",
+        "route_name": {
+          "short_name": "Sukhumvit",
+          "long_name": "BTS Sukhumvit Line"
+        },
+        "route_type": "0",
+        "route_color": "7FBF3A"
+      }
+    ],
+    "coordinates": {
+      "lat": "13.793879907040548",
+      "lng": "100.549676790319600"
+    }
+  }
     useEffect(() => {
-        fetchStationDetails();
+        formatRoutesAvailable(stationData)
     }, []);
 
     const styles = StyleSheet.create({
@@ -63,6 +151,13 @@ export default function StationDetails(props) {
             top: 0,
             alignSelf: "flex-start",
             paddingHorizontal: 15,
+            zIndex: 10,
+        },
+        navigateButtonContainer: {
+            position: "absolute",
+            marginTop: 0.02 * Dimensions.get("screen").height,
+            alignSelf: "flex-end",
+            paddingHorizontal: 5,
             zIndex: 10,
         },
         topMap: {
@@ -190,42 +285,42 @@ export default function StationDetails(props) {
         });
     }
 
-    function fetchStationDetails() {
-        setLoading(true);
+    // function fetchStationDetails() {
+    //     setLoading(true);
 
-        axios
-            .get(`${configs.API_URL}/station/id/${STATION_ID}`)
-            .then(async (response) => {
-                if (response.data.status) {
-                    if (response.data.status.status !== 200) setLoadError(true);
-                    else {
-                        setStationData(response.data.data);
-                        formatRoutesAvailable(response.data.data);
+    //     axios
+    //         .get(`${configs.API_URL}/station/id/${STATION_ID}`)
+    //         .then(async (response) => {
+    //             if (response.data.status) {
+    //                 if (response.data.status.status !== 200) setLoadError(true);
+    //                 else {
+    //                     setStationData(response.data.data);
+    //                     formatRoutesAvailable(response.data.data);
 
-                        if (response.data.data.coordinates) {
-                            await recenter(
-                                parseFloat(response.data.data.coordinates.lat),
-                                parseFloat(response.data.data.coordinates.lng),
-                            );
+    //                     if (response.data.data.coordinates) {
+    //                         await recenter(
+    //                             parseFloat(response.data.data.coordinates.lat),
+    //                             parseFloat(response.data.data.coordinates.lng),
+    //                         );
 
-                            setMarker({
-                                latitude: parseFloat(response.data.data.coordinates.lat),
-                                longitude: parseFloat(response.data.data.coordinates.lng),
-                            });
-                        }
-                    }
-                }
+    //                         setMarker({
+    //                             latitude: parseFloat(response.data.data.coordinates.lat),
+    //                             longitude: parseFloat(response.data.data.coordinates.lng),
+    //                         });
+    //                     }
+    //                 }
+    //             }
 
-                setLoading(false);
-            })
-            .catch((error) => {
-                if (error) setLoadError(true);
-                setLoading(false);
-            });
-    }
+    //             setLoading(false);
+    //         })
+    //         .catch((error) => {
+    //             if (error) setLoadError(true);
+    //             setLoading(false);
+    //         });
+    // }
 
     function formatRoutesAvailable(data) {
-        if (data.routes.length === 0) return;
+        if (0 === 0) return;
 
         let tempRoutesAvailable = [];
 
@@ -301,6 +396,9 @@ export default function StationDetails(props) {
                                     <ThemedText style={styles.stationSignText}>
                                         {stationData.code}
                                     </ThemedText>
+                                </View>
+                                <View style={styles.navigateButtonContainer}>
+                                    <NavigateBotton />
                                 </View>
                             </View>
                         )}
@@ -397,6 +495,30 @@ export default function StationDetails(props) {
                                                     origin=""
                                                     subtitle={`Departing in ${stationData.lines[key].arriving_in} seconds`}
                                                     size="small"
+                                                />
+                                            </>
+                                        ))}
+                                    </View>
+                                </>
+                            )}
+                            {stationData.lines.length !== 0 && (
+                                <>
+                                    <View style={styles.divider} />
+
+                                    <View>
+                                        <ThemedText style={styles.subheader}>
+                                            Schedules
+                                        </ThemedText>
+
+                                        {Object.keys(stationData.lines).map((key) => (
+                                            <>
+                                                <ScheduleList
+                                                    style={styles.nextDepartures}
+                                                    destination={
+                                                        stationData.lines[key].destination.name.en
+                                                    }
+                                                    subtitle={`Scheduled for every ${stationData.lines[key].route_feq} minutes until `}
+                                                    time={stationData.lines[key].route_lasttrain}
                                                 />
                                             </>
                                         ))}
