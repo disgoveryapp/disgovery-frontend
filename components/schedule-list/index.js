@@ -50,15 +50,6 @@ function ScheduleList(props) {
         scheduleMarqueeContainer: {
             flex: 1,
         },
-        timeContainer: {
-            flex: 1,
-        },
-        time: {},
-        timeText: {
-            textAlign: "right",
-            fontSize: 18,
-            fontWeight: "600",
-        },
         subTimeText: {
             textAlign: "right",
             fontSize: 16,
@@ -68,7 +59,7 @@ function ScheduleList(props) {
 
     return (
         <View style={{ ...props.style, ...styles.container }}>
-            <View style={styles.scheduler}>
+            <View style={styles.schedule}>
                 <View style={styles.destination}>
                     <ArrowIcon />
                     <View style={styles.destinationMarqueeContainer}>
@@ -77,19 +68,7 @@ function ScheduleList(props) {
                         </ThemedTextMarquee>
                     </View>
                 </View>
-
                 <View style={styles.schedule}>
-                    {!!props.schedule && (
-                        <>
-                            <ThemedText style={styles.scheduleFromText}>from </ThemedText>
-                            <View style={styles.scheduleMarqueeContainer}>
-                                <ThemedTextMarquee style={styles.scheduleText}>
-                                    {props.schedule}
-                                </ThemedTextMarquee>
-                            </View>
-                        </>
-                    )}
-                    
                     {!!props.subtitle && !!props.time && (
                         <>
                             <ThemedText style={styles.scheduleFromText}>{props.subtitle}{formatTime(props.time)}</ThemedText>

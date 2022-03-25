@@ -48,6 +48,7 @@ export default function StationDetails(props) {
     const [loadError, setLoadError] = useState(false);
     //const [stationData, setStationData] = useState({});
     const [routesAvailable, setRoutesAvailable] = useState([]);
+    const [scheduleData, setScheduleData] = useState([]);
     const [routesScrollViewScrollable, setRoutesScrollViewScrollable] = useState(false);
 
     const [marker, setMarker] = useState({ latitude: 0, longitude: 0 });
@@ -141,8 +142,10 @@ export default function StationDetails(props) {
       "lng": "100.549676790319600"
     }
   }
+  
     useEffect(() => {
         formatRoutesAvailable(stationData)
+        formatScheduleAvailable(stationData)
     }, []);
 
     const styles = StyleSheet.create({
@@ -335,6 +338,30 @@ export default function StationDetails(props) {
         setRoutesAvailable([...tempRoutesAvailable]);
     }
 
+    function formatScheduleAvailable(data) {
+        if (data.lines === []) return;
+
+        let tempScheduleData = {};
+
+        tempScheduleData.arr = new Array();
+        Object.keys(data.lines).map((key) => {
+            console.log(data.lines[key].destination.name.en);
+            tempScheduleData.arr.push({
+                name: data.lines[key].destination.name.en,
+                feq: data.lines[key].route_feq,
+                time: data.lines[key].route_lasttrain,
+            });
+        });
+        
+        tempScheduleData.arr = tempScheduleData.arr.filter((value, index, self) => 
+            index === self.findIndex((t) => (
+                t.place === value.place && t.name === value.name
+            ))
+        )
+
+        setScheduleData([...tempScheduleData.arr]);
+    }
+
     function onRoutesScrollViewLayout(event) {
         console.log(event.nativeEvent);
         setRoutesScrollViewScrollable(event.nativeEvent.layout.width >= SCREEN_WIDTH - 80);
@@ -343,6 +370,8 @@ export default function StationDetails(props) {
     function onMarkerPressed(lat, lng) {
         recenter(lat, lng);
     }
+
+    console.log(scheduleData);
 
     return (
         <View>
@@ -493,7 +522,7 @@ export default function StationDetails(props) {
                                                         stationData.lines[key].destination.name.en
                                                     }
                                                     origin=""
-                                                    subtitle={`Departing in ${stationData.lines[key].arriving_in} seconds`}
+                                                    subtitle={`Departing in ${stationData.lines[key].arriving_in} minutes`}
                                                     size="small"
                                                 />
                                             </>
@@ -510,7 +539,8 @@ export default function StationDetails(props) {
                                             Schedules
                                         </ThemedText>
 
-                                        {Object.keys(stationData.lines).map((key) => (
+                                        {Object.keys(scheduleData).map((key) => 
+                                        (
                                             <>
                                                 <ScheduleList
                                                     style={styles.nextDepartures}
