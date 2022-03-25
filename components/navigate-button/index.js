@@ -1,11 +1,12 @@
 import { useTheme } from "@react-navigation/native";
 import React from "react";
-import { StyleSheet} from "react-native";
+import { StyleSheet, View } from "react-native";
 import PropTypes from "prop-types";
-import { TouchableHighlight } from "react-native-gesture-handler";
+import { TouchableOpacity } from "react-native-gesture-handler";
 import ThemedText from "../themed-text";
+import NavigateIcon from "../../assets/svgs/navigate-icon";
 
-const NavigateBotton = (props) => {
+const NavigateButton = (props) => {
     const { colors } = useTheme();
 
     const onPress = props.onPress || function () {};
@@ -15,9 +16,9 @@ const NavigateBotton = (props) => {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            backgroundColor: colors.red,
-            width: 89,
-            height: 40,
+            backgroundColor: colors.goButton,
+            paddingHorizontal: 15,
+            paddingVertical: 12,
             borderRadius: 12,
 
             shadowColor: "#000",
@@ -30,23 +31,31 @@ const NavigateBotton = (props) => {
 
             elevation: 10,
         },
+        navigateText: {
+            fontWeight: "600",
+            fontSize: 18,
+            marginLeft: 5,
+        },
     });
 
     return (
-        <TouchableHighlight
+        <TouchableOpacity
             style={[styles.container, props.style]}
             onPress={onPress}
-            underlayColor={colors.upper_background}
+            underlayColor={colors.goButton}
         >
-            <ThemedText style={styles.time}>
-                Navigate
-            </ThemedText>
-        </TouchableHighlight>
+            <>
+                <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                    <NavigateIcon />
+                    <ThemedText style={styles.navigateText}>Go</ThemedText>
+                </View>
+            </>
+        </TouchableOpacity>
     );
 };
 
-NavigateBotton.propTypes = {
+NavigateButton.propTypes = {
     onPress: PropTypes.func,
 };
 
-export default NavigateBotton;
+export default NavigateButton;

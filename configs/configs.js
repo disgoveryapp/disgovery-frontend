@@ -1,5 +1,5 @@
 export const configs = {
-    API_URL: "http://192.168.1.8:3000",
+    API_URL: "http://192.168.1.3:3000",
     INITIAL_MAP_REGION: {
         latitude: 13.764889,
         longitude: 100.538266,

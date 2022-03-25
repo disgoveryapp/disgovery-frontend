@@ -11,12 +11,9 @@ import dayjs from "dayjs";
 function ScheduleList(props) {
     const { colors } = useTheme();
 
-    function formatTime(time) {
-        return dayjs(time).format("HH:mm");
-    }
-
     const styles = StyleSheet.create({
         container: {
+            width: "100%",
             display: "flex",
             flexDirection: "row",
         },
@@ -89,10 +86,12 @@ function ScheduleList(props) {
                             </View>
                         </>
                     )}
-                    
-                    {!!props.subtitle && !!props.time && (
+
+                    {!!props.subtitle && (
                         <>
-                            <ThemedText style={styles.scheduleFromText}>{props.subtitle}{formatTime(props.time)}</ThemedText>
+                            <ThemedText style={styles.scheduleFromText}>
+                                {props.subtitle}
+                            </ThemedText>
                         </>
                     )}
                 </View>
@@ -104,7 +103,6 @@ function ScheduleList(props) {
 ScheduleList.propTypes = {
     schedule: PropTypes.string,
     destination: PropTypes.string,
-    time: PropTypes.number,
 };
 
 export default ScheduleList;
