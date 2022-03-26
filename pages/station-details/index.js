@@ -276,7 +276,7 @@ export default function StationDetails(props) {
         <View>
             <View style={styles.backButtonContainer}>
                 <SafeAreaView edges={["top"]} />
-                <BackButton />
+                <BackButton onPress={props.navigation.pop} />
             </View>
 
             <MapView
