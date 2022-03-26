@@ -29,7 +29,6 @@ import BackButton from "../../components/back-button";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { decode } from "@googlemaps/polyline-codec";
 import { LinearGradient } from "expo-linear-gradient";
-import ArrowIcon24 from "../../assets/svgs/arrow-forward-24px";
 import ArrowIcon from "../../assets/svgs/arrow-forward-18px";
 
 const MARGIN_BETWEEN_STATION = 25;
@@ -215,6 +214,11 @@ function TripDetails(props) {
 
     function onMarkerPressed(latitude, longitude) {
         recenter(latitude, longitude);
+    }
+
+    function onStopPressed(stop_id) {
+        console.log(stop_id);
+        props.navigation.navigate("StationDetails", { stop_id: stop_id });
     }
 
     const styles = StyleSheet.create({
@@ -500,11 +504,14 @@ function TripDetails(props) {
                             )}
                         </View>
 
-                        <View style={styles.stationTextContainer}>
+                        <TouchableOpacity
+                            style={styles.stationTextContainer}
+                            onPress={() => onStopPressed(stop.id)}
+                        >
                             <ThemedTextMarquee style={styles.stationText}>
                                 {stop.name.en}
                             </ThemedTextMarquee>
-                        </View>
+                        </TouchableOpacity>
                     </View>
 
                     <View style={styles.stationSubtitleTextContainer}>
@@ -570,11 +577,14 @@ function TripDetails(props) {
                                 )}
                             </View>
 
-                            <View style={styles.stationTextContainer}>
+                            <TouchableOpacity
+                                style={styles.stationTextContainer}
+                                onPress={() => onStopPressed(stop.id)}
+                            >
                                 <ThemedTextMarquee style={styles.previousStationText}>
                                     {stop.name.en}
                                 </ThemedTextMarquee>
-                            </View>
+                            </TouchableOpacity>
                         </View>
                     </View>
 

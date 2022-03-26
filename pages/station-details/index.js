@@ -19,35 +19,9 @@ import ThemedText from "../../components/themed-text";
 import TransitLine from "../../components/transit-line";
 import OriginToDestinationTitle from "../../components/origin-to-destination-title";
 import dayjs from "dayjs";
-import duration from "dayjs/plugin/duration";
-import relativeTime from "dayjs/plugin/relativeTime";
-import updateLocale from "dayjs/plugin/updateLocale";
 import ScheduleList from "../../components/schedule-list";
 import NavigateButton from "../../components/navigate-button";
 
-dayjs.extend(duration);
-dayjs.extend(relativeTime);
-dayjs.extend(updateLocale);
-
-dayjs.updateLocale("en", {
-    relativeTime: {
-        future: "%s",
-        past: "",
-        s: "%d seconds ",
-        m: "minute ",
-        mm: "%d minutes ",
-        h: "hour ",
-        hh: "%d hours ",
-        d: "day ",
-        dd: "%d days ",
-        M: "month ",
-        MM: "%d months ",
-        y: "year ",
-        yy: "%d years ",
-    },
-});
-
-const STATION_ID = "MRT_PP14";
 const SCREEN_WIDTH = Dimensions.get("screen").width;
 
 export default function StationDetails(props) {
@@ -61,6 +35,8 @@ export default function StationDetails(props) {
     const [routesScrollViewScrollable, setRoutesScrollViewScrollable] = useState(false);
 
     const [marker, setMarker] = useState({ latitude: 0, longitude: 0 });
+
+    const STATION_ID = props.route.params.stop_id;
 
     useEffect(() => {
         fetchStationDetails();
