@@ -11,7 +11,7 @@ export default function SuggestedRoutes(props) {
             justifyContent: "center",
             alignItems: "center",
         },
-        text: {
+        titleText: {
             fontWeight: "bold",
             fontSize: 24,
             padding: 12,
@@ -20,7 +20,7 @@ export default function SuggestedRoutes(props) {
     return (
         <>
             <View style={styles.container}>
-                <ThemedText style={styles.text}>No Connection</ThemedText>
+                <ThemedText style={styles.titleText}>Suggested routes</ThemedText>
             </View>
         </>
     );

@@ -21,7 +21,12 @@ export default function OverViewRoute(props) {
     return (
         <>
             <View style={styles.container}>
-                <ThemedText style={styles.text}>No Connection</ThemedText>
+                <ThemedText style={styles.titleText}>Overview</ThemedText>
+                <View>
+                    <TravelBlock />
+                    <TravelBlock />
+                    <TravelBlock />
+                </View>
             </View>
         </>
     );

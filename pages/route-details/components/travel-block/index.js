@@ -1,7 +1,6 @@
 import React from "react";
 import ThemedText from "../../../../components/themed-text";
 import { View, StyleSheet } from "react-native";
-import CloudOffIcon from "../../../../assets/svgs/cloud-off";
 
 export default function OverViewRoute(props) {
     const styles = StyleSheet.create({
@@ -19,12 +18,15 @@ export default function OverViewRoute(props) {
     });
 
     return (
-        <View style={styles.blockContainer}>
+        <View style={styles.container}>
             <View style={styles.iconBlock}>
                 <View styles={styles.icon} />
                 <ThemedText>Taxi</ThemedText>
             </View>
-            <View style={styles.detailBlock}></View>
+            <View style={styles.detailBlock}>
+                <ThemedText style={styles.timeText}>24 min</ThemedText>
+                <ThemedText styles={styles.detailText}>63 THB</ThemedText>
+            </View>
         </View>
     );
 }
