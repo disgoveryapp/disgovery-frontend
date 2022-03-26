@@ -19,35 +19,9 @@ import ThemedText from "../../components/themed-text";
 import TransitLine from "../../components/transit-line";
 import OriginToDestinationTitle from "../../components/origin-to-destination-title";
 import dayjs from "dayjs";
-import duration from "dayjs/plugin/duration";
-import relativeTime from "dayjs/plugin/relativeTime";
-import updateLocale from "dayjs/plugin/updateLocale";
 import ScheduleList from "../../components/schedule-list";
 import NavigateButton from "../../components/navigate-button";
 
-dayjs.extend(duration);
-dayjs.extend(relativeTime);
-dayjs.extend(updateLocale);
-
-dayjs.updateLocale("en", {
-    relativeTime: {
-        future: "%s",
-        past: "",
-        s: "%d seconds ",
-        m: "minute ",
-        mm: "%d minutes ",
-        h: "hour ",
-        hh: "%d hours ",
-        d: "day ",
-        dd: "%d days ",
-        M: "month ",
-        MM: "%d months ",
-        y: "year ",
-        yy: "%d years ",
-    },
-});
-
-const STATION_ID = "MRT_PP14";
 const SCREEN_WIDTH = Dimensions.get("screen").width;
 
 export default function StationDetails(props) {
@@ -61,6 +35,8 @@ export default function StationDetails(props) {
     const [routesScrollViewScrollable, setRoutesScrollViewScrollable] = useState(false);
 
     const [marker, setMarker] = useState({ latitude: 0, longitude: 0 });
+
+    const STATION_ID = props.route.params.stop_id;
 
     useEffect(() => {
         fetchStationDetails();
@@ -165,16 +141,20 @@ export default function StationDetails(props) {
         },
         stationSignAndNavigateButtonContainer: {
             marginTop: -70,
+            alignItems: "flex-start",
         },
         stationSignContainer: {
-            width: 60,
+            minWidth: 60,
+            maxWidth: "20%",
             height: 60,
+            paddingHorizontal: 7,
             borderRadius: 100,
             backgroundColor: colors.white,
             marginBottom: 10,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            textAlign: "center",
 
             shadowColor: "#000",
             shadowOffset: {
@@ -294,13 +274,18 @@ export default function StationDetails(props) {
         recenter(lat, lng);
     }
 
-    function onGoPressed() {}
+    function onGoPressed() {
+        props.navigation.navigate("SearchOrigin", {
+            destination_name: stationData.name.en,
+            destination_data: stationData,
+        });
+    }
 
     return (
         <View>
             <View style={styles.backButtonContainer}>
                 <SafeAreaView edges={["top"]} />
-                <BackButton />
+                <BackButton onPress={props.navigation.pop} />
             </View>
 
             <MapView
@@ -340,7 +325,7 @@ export default function StationDetails(props) {
                                         <View
                                             style={{
                                                 ...styles.stationSignContainer,
-                                                borderWidth: 5,
+                                                borderWidth: 6,
                                                 borderColor:
                                                     routesAvailable.length !== 0
                                                         ? `#${routesAvailable[0].color}`
@@ -352,7 +337,7 @@ export default function StationDetails(props) {
                                             </ThemedText>
                                         </View>
                                         <View style={styles.navigateButtonContainer}>
-                                            <NavigateButton />
+                                            <NavigateButton onPress={onGoPressed} />
                                         </View>
                                     </View>
                                 )}

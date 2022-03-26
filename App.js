@@ -58,7 +58,12 @@ export default function App() {
                         <Stack.Screen
                             name="SearchOrigin"
                             component={SearchOrigin}
-                            options={{ animation: "none", gestureEnabled: false }}
+                            options={{ animation: "fade" }}
+                        />
+                        <Stack.Screen
+                            name="StationDetails"
+                            component={StationDetails}
+                            options={{ animation: "fade" }}
                         />
                     </Stack.Navigator>
                 </NavigationContainer>

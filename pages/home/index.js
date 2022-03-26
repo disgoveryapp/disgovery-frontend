@@ -130,7 +130,7 @@ export default function Home() {
                 setLoading(false);
             })
             .catch((error) => {
-                console.log(error);
+                console.error(error);
                 setNearbyStations([]);
                 setLoading(false);
             });

@@ -355,6 +355,10 @@ export default function Search() {
         });
     }
 
+    function navigateToStationDetailsPage(stop_id) {
+        navigation.navigate("StationDetails", { stop_id: stop_id });
+    }
+
     function changeMode(mode) {
         setMode(mode);
     }
@@ -396,10 +400,7 @@ export default function Search() {
                                         trip={item.trips}
                                         onPress={() => {
                                             setDestination_data(item);
-                                            navigateToSearchOriginPage(
-                                                item.name.en,
-                                                destination_data,
-                                            );
+                                            navigateToStationDetailsPage(item.station_id);
                                         }}
                                     />
                                 ))}
@@ -445,6 +446,9 @@ export default function Search() {
                                             color={item.color}
                                             currentLocation={currentLocation}
                                             stationData={item.stations}
+                                            onPress={(nearestId) =>
+                                                navigateToStationDetailsPage(nearestId)
+                                            }
                                         />
                                     </>
                                 ))}
