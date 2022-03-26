@@ -189,9 +189,6 @@ function StationTab(props) {
                                                                 </>
                                                             </ThemedText>
                                                         </View>
-                                                        <TouchableOpacity onPress={props.onPress}>
-                                                            <InfoIcon />
-                                                        </TouchableOpacity>
                                                     </View>
                                                 </TouchableOpacity>
                                             </View>

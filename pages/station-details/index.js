@@ -270,7 +270,12 @@ export default function StationDetails(props) {
         recenter(lat, lng);
     }
 
-    function onGoPressed() {}
+    function onGoPressed() {
+        props.navigation.navigate("SearchOrigin", {
+            destination_name: stationData.name.en,
+            destination_data: stationData,
+        });
+    }
 
     return (
         <View>
@@ -328,7 +333,7 @@ export default function StationDetails(props) {
                                             </ThemedText>
                                         </View>
                                         <View style={styles.navigateButtonContainer}>
-                                            <NavigateButton />
+                                            <NavigateButton onPress={onGoPressed} />
                                         </View>
                                     </View>
                                 )}
