@@ -8,17 +8,18 @@ import SubwayIcon from "../../../../assets/svgs/subway-icon";
 import TramIcon from "../../../../assets/svgs/tram-icon";
 import BoatIcon from "../../../../assets/svgs/boat-icon";
 import RailIcon from "../../../../assets/svgs/rail-icon";
-import { color } from "react-native-elements/dist/helpers";
 import TransitLine from "../../../../components/transit-line";
 
 function LineTab(props) {
     const { colors } = useTheme();
     const [nearestStation, setNearestStation] = useState({ en: null, th: null });
     const [nearestDistance, setNearestDistance] = useState(null);
+    const [nearestId, setNearestId] = useState("");
 
     useEffect(() => {
         findShortestRoute();
     }, []);
+
     function round(value, step) {
         step || (step = 1.0);
         let inv = 1.0 / step;
@@ -28,6 +29,7 @@ function LineTab(props) {
     function deg2rad(deg) {
         return deg * (Math.PI / 180);
     }
+
     function getDistanceFromLatLonInm(lat1, lon1, lat2, lon2) {
         lat1 = parseFloat(lat1);
         lon1 = parseFloat(lon1);
@@ -65,6 +67,7 @@ function LineTab(props) {
         let data = props.stationData || [];
         let nearStation = {};
         let nearDistance = null;
+        let nearestId = "";
 
         for (let i = 0; i < data.length; i++) {
             let thisDistance = getDistanceFromLatLonInm(
@@ -76,11 +79,13 @@ function LineTab(props) {
             if (thisDistance < nearDistance || i === 0) {
                 nearDistance = thisDistance;
                 nearStation = data[i].name;
+                nearestId = data[i].id;
             }
         }
 
         setNearestDistance(nearDistance);
         setNearestStation(nearStation);
+        setNearestId(nearestId);
     }
 
     const styles = StyleSheet.create({
@@ -154,7 +159,7 @@ function LineTab(props) {
     });
     return (
         <>
-            <TouchableOpacity style={styles.container} onPress={props.onPress}>
+            <TouchableOpacity style={styles.container} onPress={() => props.onPress(nearestId)}>
                 <View style={styles.topContainer}>
                     <View style={styles.dataContainer}>
                         <View style={styles.iconContainer}>

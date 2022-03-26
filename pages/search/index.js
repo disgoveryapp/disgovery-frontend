@@ -446,6 +446,9 @@ export default function Search() {
                                             color={item.color}
                                             currentLocation={currentLocation}
                                             stationData={item.stations}
+                                            onPress={(nearestId) =>
+                                                navigateToStationDetailsPage(nearestId)
+                                            }
                                         />
                                     </>
                                 ))}
