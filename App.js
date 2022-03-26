@@ -21,6 +21,7 @@ import Home from "./pages/home";
 import TripDetails from "./pages/trip-details";
 import Search from "./pages/search";
 import SearchOrigin from "./pages/search-origin";
+import StationDetails from "./pages/station-details";
 
 export default function App() {
     const scheme = useColorScheme();

@@ -88,12 +88,22 @@ function OriginToDestinationTitle(props) {
                 </View>
 
                 <View style={styles.origin}>
-                    <ThemedText style={styles.originFromText}>from </ThemedText>
-                    <View style={styles.originMarqueeContainer}>
-                        <ThemedTextMarquee style={styles.originText}>
-                            {props.origin}
-                        </ThemedTextMarquee>
-                    </View>
+                    {!!props.origin && (
+                        <>
+                            <ThemedText style={styles.originFromText}>from </ThemedText>
+                            <View style={styles.originMarqueeContainer}>
+                                <ThemedTextMarquee style={styles.originText}>
+                                    {props.origin}
+                                </ThemedTextMarquee>
+                            </View>
+                        </>
+                    )}
+
+                    {!!props.subtitle && (
+                        <>
+                            <ThemedText style={styles.originFromText}>{props.subtitle}</ThemedText>
+                        </>
+                    )}
                 </View>
             </View>
 
