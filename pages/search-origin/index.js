@@ -388,8 +388,8 @@ export default function SearchOrigin(props) {
                 <View style={styles.searchbox}>
                     <SearchOriginBar
                         inputRef={inputRef}
-                        placeholder="Search Origin"
-                        placeholderLocation="Search Destination"
+                        placeholder="Search origin"
+                        placeholderLocation="Search destination"
                         onChangeText={setOriginInput}
                         value={originInput}
                         onChangeTextLocation={setDestinationInput}
