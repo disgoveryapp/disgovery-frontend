@@ -356,7 +356,6 @@ export default function Search() {
     }
 
     function navigateToStationDetailsPage(stop_id) {
-        console.log(stop_id);
         navigation.navigate("StationDetails", { stop_id: stop_id });
     }
 
