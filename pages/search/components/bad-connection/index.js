@@ -12,8 +12,8 @@ export default function BadConnectionComponent(props) {
             alignItems: "center",
         },
         text: {
-            fontWeight: "bold",
-            fontSize: 24,
+            fontWeight: "600",
+            fontSize: 20,
             padding: 12,
         },
     });

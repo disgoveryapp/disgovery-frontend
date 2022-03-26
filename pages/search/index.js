@@ -22,29 +22,44 @@ import * as Haptics from "expo-haptics";
 import ExpandDownIcon18px from "../../assets/svgs/expand-down-icon-18px";
 import PlaceIcon from "../../assets/svgs/place-icon";
 import RouteIcon from "../../assets/svgs/route-icon";
+import LineTab from "./components/line-tab";
+import * as Location from "expo-location";
 
 const CLOSE_ON_SCROLL_TO = -100;
 const CLOSE_ON_VELOCITY = -3;
 const PULL_TO_CLOSE_STRING = "Pull down to close";
 const RELEASE_TO_CLOSE_STRING = "Release to close";
 
+let firstRun = true;
+
 export default function Search() {
     const { colors } = useTheme();
 
     const scrollY = new Animated.Value(0);
+    const SEARCH_MODES = ["stationsAndPlaces", "lines"];
 
     const [text, onChangeText] = useState("");
+    const [api23Result, setApi23Result] = useState([]);
     const [api22Result, setApi22Result] = useState([]);
     const [api21Result, setApi21Result] = useState([]);
     const [error21, setError21] = useState(false);
     const [error22, setError22] = useState(false);
+    const [error23, setError23] = useState(false);
     const [loading, setLoading] = useState(false);
+    const ErrorMessage = "ERR_UNESCAPED_CHARACTERS";
 
     const [hapticPlayed, setHapticPlayed] = useState(false);
     const [closable, setClosable] = useState(true);
+    const [destination_data, setDestination_data] = useState({});
 
     const [pullDownToCloseString, setPullDownToCloseString] = useState(PULL_TO_CLOSE_STRING);
     const [mode, setMode] = useState("");
+
+    const [currentLocation, setCurrentLocation] = useState({
+        latitude: 13.764889,
+        longitude: 100.538266,
+    });
+    const [locationErrorMessage, setLocationErrorMessage] = useState(null);
 
     const TRY_SEARCHING_COMPONENTS = {
         stationsAndPlaces: {
@@ -62,9 +77,59 @@ export default function Search() {
     const debouncedValue = useDebounce(text, 200);
 
     useEffect(() => {
+        if (firstRun) {
+            (async () => {
+                await fetchNewLocation();
+            })().catch(() => {});
+            firstRun = false;
+        }
+    }, []);
+
+    async function fetchNewLocation() {
+        setCurrentLocation(await expoFetchNewLocation());
+    }
+
+    async function expoFetchNewLocation() {
+        let { status } = await Location.requestForegroundPermissionsAsync().catch(() => {});
+        if (status !== "granted") {
+            setLocationErrorMessage("Location permission is denied");
+            return;
+        }
+
+        let location = await Location.getCurrentPositionAsync({
+            accuracy: Location.Accuracy.BestForNavigation,
+        }).catch(() => {});
+
+        return {
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
+        };
+    }
+
+    useEffect(() => {
         if (!hapticPlayed) setPullDownToCloseString(PULL_TO_CLOSE_STRING);
         else setPullDownToCloseString(RELEASE_TO_CLOSE_STRING);
     }, [hapticPlayed]);
+
+    async function simpleApi23Call() {
+        try {
+            const result = await axios({
+                method: "get",
+                url: `${configs.API_URL}/autocomplete/lines?query=${text}`,
+                headers: {},
+            });
+
+            setError23(false);
+
+            if (result.data.data === undefined || result.data.data === null) {
+                setApi23Result([]);
+            } else {
+                setApi23Result(result.data.data);
+            }
+        } catch (error) {
+            setError23(true);
+        }
+    }
 
     async function simpleApi22Call() {
         try {
@@ -76,7 +141,12 @@ export default function Search() {
 
             setError22(false);
 
-            if (result.data.data === undefined && result.data.data === null) {
+            if (
+                result.data.data === undefined ||
+                result.data.data === null ||
+                result.data.data === [] ||
+                Object.keys(result.data.data).length === 0
+            ) {
                 setApi22Result([]);
             } else {
                 setApi22Result(result.data.data);
@@ -96,7 +166,13 @@ export default function Search() {
 
             setError21(false);
 
-            if (result.data === undefined && result.data === null) {
+            if (
+                result.data === undefined ||
+                result.data === null ||
+                result.data.code === ErrorMessage ||
+                result.data === [] ||
+                Object.keys(result.data).length === 0
+            ) {
                 setApi21Result([]);
             } else {
                 setApi21Result(result.data);
@@ -107,23 +183,56 @@ export default function Search() {
     }
 
     useEffect(() => {
-        if (text === "") {
-            setApi22Result([]);
-        } else {
-            setLoading(true);
-            simpleApi22Call();
-            setLoading(false);
+        if (mode === SEARCH_MODES[0]) {
+            if (text === "") {
+                setApi22Result([]);
+            } else {
+                setLoading(true);
+                simpleApi22Call();
+                setLoading(false);
+            }
+        } else if (mode === SEARCH_MODES[1]) {
+            if (text === "") {
+                setApi23Result([]);
+            } else {
+                setLoading(true);
+                simpleApi23Call();
+                setLoading(false);
+            }
         }
     }, [text]);
 
     useEffect(() => {
-        if (text === "") {
-            setApi21Result([]);
-            setApi22Result([]);
-        } else {
-            simpleApi21Call();
+        if (mode === SEARCH_MODES[0]) {
+            if (text === "") {
+                setApi21Result([]);
+                setApi22Result([]);
+            } else {
+                simpleApi21Call();
+            }
         }
     }, [debouncedValue]);
+    useEffect(() => {
+        if (mode === SEARCH_MODES[0]) {
+            if (text === "") {
+                setApi21Result([]);
+                setApi22Result([]);
+            } else {
+                setLoading(true);
+                simpleApi21Call();
+                simpleApi22Call();
+                setLoading(false);
+            }
+        } else if (mode === SEARCH_MODES[1]) {
+            if (text === "") {
+                setApi23Result([]);
+            } else {
+                setLoading(true);
+                simpleApi23Call();
+                setLoading(false);
+            }
+        }
+    }, [mode]);
 
     const styles = StyleSheet.create({
         searchbox: {
@@ -239,6 +348,13 @@ export default function Search() {
         }
     }
 
+    function navigateToSearchOriginPage(destination_name, destination_data) {
+        navigation.navigate("SearchOrigin", {
+            destination_name: destination_name,
+            destination_data: destination_data,
+        });
+    }
+
     function changeMode(mode) {
         setMode(mode);
     }
@@ -265,6 +381,81 @@ export default function Search() {
         </>
     );
 
+    function StationAndPlaceScrollView() {
+        return (
+            <>
+                {api22Result !== undefined && api22Result !== null && api22Result.length !== 0 && (
+                    <>
+                        <ThemedText style={styles.topictext}>Stations</ThemedText>
+                        <View style={styles.tabbarcontainer}>
+                            <>
+                                {api22Result.map((item, key) => (
+                                    <StationTab
+                                        key={key}
+                                        place={item.name.en}
+                                        trip={item.trips}
+                                        onPress={() => {
+                                            setDestination_data(item);
+                                            navigateToSearchOriginPage(
+                                                item.name.en,
+                                                destination_data,
+                                            );
+                                        }}
+                                    />
+                                ))}
+                            </>
+                        </View>
+                    </>
+                )}
+                {api21Result !== undefined && api21Result !== null && api21Result.length !== 0 && (
+                    <View>
+                        <ThemedText style={styles.topictext}>Places</ThemedText>
+                        <View style={styles.tabbarcontainer}>
+                            {api21Result.map((item, key) => (
+                                <PlaceTab
+                                    key={key}
+                                    place={item.name.en}
+                                    address={item.address.en}
+                                    onPress={() => {
+                                        setDestination_data(item);
+                                        navigateToSearchOriginPage(item.name.en, destination_data);
+                                    }}
+                                />
+                            ))}
+                        </View>
+                    </View>
+                )}
+            </>
+        );
+    }
+
+    function LinesScrollView() {
+        return (
+            <>
+                {api23Result !== undefined && api23Result !== null && api23Result.length !== 0 && (
+                    <>
+                        <View style={styles.tabbarcontainer}>
+                            <ThemedText style={styles.topictext}>Lines</ThemedText>
+                            <>
+                                {api23Result.map((item, key) => (
+                                    <>
+                                        <LineTab
+                                            type={item.type}
+                                            route_name={item.name}
+                                            color={item.color}
+                                            currentLocation={currentLocation}
+                                            stationData={item.stations}
+                                        />
+                                    </>
+                                ))}
+                            </>
+                        </View>
+                    </>
+                )}
+            </>
+        );
+    }
+
     return (
         <>
             <View style={styles.container}>
@@ -278,12 +469,8 @@ export default function Search() {
                     />
                 </View>
 
-                <TouchableOpacity onPress={() => onChangeText}></TouchableOpacity>
-
                 <View style={styles.scrollView}>
-                    {loading ? (
-                        <></>
-                    ) : (
+                    {!loading && (
                         <>
                             {!(error21 && error22) ? (
                                 <ScrollView
@@ -306,68 +493,25 @@ export default function Search() {
                                         api22Result.length !== 0) ||
                                     (api21Result !== undefined &&
                                         api21Result !== null &&
-                                        api21Result.length !== 0) ? (
+                                        api21Result.length !== 0) ||
+                                    (api23Result !== undefined &&
+                                        api23Result !== null &&
+                                        api23Result.length !== 0) ? (
                                         <>
-                                            {api22Result !== undefined &&
-                                            api22Result !== null &&
-                                            api22Result.length !== 0 ? (
-                                                <>
-                                                    <ThemedText style={styles.topictext}>
-                                                        Stations
-                                                    </ThemedText>
-                                                    <View style={styles.tabbarcontainer}>
-                                                        <>
-                                                            {api22Result.map((item, key) => (
-                                                                <StationTab
-                                                                    key={key}
-                                                                    place={item.name.en}
-                                                                    trip={item.trips}
-                                                                ></StationTab>
-                                                            ))}
-                                                        </>
-                                                    </View>
-                                                </>
-                                            ) : (
-                                                <></>
+                                            {mode == SEARCH_MODES[0] && (
+                                                <StationAndPlaceScrollView />
                                             )}
-                                            {api21Result !== undefined &&
-                                            api21Result !== null &&
-                                            api21Result.length !== 0 ? (
-                                                <View>
-                                                    <ThemedText style={styles.topictext}>
-                                                        Places
-                                                    </ThemedText>
-                                                    <View style={styles.tabbarcontainer}>
-                                                        {api21Result.map((item, key) => (
-                                                            <PlaceTab
-                                                                key={key}
-                                                                place={item.name.en}
-                                                                address={item.address.en}
-                                                            ></PlaceTab>
-                                                        ))}
-                                                    </View>
-                                                </View>
-                                            ) : (
-                                                <></>
-                                            )}
+                                            {mode == SEARCH_MODES[1] && <LinesScrollView />}
                                         </>
                                     ) : (
-                                        <>
-                                            <View style={styles.trySearchingContainer}>
-                                                <View style={styles.trySearchingIconsContainer}>
-                                                    {mode ? (
-                                                        TRY_SEARCHING_COMPONENTS[mode].icon
-                                                    ) : (
-                                                        <></>
-                                                    )}
-                                                </View>
-                                                <ThemedText style={styles.trySearchingText}>
-                                                    {mode
-                                                        ? TRY_SEARCHING_COMPONENTS[mode].string
-                                                        : ""}
-                                                </ThemedText>
+                                        <View style={styles.trySearchingContainer}>
+                                            <View style={styles.trySearchingIconsContainer}>
+                                                {mode ? TRY_SEARCHING_COMPONENTS[mode].icon : <></>}
                                             </View>
-                                        </>
+                                            <ThemedText style={styles.trySearchingText}>
+                                                {mode ? TRY_SEARCHING_COMPONENTS[mode].string : ""}
+                                            </ThemedText>
+                                        </View>
                                     )}
                                 </ScrollView>
                             ) : (
@@ -380,6 +524,3 @@ export default function Search() {
         </>
     );
 }
-/*
-{item.name.en}
-*/
