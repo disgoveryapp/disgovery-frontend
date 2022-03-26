@@ -156,7 +156,7 @@ function TripDetails(props) {
                 }
             })
             .catch((error) => {
-                console.log("An error occured while getting trip details" + error);
+                console.error("An error occured while getting trip details" + error);
                 setTripDetails("error");
                 setLoading(false);
             });
@@ -194,7 +194,7 @@ function TripDetails(props) {
                     }
             })
             .catch((error) => {
-                console.log("An error occured while getting shapes" + error);
+                console.error("An error occured while getting shapes" + error);
                 setShape([]);
             });
     }
@@ -217,7 +217,6 @@ function TripDetails(props) {
     }
 
     function onStopPressed(stop_id) {
-        console.log(stop_id);
         props.navigation.navigate("StationDetails", { stop_id: stop_id });
     }
 
