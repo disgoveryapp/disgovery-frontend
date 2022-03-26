@@ -141,16 +141,20 @@ export default function StationDetails(props) {
         },
         stationSignAndNavigateButtonContainer: {
             marginTop: -70,
+            alignItems: "flex-start",
         },
         stationSignContainer: {
-            width: 60,
+            minWidth: 60,
+            maxWidth: "20%",
             height: 60,
+            paddingHorizontal: 7,
             borderRadius: 100,
             backgroundColor: colors.white,
             marginBottom: 10,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            textAlign: "center",
 
             shadowColor: "#000",
             shadowOffset: {
@@ -321,7 +325,7 @@ export default function StationDetails(props) {
                                         <View
                                             style={{
                                                 ...styles.stationSignContainer,
-                                                borderWidth: 5,
+                                                borderWidth: 6,
                                                 borderColor:
                                                     routesAvailable.length !== 0
                                                         ? `#${routesAvailable[0].color}`
