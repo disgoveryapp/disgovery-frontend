@@ -6,8 +6,11 @@ import MapView, { Marker, Polyline } from "react-native-maps";
 import { googleMapsStyling } from "../../maps/google-maps-styling";
 import * as Location from "expo-location";
 import axios from "axios";
-import { configs, pSBC } from "../../configs/configs";
+import { configs, getRouteTypeString, pSBC } from "../../configs/configs";
 import { decode } from "@googlemaps/polyline-codec";
+import { SafeAreaView } from "react-native-safe-area-context";
+import ArrowIcon from "../../assets/svgs/arrow-forward-18px";
+import dayjs from "dayjs";
 
 const ROUTE_DETAILS = {
     schedule: {
@@ -125,6 +128,7 @@ const ROUTE_DETAILS = {
             },
             via_line: {
                 id: "BTS_SUKHUMVIT",
+                type: "0",
                 name: {
                     short_name: "Sukhumvit",
                     long_name: "BTS Sukhumvit Line",
@@ -319,6 +323,7 @@ const ROUTE_DETAILS = {
             },
             via_line: {
                 id: "BTS_SILOM",
+                type: "0",
                 name: {
                     short_name: "Silom",
                     long_name: "BTS Silom Line",
@@ -443,6 +448,7 @@ const ROUTE_DETAILS = {
             },
             via_line: {
                 id: "MRT_BLUE",
+                type: "1",
                 name: {
                     short_name: "Blue",
                     long_name: "MRT Blue Line",
@@ -713,6 +719,8 @@ const Navigation = () => {
     const [mapsCurrentLocationRegion, setMapCurrentLocationRegion] = useState(undefined);
     const [locationErrorMessage, setLocationErrorMessage] = useState(null);
     const [polylines, setPolylines] = useState([]);
+    const [directions, setDirections] = useState([]);
+    const [currentDirection, setCurrentDirection] = useState("");
 
     useEffect(() => {
         if (firstRun) {
@@ -722,6 +730,7 @@ const Navigation = () => {
             firstRun = false;
 
             parsePolylines();
+            parseDirections();
         }
     }, []);
 
@@ -830,6 +839,73 @@ const Navigation = () => {
         return;
     }
 
+    function parseDirections() {
+        let tempDirections = [];
+
+        for (let i in ROUTE_DETAILS.directions) {
+            if (ROUTE_DETAILS.directions[i].type === "board") {
+                tempDirections.push({
+                    text: `Board ${getRouteTypeString(
+                        ROUTE_DETAILS.directions[i].via_line.type || "0",
+                        false,
+                    )} from ${ROUTE_DETAILS.directions[i].from.station.name.en} to ${
+                        ROUTE_DETAILS.directions[i].to.station.name.en
+                    }`,
+                    near: ROUTE_DETAILS.directions[i].from.coordinates,
+                });
+                tempDirections.push({
+                    text: `Alight at ${ROUTE_DETAILS.directions[i].to.station.name.en}`,
+                    near: ROUTE_DETAILS.directions[i].to.coordinates,
+                });
+            } else if (ROUTE_DETAILS.directions[i].type === "walk") {
+                for (let step of ROUTE_DETAILS.directions[i].route.steps) {
+                    tempDirections.push({
+                        distance: { text: `In ${step.distance.text}`, value: step.distance.value },
+                        text: htmlToText(step.html_instructions),
+                        near: ROUTE_DETAILS.directions[i].start_location,
+                    });
+                }
+            } else if (ROUTE_DETAILS.directions[i].type === "transfer") {
+                tempDirections.push({
+                    text: `Transfer from ${ROUTE_DETAILS.directions[i].from.station.name.en} to ${ROUTE_DETAILS.directions[i].to.station.name.en}`,
+                    near: ROUTE_DETAILS.directions[i].from.coordinates,
+                });
+            }
+
+            if (parseInt(i) === ROUTE_DETAILS.directions.length - 1) {
+                if (ROUTE_DETAILS.directions[ROUTE_DETAILS.directions.length - 1].type === "walk") {
+                    tempDirections.push({
+                        text: `You have arrived at ${
+                            ROUTE_DETAILS.directions[ROUTE_DETAILS.directions.length - 1].to.place
+                                .address
+                        }`,
+                        near: ROUTE_DETAILS.directions[ROUTE_DETAILS.directions.length - 1].to
+                            .coordinates,
+                    });
+                } else if (
+                    ROUTE_DETAILS.directions[ROUTE_DETAILS.directions.length - 1].type === "board"
+                ) {
+                    tempDirections.push({
+                        text: `You have arrived at ${ROUTE_DETAILS.destination.station.name.en}`,
+                        near: ROUTE_DETAILS.destination.coordinates,
+                    });
+                }
+            }
+        }
+
+        console.log(tempDirections);
+        setDirections([...tempDirections]);
+        setCurrentDirection(tempDirections[0]);
+    }
+
+    function htmlToText(html) {
+        let response = html.replaceAll(`<div style=\"font-size:0.9em\">`, "<div> ");
+        response = response.replaceAll(/<[^>]+>/g, "");
+        response = response.replaceAll("&nbsp;", " ");
+
+        return response;
+    }
+
     const styles = StyleSheet.create({
         container: {
             backgroundColor: colors.background,
@@ -850,7 +926,141 @@ const Navigation = () => {
             borderRadius: 30,
             borderWidth: 2.5,
         },
+        topNavigationPanelContainerWithSafeAreaContainer: {
+            position: "absolute",
+            top: 0,
+            width: "100%",
+            paddingHorizontal: 10,
+        },
+        topNavigationPanelContainer: {
+            width: "100%",
+            borderRadius: 12,
+            backgroundColor: colors.background,
+            padding: 18,
+
+            shadowColor: colors.shadow,
+            shadowOffset: {
+                width: 0,
+                height: 5,
+            },
+            shadowOpacity: 0.34,
+            shadowRadius: 6.27,
+
+            elevation: 10,
+        },
+        bottomNavigationPanelContainerWithSafeAreaContainer: {
+            position: "absolute",
+            bottom: 0,
+            width: "100%",
+            paddingHorizontal: 10,
+        },
+        bottomNavigationPanelContainer: {
+            width: "100%",
+            borderRadius: 12,
+            backgroundColor: colors.background,
+            padding: 18,
+
+            shadowColor: colors.shadow,
+            shadowOffset: {
+                width: 0,
+                height: 5,
+            },
+            shadowOpacity: 0.34,
+            shadowRadius: 6.27,
+
+            elevation: 10,
+        },
+        bottomNavigationPanelTitle: {
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+        },
+        bottomNaviationPanelTitleArrowIcon: {
+            marginLeft: 5,
+        },
+        onGoingNavigationText: {
+            color: colors.subtitle,
+            fontSize: 16,
+        },
+        bottomNavigationPanelArrivingInContainer: {
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            marginTop: 5,
+        },
+        bottomNavigationPanelArrivingInText: {
+            color: colors.text,
+            fontWeight: "600",
+            fontSize: 24,
+        },
+        bottomNavigationPanelTimeText: {
+            color: colors.primary,
+            fontWeight: "600",
+            fontSize: 24,
+            marginLeft: 5,
+        },
+        bottomNavigationPanelETAText: {
+            color: colors.subtitle,
+            fontWeight: "600",
+            fontSize: 24,
+            marginLeft: 5,
+        },
+        topNavigationPanelDistanceText: {
+            color: colors.subtitle,
+            fontWeight: "600",
+            fontSize: 18,
+        },
+        topNavigationPanelDirectionText: {
+            color: colors.text,
+            fontWeight: "600",
+            fontSize: 24,
+        },
     });
+
+    const TopNavigationPanel = () => (
+        <>
+            <View style={styles.topNavigationPanelContainerWithSafeAreaContainer}>
+                <SafeAreaView edges={["top"]} />
+                <View style={styles.topNavigationPanelContainer}>
+                    {currentDirection.distance && (
+                        <ThemedText style={styles.topNavigationPanelDistanceText}>
+                            {currentDirection.distance.text}
+                        </ThemedText>
+                    )}
+                    {currentDirection.text && (
+                        <ThemedText style={styles.topNavigationPanelDirectionText}>
+                            {currentDirection.text}
+                        </ThemedText>
+                    )}
+                </View>
+            </View>
+        </>
+    );
+
+    const BottomNavigationPanel = () => (
+        <View style={styles.bottomNavigationPanelContainerWithSafeAreaContainer}>
+            <View style={styles.bottomNavigationPanelContainer}>
+                <View style={styles.bottomNavigationPanelTitle}>
+                    <ThemedText style={styles.onGoingNavigationText}>
+                        On-going navigation
+                    </ThemedText>
+                    <ArrowIcon style={styles.bottomNaviationPanelTitleArrowIcon} />
+                </View>
+                <View style={styles.bottomNavigationPanelArrivingInContainer}>
+                    <ThemedText style={styles.bottomNavigationPanelArrivingInText}>
+                        Arriving in
+                    </ThemedText>
+                    <ThemedText style={styles.bottomNavigationPanelTimeText}>
+                        {Math.round(ROUTE_DETAILS.schedule.duration / 60)} min
+                    </ThemedText>
+                    <ThemedText style={styles.bottomNavigationPanelETAText}>
+                        · {dayjs(ROUTE_DETAILS.schedule.arriving_at).format("HH:mm")}
+                    </ThemedText>
+                </View>
+            </View>
+            <SafeAreaView edges={["bottom"]} />
+        </View>
+    );
 
     return (
         <View style={styles.container}>
@@ -903,6 +1113,9 @@ const Navigation = () => {
                     </>
                 ))}
             </MapView>
+
+            <TopNavigationPanel />
+            <BottomNavigationPanel />
         </View>
     );
 };

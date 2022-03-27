@@ -95,3 +95,38 @@ export function pSBC(p, c0, c1, l) {
                 .slice(1, f ? undefined : -2)
         );
 }
+
+/**
+ *
+ * @param {"0"|"1"|"2"|"3"|"4"|"5"|"6"|"7"|"11"|"12"} type
+ * @param {boolean} plural
+ * @returns
+ */
+export function getRouteTypeString(type, plural) {
+    if (!plural) plural = false;
+
+    switch (type) {
+        case "0":
+            return plural ? "trains" : "a train";
+        case "1":
+            return plural ? "trains" : "a train";
+        case "2":
+            return plural ? "trains" : "a train";
+        case "3":
+            return plural ? "buses" : "a bus";
+        case "4":
+            return plural ? "ferries" : "a ferry";
+        case "5":
+            return plural ? "trams" : "a tram";
+        case "6":
+            return plural ? "cable cars" : "a cable car";
+        case "7":
+            return plural ? "funiculars" : "a funicular";
+        case "11":
+            return plural ? "buses" : "a bus";
+        case "12":
+            return plural ? "train" : "a train";
+        default:
+            return "";
+    }
+}
