@@ -8,6 +8,8 @@ import * as Location from "expo-location";
 import RecenterButton from "../../components/recenter-button";
 import axios from "axios";
 import { configs } from "../../configs/configs";
+import OverViewRoute from "./components/overview-route";
+import SuggestedRoutes from "./components/suggested-routes";
 
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -18,7 +20,7 @@ const INITIAL_MAP_REGION = {
     longitudeDelta: 0.035,
 };
 
-export default function RouteDetails() {
+export default function RouteSelection() {
     const { dark, colors } = useTheme();
     const mapRef = useRef();
     let firstRun = true;
@@ -169,7 +171,10 @@ export default function RouteDetails() {
                 //onScroll={onScroll}
                 //onScrollBeginDrag={onScrollBeginDrag}
                 //onScrollEndDrag={onScrollEndDrag}
-            ></ScrollView>
+            >
+                <OverViewRoute />
+                <SuggestedRoutes />
+            </ScrollView>
         </View>
     );
 }

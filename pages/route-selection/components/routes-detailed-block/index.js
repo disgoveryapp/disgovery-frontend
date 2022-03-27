@@ -1,7 +1,6 @@
 import React from "react";
 import ThemedText from "../../../../components/themed-text";
 import { View, StyleSheet } from "react-native";
-import CloudOffIcon from "../../../../assets/svgs/walk-icon";
 
 export default function RoutesDetailedBlock(props) {
     const styles = StyleSheet.create({

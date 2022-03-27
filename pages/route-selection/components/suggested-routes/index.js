@@ -3,14 +3,9 @@ import ThemedText from "../../../../components/themed-text";
 import { View, StyleSheet } from "react-native";
 import CloudOffIcon from "../../../../assets/svgs/cloud-off";
 
-export default function SuggestedRoutes(props) {
+export default function SuggestedRoutes() {
     const styles = StyleSheet.create({
-        container: {
-            width: "100%",
-            height: "100%",
-            justifyContent: "center",
-            alignItems: "center",
-        },
+        container: {},
         titleText: {
             fontWeight: "bold",
             fontSize: 24,
@@ -20,7 +15,7 @@ export default function SuggestedRoutes(props) {
     return (
         <>
             <View style={styles.container}>
-                <ThemedText style={styles.titleText}>Suggested routes</ThemedText>
+                <ThemedText>Suggested routes</ThemedText>
             </View>
         </>
     );
