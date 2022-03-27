@@ -16,7 +16,7 @@ export const darkTheme = {
         linear_gradient_secondary: "#444444",
         shadow: "#000",
         divider: "#444444",
-        goButton: "#186FFF",
+        go_button: "#186FFF",
     },
 };
 
@@ -38,6 +38,6 @@ export const lightTheme = {
         linear_gradient_secondary: "#ccc",
         shadow: "#000",
         divider: "#e0e0e0",
-        goButton: "#186FFF",
+        go_button: "#186FFF",
     },
 };

@@ -64,10 +64,6 @@ export default function Home() {
         }
     }, []);
 
-    useEffect(() => {
-        mapRef._updateStyle;
-    }, [colors]);
-
     async function fetchNewLocation() {
         let { status } = await Location.requestForegroundPermissionsAsync().catch(() => {});
         if (status !== "granted") {

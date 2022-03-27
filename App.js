@@ -22,6 +22,7 @@ import TripDetails from "./pages/trip-details";
 import Search from "./pages/search";
 import SearchOrigin from "./pages/search-origin";
 import StationDetails from "./pages/station-details";
+import Navigation from "./pages/navigation";
 
 export default function App() {
     const scheme = useColorScheme();
@@ -48,6 +49,7 @@ export default function App() {
                             headerShown: false,
                         }}
                     >
+                        <Stack.Screen name="Navigation" component={Navigation} />
                         <Stack.Screen name="Home" component={Home} />
                         <Stack.Screen name="TripDetails" component={TripDetails} />
                         <Stack.Screen

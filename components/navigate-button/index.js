@@ -16,7 +16,7 @@ const NavigateButton = (props) => {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            backgroundColor: colors.goButton,
+            backgroundColor: colors.go_button,
             paddingHorizontal: 15,
             paddingVertical: 12,
             borderRadius: 12,
@@ -42,7 +42,7 @@ const NavigateButton = (props) => {
         <TouchableOpacity
             style={[styles.container, props.style]}
             onPress={onPress}
-            underlayColor={colors.goButton}
+            underlayColor={colors.go_button}
         >
             <>
                 <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
