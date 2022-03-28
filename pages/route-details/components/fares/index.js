@@ -4,7 +4,8 @@ import { useTheme } from "@react-navigation/native";
 import ThemedText from "../../../../components/themed-text";
 import ThemedTextMarquee from "../../../../components/themed-text-marquee";
 import ExpandDownIcon18px from "../../../../assets/svgs/expand-down-icon-18px";
-import { textAlign } from "@mui/system";
+import ExpandDownIcon from "../../../../assets/svgs/expand-down-icon";
+
 
 function Fares() {
 
@@ -31,17 +32,22 @@ function Fares() {
         //         elevation: 10,
         //     },
         fare_container: {
-            // display: "flex",
-            // flexDirection: "row",
+            display: "flex",
+            flexDirection: "row",
+            justifyContent:"space-around",
             textAlign:"right",
+            width:"100%",
         },
         text_container:{
             fontSize: size === "small" ? 16 : 18,
             fontWeight: size === "small" ? "500" : "600",
             marginLeft: size === "small" ? 22 : 0,
         },
+        expand_sign:{
+            display: "flex",
+            flexDirection: "row",
+        },
         text:{
-            flex: 1,
             fontSize: 18,
             fontWeight: size === "small" ? "500" : "600",
             color: "black",
@@ -51,7 +57,10 @@ function Fares() {
     return(
         <View style={styles.bottomCard}>
             <View style={styles.fare_container}>
-                <ThemedText style={styles.text}>Fares</ThemedText>
+                <View style={styles.expand_sign}>
+                    <ThemedText style={styles.text}>Fares</ThemedText>
+                    <ExpandDownIcon></ExpandDownIcon>
+                </View>
                 <ThemedText style={styles.text}>63 THB</ThemedText>
             </View>
         </View>

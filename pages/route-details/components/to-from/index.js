@@ -129,14 +129,14 @@ function ToFrom() {
                 //     scrollY.setValue(event.nativeEvent.contentOffset.y)
                 // }
             >
-                <OriginToDestinationTitle
+                {/* <OriginToDestinationTitle
                     style={styles.title}
                     origin={"Khu Kot"}
                     destination={"Khu Kot"}
                     time={3000}
                     subTime={"On time"}
                     subTimeColor={colors.primary}
-                />
+                /> */}
                         <View style={{ ...subprops.style, ...styles.container }}>
                             <View style={styles.originDestinationContainer}>
                                 <View style={styles.destination}>
