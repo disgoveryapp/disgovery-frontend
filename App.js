@@ -23,6 +23,9 @@ import Search from "./pages/search";
 import SearchOrigin from "./pages/search-origin";
 import StationDetails from "./pages/station-details";
 
+import RouteDetails from "./pages/route-details";
+import RouteSelection from "./pages/route-selection";
+
 export default function App() {
     const scheme = useColorScheme();
     const [fontLoaded] = useFonts({
@@ -48,7 +51,7 @@ export default function App() {
                             headerShown: false,
                         }}
                     >
-                        <Stack.Screen name="Home" component={Home} />
+                        <Stack.Screen name="Home" component={RouteSelection} />
                         <Stack.Screen name="TripDetails" component={TripDetails} />
                         <Stack.Screen
                             name="Search"
