@@ -1,14 +1,18 @@
 import React from "react";
 import ThemedText from "../../../../components/themed-text";
 import { View, StyleSheet } from "react-native";
+import { useTheme } from "@react-navigation/native";
 
-export default function RoutesDetailedBlock(props) {
+export default function RoutesDetailedBlock() {
+    const { colors } = useTheme();
     const styles = StyleSheet.create({
         container: {
-            width: "100%",
-            height: "100%",
+            width: 350,
+            height: 74,
+            borderRadius: 12,
             justifyContent: "center",
             alignItems: "center",
+            backgroundColor: colors.upper_background,
         },
         text: {
             fontWeight: "bold",
