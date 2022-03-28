@@ -10,6 +10,8 @@ import axios from "axios";
 import { configs } from "../../configs/configs";
 import OverViewRoute from "./components/overview-route";
 import SuggestedRoutes from "./components/suggested-routes";
+import RouteSelectionBar from "./components/route-selection-bar";
+import FaceCovering from "../route-details/components/face-covering";
 
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -32,6 +34,28 @@ export default function RouteSelection() {
     const [locationErrorMessage, setLocationErrorMessage] = useState(null);
 
     const [nearbyStations, setNearbyStations] = useState([]);
+
+    const [api31Result, setApi31Result] = useState([]);
+    const [error31, setError31] = useState(false);
+
+    async function api31Call() {
+        try {
+            axios.post(`${configs.API_URL}/route/new`, {
+                origin: "station:BTS_CEN_1",
+                destination: "coordinates:13.7546154,100.5324766",
+            });
+
+            setError31(false);
+
+            if (result.data.data === undefined || result.data.data === null) {
+                setApi31Result([]);
+            } else {
+                setApi31Result(result.data.data);
+            }
+        } catch (error) {
+            setError31(true);
+        }
+    }
 
     const styles = StyleSheet.create({
         container: {
@@ -60,6 +84,8 @@ export default function RouteSelection() {
             width: "100%",
             height: "100%",
             zIndex: 5,
+            paddingHorizontal: 12,
+            paddingVertical: 16,
 
             shadowColor: colors.shadow,
             shadowOffset: {
@@ -70,6 +96,16 @@ export default function RouteSelection() {
             shadowRadius: 6.27,
 
             elevation: 10,
+        },
+        line: {
+            height: 1,
+            backgroundColor: colors.divider,
+        },
+        topictext: {
+            color: colors.subtitle,
+            //paddingHorizontal: 15,
+            paddingVertical: 8,
+            fontWeight: "600",
         },
     });
 
@@ -141,6 +177,9 @@ export default function RouteSelection() {
                 setLoading(false);
             });
     }
+    function DividerLine() {
+        return <View style={styles.line} />;
+    }
 
     function onMapRegionChangeComplete(region) {
         fetchNearbyStations(region);
@@ -172,8 +211,12 @@ export default function RouteSelection() {
                 //onScrollBeginDrag={onScrollBeginDrag}
                 //onScrollEndDrag={onScrollEndDrag}
             >
-                <OverViewRoute />
-                <SuggestedRoutes />
+                <RouteSelectionBar />
+                <DividerLine />
+                <FaceCovering />
+                <DividerLine />
+                <OverViewRoute topictextStyle={styles.topictext} />
+                <SuggestedRoutes topictextStyle={styles.topictext} />
             </ScrollView>
         </View>
     );

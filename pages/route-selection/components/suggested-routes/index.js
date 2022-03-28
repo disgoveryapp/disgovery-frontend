@@ -4,7 +4,7 @@ import { View, StyleSheet } from "react-native";
 import CloudOffIcon from "../../../../assets/svgs/cloud-off";
 import RoutesDetailedBlock from "../routes-detailed-block";
 
-export default function SuggestedRoutes() {
+export default function SuggestedRoutes(props) {
     const styles = StyleSheet.create({
         container: {},
         titleText: {
@@ -16,7 +16,7 @@ export default function SuggestedRoutes() {
     return (
         <>
             <View style={styles.container}>
-                <ThemedText>Suggested routes</ThemedText>
+                <ThemedText style={props.topictextStyle}>Suggested routes</ThemedText>
                 <View>
                     <RoutesDetailedBlock />
                 </View>

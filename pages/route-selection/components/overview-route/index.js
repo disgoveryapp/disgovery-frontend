@@ -24,7 +24,7 @@ export default function OverViewRoute(props) {
     return (
         <>
             <View style={styles.container}>
-                <ThemedText style={styles.titleText}>Overview</ThemedText>
+                <ThemedText style={props.topictextStyle}>Overview</ThemedText>
                 <View style={styles.subContainer}>
                     <TravelBlock />
                     <TravelBlock />

@@ -15,9 +15,8 @@ function FaceCovering(props) {
             flexDirection: "row",
             justifyContent: "flex-start",
             alignItems: "flex-start",
-            borderBottomColor: colors.divider,
-            borderBottomWidth: 1,
-            padding: 14,
+
+            paddingVertical: 14,
         },
         iconContainer: {
             display: "flex",
@@ -37,7 +36,7 @@ function FaceCovering(props) {
                 <MaskIcon />
             </View>
             <ThemedText style={styles.title}>
-                Face Covering is required when travellingvia public transportation
+                Face Covering is required when travelling via public transportation
             </ThemedText>
         </View>
     );
