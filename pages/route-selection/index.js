@@ -1,5 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
-import { SafeAreaView, StyleSheet, Text, View, Dimensions, ScrollView } from "react-native";
+import {
+    SafeAreaView,
+    StyleSheet,
+    Text,
+    View,
+    Dimensions,
+    ScrollView,
+    TouchableOpacity,
+} from "react-native";
 import ThemedText from "../../components/themed-text";
 import { useTheme } from "@react-navigation/native";
 import MapView, { Polyline } from "react-native-maps";
@@ -12,6 +20,7 @@ import OverViewRoute from "./components/overview-route";
 import SuggestedRoutes from "./components/suggested-routes";
 import RouteSelectionBar from "./components/route-selection-bar";
 import FaceCovering from "../route-details/components/face-covering";
+import ArrowBackwardIcon from "../../assets/svgs/arrow-backward-24px";
 
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -63,8 +72,6 @@ export default function RouteSelection() {
         container: {
             backgroundColor: colors.background,
             flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
         },
         maps: {
             position: "absolute",
@@ -82,7 +89,7 @@ export default function RouteSelection() {
             backgroundColor: colors.background,
             borderTopLeftRadius: 22,
             borderTopRightRadius: 22,
-            top: SCREEN_HEIGHT * 0.3,
+            top: SCREEN_HEIGHT * 0.25,
             width: "100%",
             height: "100%",
             zIndex: 5,
@@ -108,6 +115,15 @@ export default function RouteSelection() {
             //paddingHorizontal: 15,
             paddingVertical: 8,
             fontWeight: "600",
+        },
+        backIcon: {
+            width: 40,
+            height: 40,
+            borderRadius: 20,
+            backgroundColor: colors.background,
+            alignItems: "center",
+            justifyContent: "center",
+            left: 12,
         },
     });
 
@@ -183,6 +199,14 @@ export default function RouteSelection() {
         return <View style={styles.line} />;
     }
 
+    function BackButton() {
+        return (
+            <TouchableOpacity style={styles.backIcon}>
+                <ArrowBackwardIcon fill={colors.text} />
+            </TouchableOpacity>
+        );
+    }
+
     function onMapRegionChangeComplete(region) {
         fetchNearbyStations(region);
     }
@@ -190,6 +214,7 @@ export default function RouteSelection() {
     return (
         <View style={styles.container}>
             <SafeAreaView />
+
             <MapView
                 ref={mapRef}
                 style={styles.maps}
@@ -200,6 +225,7 @@ export default function RouteSelection() {
                 onRegionChangeComplete={(region) => onMapRegionChangeComplete(region)}
                 showsUserLocation
             ></MapView>
+            <BackButton />
             <ScrollView
                 style={styles.scrollView}
                 showsHorizontalScrollIndicator={false}
