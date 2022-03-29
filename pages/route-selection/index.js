@@ -89,7 +89,7 @@ export default function RouteSelection() {
             backgroundColor: colors.background,
             borderTopLeftRadius: 22,
             borderTopRightRadius: 22,
-            top: SCREEN_HEIGHT * 0.25,
+            top: SCREEN_HEIGHT * 0.22,
             width: "100%",
             height: "100%",
             zIndex: 5,
