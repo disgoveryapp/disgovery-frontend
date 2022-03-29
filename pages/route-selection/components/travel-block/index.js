@@ -3,9 +3,14 @@ import ThemedText from "../../../../components/themed-text";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import TaxiIcon from "../../../../assets/svgs/taxi-icon";
+import RailIcon from "../../../../assets/svgs/rail-icon";
+import WalkIcon from "../../../../assets/svgs/walk-icon";
+import TramIcon from "../../../../assets/svgs/tram-icon";
 
 export default function TravelBlock(props) {
     const { colors } = useTheme();
+
+    const mockUptype = "train";
 
     const styles = StyleSheet.create({
         container: {
@@ -41,7 +46,9 @@ export default function TravelBlock(props) {
         <TouchableOpacity style={styles.container}>
             <View style={styles.iconBlock}>
                 <View styles={styles.icon}>
-                    <TaxiIcon />
+                    {mockUptype === "taxi" && <TaxiIcon fill={colors.text} />}
+                    {mockUptype === "train" && <RailIcon fill={colors.text} />}
+                    {mockUptype === "walk" && <WalkIcon fill={colors.text} />}
                 </View>
                 <ThemedText style={styles.iconText}>Taxi</ThemedText>
             </View>
