@@ -9,6 +9,7 @@ export default function OverViewRoute(props) {
         container: {
             flex: 1,
             width: "100%",
+            paddingHorizontal: props.containerPadding,
         },
         text: {
             fontWeight: "bold",

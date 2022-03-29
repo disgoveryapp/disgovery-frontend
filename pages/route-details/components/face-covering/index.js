@@ -17,6 +17,7 @@ function FaceCovering(props) {
             alignItems: "flex-start",
 
             paddingVertical: 14,
+            paddingHorizontal: props.containerPadding,
         },
         iconContainer: {
             display: "flex",

@@ -26,6 +26,8 @@ export default function RouteSelection() {
     const { dark, colors } = useTheme();
     const mapRef = useRef();
     let firstRun = true;
+    const containerPadding = 12;
+    const wearFaceMask = true;
 
     const [loading, setLoading] = useState(false);
     const [mapsIsRecentered, setMapsIsRecentered] = useState(false);
@@ -84,7 +86,7 @@ export default function RouteSelection() {
             width: "100%",
             height: "100%",
             zIndex: 5,
-            paddingHorizontal: 12,
+            //paddingHorizontal: 12,
             paddingVertical: 16,
 
             shadowColor: colors.shadow,
@@ -211,12 +213,23 @@ export default function RouteSelection() {
                 //onScrollBeginDrag={onScrollBeginDrag}
                 //onScrollEndDrag={onScrollEndDrag}
             >
-                <RouteSelectionBar />
+                <RouteSelectionBar containerPadding={containerPadding} />
                 <DividerLine />
-                <FaceCovering />
-                <DividerLine />
-                <OverViewRoute topictextStyle={styles.topictext} />
-                <SuggestedRoutes topictextStyle={styles.topictext} />
+                {wearFaceMask && (
+                    <>
+                        <FaceCovering containerPadding={containerPadding} />
+                        <DividerLine />
+                    </>
+                )}
+
+                <OverViewRoute
+                    topictextStyle={styles.topictext}
+                    containerPadding={containerPadding}
+                />
+                <SuggestedRoutes
+                    topictextStyle={styles.topictext}
+                    containerPadding={containerPadding}
+                />
             </ScrollView>
         </View>
     );

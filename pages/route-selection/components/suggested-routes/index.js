@@ -6,18 +6,24 @@ import RoutesDetailedBlock from "../routes-detailed-block";
 
 export default function SuggestedRoutes(props) {
     const styles = StyleSheet.create({
-        container: {},
+        container: {
+            paddingHorizontal: props.containerPadding,
+        },
         titleText: {
             fontWeight: "bold",
             fontSize: 24,
             padding: 12,
+        },
+        subContainer: {
+            justifyContent: "center",
+            alignItems: "center",
         },
     });
     return (
         <>
             <View style={styles.container}>
                 <ThemedText style={props.topictextStyle}>Suggested routes</ThemedText>
-                <View>
+                <View style={styles.subContainer}>
                     <RoutesDetailedBlock />
                 </View>
             </View>

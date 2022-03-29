@@ -1,10 +1,10 @@
 import React from "react";
 import ThemedText from "../../../../components/themed-text";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import WalkIcon from "../../../../assets/svgs/walk-icon";
 import SubwayIcon10 from "../../../../assets/svgs/subway-icon-10px";
-import { Barlow_100Thin } from "@expo-google-fonts/barlow";
+
 export default function RoutesDetailedBlock() {
     const { colors } = useTheme();
     const styles = StyleSheet.create({
@@ -90,7 +90,7 @@ export default function RoutesDetailedBlock() {
     }
 
     return (
-        <View style={styles.container}>
+        <TouchableOpacity style={styles.container}>
             <ThemedText style={styles.arrivedTime}>Arrive by 16:02</ThemedText>
             <View style={styles.subContainer}>
                 <View style={styles.iconBlock}>
@@ -109,7 +109,7 @@ export default function RoutesDetailedBlock() {
                     <ThemedText styles={styles.detailText}>63 THB</ThemedText>
                 </View>
             </View>
-        </View>
+        </TouchableOpacity>
     );
 }
 //<WalkIcon />
