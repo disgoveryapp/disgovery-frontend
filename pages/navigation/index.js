@@ -1003,8 +1003,6 @@ const Navigation = () => {
     const [nearestPoint, setNearestPoint] = useState(undefined);
     const [offRoad, setOffRoad] = useState(false);
 
-    const [currentShownLocaiton, setCurrentShownLocation] = useState(undefined);
-
     useEffect(() => {
         if (firstRun) {
             (async () => {
@@ -1194,7 +1192,6 @@ const Navigation = () => {
             }
         }
 
-        console.log(tempDirections);
         setDirections([...tempDirections]);
         setCurrentDirection(tempDirections[0]);
     }
@@ -1424,8 +1421,13 @@ const Navigation = () => {
 
                 {Object.keys(polylines).map((key) => (
                     <>
-                        <Marker coordinate={polylines[key].polyline[0]} anchor={{ x: 0.5, y: 0.5 }}>
+                        <Marker
+                            key={`marker_start_${polylines[key].polyline[0]}`}
+                            coordinate={polylines[key].polyline[0]}
+                            anchor={{ x: 0.5, y: 0.5 }}
+                        >
                             <View
+                                key={`marker_start_view_${polylines[key].polyline[0]}`}
                                 style={{
                                     ...styles.marker,
                                     backgroundColor: colors.white,
@@ -1434,6 +1436,7 @@ const Navigation = () => {
                             />
                         </Marker>
                         <Polyline
+                            key={`polyline_outer_${polylines[key].polyline[0]}`}
                             coordinates={polylines[key].polyline}
                             strokeWidth={14}
                             strokeColor={pSBC(
@@ -1444,15 +1447,22 @@ const Navigation = () => {
                             )}
                         />
                         <Polyline
+                            key={`polyline_inner_${polylines[key].polyline[0]}`}
                             coordinates={polylines[key].polyline}
                             strokeWidth={8}
                             strokeColor={polylines[key].color}
                         />
                         <Marker
+                            key={`marker_end_${
+                                polylines[key].polyline[polylines[key].polyline.length - 1]
+                            }`}
                             coordinate={polylines[key].polyline[polylines[key].polyline.length - 1]}
                             anchor={{ x: 0.5, y: 0.5 }}
                         >
                             <View
+                                key={`marker_end_view_${
+                                    polylines[key].polyline[polylines[key].polyline.length - 1]
+                                }`}
                                 style={{
                                     ...styles.marker,
                                     backgroundColor: colors.white,
