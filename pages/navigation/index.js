@@ -1023,8 +1023,14 @@ const Navigation = () => {
         // console.log(location);
         let snapped = snapToPolyline(polylines, location);
         if (snapped) {
-            setNearestPoint(snapped.interpolatedCoordinatesOnPolyline);
-            setOffRoad(snapped.offRoad);
+            if (
+                !nearestPoint ||
+                (nearestPoint.latitude !== snapped.interpolatedCoordinatesOnPolyline.latitude &&
+                    nearestPoint.longitude !== snapped.interpolatedCoordinatesOnPolyline.longitude)
+            ) {
+                setNearestPoint(snapped.interpolatedCoordinatesOnPolyline);
+                setOffRoad(snapped.offRoad);
+            }
         }
     }, [location]);
 
@@ -1310,6 +1316,29 @@ const Navigation = () => {
             fontWeight: "600",
             fontSize: 24,
         },
+        offRoadContainer: {
+            maxWidth: "25%",
+            alignSelf: "flex-end",
+            marginTop: 10,
+            borderRadius: 12,
+            backgroundColor: colors.upper_background,
+            padding: 15,
+
+            shadowColor: colors.shadow,
+            shadowOffset: {
+                width: 0,
+                height: 5,
+            },
+            shadowOpacity: 0.34,
+            shadowRadius: 6.27,
+
+            elevation: 10,
+        },
+        offRoadText: {
+            color: colors.text,
+            fontWeight: "600",
+            fontSize: 18,
+        },
     });
 
     const TopNavigationPanel = () => (
@@ -1328,6 +1357,12 @@ const Navigation = () => {
                         </ThemedText>
                     )}
                 </View>
+
+                {offRoad && (
+                    <View style={styles.offRoadContainer}>
+                        <ThemedText style={styles.offRoadText}>Off road</ThemedText>
+                    </View>
+                )}
             </View>
         </>
     );

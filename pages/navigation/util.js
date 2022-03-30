@@ -1,5 +1,5 @@
 const INTERPOLATION_ITERATION = 10;
-const OFF_ROAD_DISTANCE = 50;
+const OFF_ROAD_DISTANCE_KM = 0.05;
 
 export function snapToPolyline(polylines, currentCoordinates) {
     if (!currentCoordinates) return;
@@ -48,19 +48,11 @@ export function snapToPolyline(polylines, currentCoordinates) {
         currentCoordinates.longitude,
     );
 
-    if (distanceBetweenCurrentAndInterpolated > OFF_ROAD_DISTANCE) {
-        return {
-            interpolatedCoordinatesOnPolyline: interpolatedCoordinatesOnPolyline,
-            distance: distanceBetweenCurrentAndInterpolated,
-            offRoad: true,
-        };
-    } else {
-        return {
-            interpolatedCoordinatesOnPolyline: interpolatedCoordinatesOnPolyline,
-            distance: distanceBetweenCurrentAndInterpolated,
-            offRoad: false,
-        };
-    }
+    return {
+        interpolatedCoordinatesOnPolyline: interpolatedCoordinatesOnPolyline,
+        distance: distanceBetweenCurrentAndInterpolated,
+        offRoad: distanceBetweenCurrentAndInterpolated > OFF_ROAD_DISTANCE_KM,
+    };
 }
 
 function interpolatePolyline(allPolylines, closestPoint, currentLocation, candidate, iteration) {
