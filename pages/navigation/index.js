@@ -1004,32 +1004,49 @@ const Navigation = () => {
     const [offRoad, setOffRoad] = useState(false);
 
     useEffect(() => {
-        if (firstRun) {
-            (async () => {
-                fetchNewLocation(true);
-            })().catch(() => {});
-            firstRun = false;
+        let subscribed = true;
 
-            parsePolylines();
-            parseDirections();
+        if (subscribed) {
+            if (firstRun) {
+                (async () => {
+                    fetchNewLocation(true);
+                })().catch(() => {});
+                firstRun = false;
+
+                parsePolylines();
+                parseDirections();
+            }
+
+            setInterval(async () => fetchNewLocation(false), 3000);
         }
 
-        setInterval(async () => fetchNewLocation(false), 3000);
+        return () => {
+            subscribed = false;
+        };
     }, []);
 
     useEffect(() => {
         // console.log(location);
-        let snapped = snapToPolyline(polylines, location);
-        if (snapped) {
-            if (
-                !nearestPoint ||
-                (nearestPoint.latitude !== snapped.interpolatedCoordinatesOnPolyline.latitude &&
-                    nearestPoint.longitude !== snapped.interpolatedCoordinatesOnPolyline.longitude)
-            ) {
-                setNearestPoint(snapped.interpolatedCoordinatesOnPolyline);
-                setOffRoad(snapped.offRoad);
+        let subscribed = true;
+
+        if (subscribed) {
+            let snapped = snapToPolyline(polylines, location);
+            if (snapped) {
+                if (
+                    !nearestPoint ||
+                    (nearestPoint.latitude !== snapped.interpolatedCoordinatesOnPolyline.latitude &&
+                        nearestPoint.longitude !==
+                            snapped.interpolatedCoordinatesOnPolyline.longitude)
+                ) {
+                    setNearestPoint(snapped.interpolatedCoordinatesOnPolyline);
+                    setOffRoad(snapped.offRoad);
+                }
             }
         }
+
+        return () => {
+            subscribed = false;
+        };
     }, [location]);
 
     useEffect(() => {
