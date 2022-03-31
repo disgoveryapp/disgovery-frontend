@@ -994,6 +994,9 @@ const Navigation = () => {
     const { colors, dark } = useTheme();
     let firstRun = true;
     const mapRef = useRef();
+    const SAFE_AREA = useSafeAreaInsets();
+
+    const [isRecentered, setIsRecentered] = useState(true);
 
     const [location, setLocation] = useState(undefined);
     const [mapsCurrentLocationRegion, setMapCurrentLocationRegion] = useState(undefined);
@@ -1003,8 +1006,6 @@ const Navigation = () => {
     const [currentDirection, setCurrentDirection] = useState("");
     const [nearestPoint, setNearestPoint] = useState(undefined);
     const [offRoad, setOffRoad] = useState(false);
-
-    const SAFE_AREA = useSafeAreaInsets();
 
     useEffect(() => {
         let subscribed = true;
@@ -1105,7 +1106,8 @@ const Navigation = () => {
 
     async function recenter(region) {
         console.log("recentring");
-        mapRef.current.animateToRegion(region || INITIAL_MAP_REGION);
+        await mapRef.current.animateToRegion(region || INITIAL_MAP_REGION);
+        setIsRecentered(true);
     }
 
     function decodePolyline(polyline) {
@@ -1230,6 +1232,10 @@ const Navigation = () => {
         response = response.replaceAll("&nbsp;", " ");
 
         return response;
+    }
+
+    function onMapRegionChange() {
+        setIsRecentered(false);
     }
 
     const styles = StyleSheet.create({
@@ -1399,7 +1405,15 @@ const Navigation = () => {
 
     const BottomNavigationPanel = () => (
         <View style={styles.bottomNavigationPanelContainerWithSafeAreaContainer}>
-            <RecenterButton style={styles.recenterButton} />
+            {!isRecentered && (
+                <RecenterButton
+                    style={styles.recenterButton}
+                    recentered={isRecentered}
+                    onPress={() => {
+                        fetchNewLocation(true);
+                    }}
+                />
+            )}
             <View style={styles.bottomNavigationPanelContainer}>
                 <View style={styles.bottomNavigationPanelTitle}>
                     <ThemedText style={styles.onGoingNavigationText}>
@@ -1430,6 +1444,7 @@ const Navigation = () => {
                 initialRegion={INITIAL_MAP_REGION}
                 provider="google"
                 customMapStyle={dark ? googleMapsStyling.dark : googleMapsStyling.light}
+                onRegionChange={onMapRegionChange}
                 showsUserLocation
                 followsUserLocation
             >
