@@ -220,7 +220,11 @@ export default function StationDetails(props) {
         setLoading(true);
 
         axios
-            .get(`${configs.API_URL}/station/id/${STATION_ID}`)
+            .get(`${configs.API_URL}/station/id/${STATION_ID}`, {
+                headers: {
+                    Authorization: `Bearer ${configs.PERSISTENT_JWT}`,
+                },
+            })
             .then(async (response) => {
                 if (response.data.status) {
                     if (response.data.status.status !== 200) setLoadError(true);
