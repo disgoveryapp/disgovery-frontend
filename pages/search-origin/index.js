@@ -101,7 +101,9 @@ export default function SearchOrigin(props) {
             const result = await axios({
                 method: "get",
                 url: `${configs.API_URL}/autocomplete/stations?query=${text}&max_result=${numberOfApi22Data}`,
-                headers: {},
+                headers: {
+                    Authorization: `Bearer ${configs.PERSISTENT_JWT}`,
+                },
             });
 
             setError22(false);
@@ -126,7 +128,9 @@ export default function SearchOrigin(props) {
             const result = await axios({
                 method: "get",
                 url: `${configs.API_URL}/autocomplete/places?query=${text}`,
-                headers: {},
+                headers: {
+                    Authorization: `Bearer ${configs.PERSISTENT_JWT}`,
+                },
             });
 
             setError21(false);

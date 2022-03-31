@@ -118,6 +118,9 @@ export default function Home() {
                     region.longitude
                 }&radius=${region.latitudeDelta * 111045}`,
                 {
+                    headers: {
+                        Authorization: `Bearer ${configs.PERSISTENT_JWT}`,
+                    },
                     timeout: 10000,
                 },
             )
