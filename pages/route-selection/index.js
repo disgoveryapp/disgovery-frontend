@@ -51,18 +51,21 @@ export default function RouteSelection() {
 
     async function api31Call() {
         try {
-            axios.post(`${configs.API_URL}/route/new`, {
-                origin: "station:BTS_CEN_1",
-                destination: "coordinates:13.7546154,100.5324766",
-            });
+            await axios
+                .post(`${configs.API_URL}/route/new`, {
+                    origin: "coordinates:13.7623641,100.4719031",
+                    destination: "coordinates:13.7546154,100.5324766",
+                })
+                .then(function (result) {
+                    console.log(result.data);
+                    setError31(false);
 
-            setError31(false);
-
-            if (result.data.data === undefined || result.data.data === null) {
-                setApi31Result([]);
-            } else {
-                setApi31Result(result.data.data);
-            }
+                    if (result.data.data === undefined || result.data.data === null) {
+                        setApi31Result([]);
+                    } else {
+                        setApi31Result(result.data.data);
+                    }
+                });
         } catch (error) {
             setError31(true);
         }
@@ -134,6 +137,10 @@ export default function RouteSelection() {
             })().catch(() => {});
             firstRun = false;
         }
+    }, []);
+    useEffect(() => {
+        api31Call();
+        console.log(api31Result, ":result");
     }, []);
 
     useEffect(() => {
@@ -260,3 +267,4 @@ export default function RouteSelection() {
         </View>
     );
 }
+//station:BTS_CEN_1
