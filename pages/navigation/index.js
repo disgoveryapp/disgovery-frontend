@@ -1030,16 +1030,19 @@ const Navigation = () => {
         let subscribed = true;
 
         if (subscribed) {
-            let snapped = snapToPolyline(polylines, location);
-            if (snapped) {
-                if (
-                    !nearestPoint ||
-                    (nearestPoint.latitude !== snapped.interpolatedCoordinatesOnPolyline.latitude &&
-                        nearestPoint.longitude !==
-                            snapped.interpolatedCoordinatesOnPolyline.longitude)
-                ) {
-                    setNearestPoint(snapped.interpolatedCoordinatesOnPolyline);
-                    setOffRoad(snapped.offRoad);
+            if (polylines.length !== 0 && location) {
+                let snapped = snapToPolyline(polylines, location);
+                if (snapped) {
+                    if (
+                        !nearestPoint ||
+                        (nearestPoint.latitude !==
+                            snapped.interpolatedCoordinatesOnPolyline.latitude &&
+                            nearestPoint.longitude !==
+                                snapped.interpolatedCoordinatesOnPolyline.longitude)
+                    ) {
+                        setNearestPoint(snapped.interpolatedCoordinatesOnPolyline);
+                        setOffRoad(snapped.offRoad);
+                    }
                 }
             }
         }
@@ -1146,6 +1149,11 @@ const Navigation = () => {
     async function getShape(routeId, fromCoordinates, toCoordinates) {
         let response = await axios.get(
             `${configs.API_URL}/shape/${routeId}?from=${fromCoordinates.lat},${fromCoordinates.lng}&to=${toCoordinates.lat},${toCoordinates.lng}`,
+            {
+                headers: {
+                    Authorization: `Bearer ${configs.PERSISTENT_JWT}`,
+                },
+            },
         );
 
         if (response.data.data) {
