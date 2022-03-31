@@ -114,7 +114,11 @@ function TripDetails(props) {
     function fetchTripDetails() {
         setLoading(true);
         axios
-            .get(`${configs.API_URL}/trip/${TRIP_ID}?origin=${ORIGIN_ID}`)
+            .get(`${configs.API_URL}/trip/${TRIP_ID}?origin=${ORIGIN_ID}`, {
+                headers: {
+                    Authorization: `Bearer ${configs.PERSISTENT_JWT}`,
+                },
+            })
             .then((response) => {
                 let responseData = response.data.data;
                 let approximateTime = false;
@@ -166,6 +170,11 @@ function TripDetails(props) {
         axios
             .get(
                 `${configs.API_URL}/shape/${route_id}?from=${origin_lat},${origin_lng}&to=${destination_lat},${destination_lng}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${configs.PERSISTENT_JWT}`,
+                    },
+                },
             )
             .then((response) => {
                 let responseData = response.data.data;
