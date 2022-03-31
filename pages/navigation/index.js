@@ -8,10 +8,11 @@ import * as Location from "expo-location";
 import axios from "axios";
 import { configs, getRouteTypeString, pSBC } from "../../configs/configs";
 import { decode } from "@googlemaps/polyline-codec";
-import { SafeAreaView } from "react-native-safe-area-context";
 import ArrowIcon from "../../assets/svgs/arrow-forward-18px";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import dayjs from "dayjs";
-import { getDistanceFromLatLonInKm, snapToPolyline } from "./util";
+import { snapToPolyline } from "./util";
+import RecenterButton from "../../components/recenter-button";
 
 const ROUTE_DETAILS = {
     schedule: {
@@ -1003,6 +1004,8 @@ const Navigation = () => {
     const [nearestPoint, setNearestPoint] = useState(undefined);
     const [offRoad, setOffRoad] = useState(false);
 
+    const SAFE_AREA = useSafeAreaInsets();
+
     useEffect(() => {
         let subscribed = true;
 
@@ -1254,6 +1257,7 @@ const Navigation = () => {
             top: 0,
             width: "100%",
             paddingHorizontal: 10,
+            paddingTop: SAFE_AREA.top,
         },
         topNavigationPanelContainer: {
             width: "100%",
@@ -1276,6 +1280,7 @@ const Navigation = () => {
             bottom: 0,
             width: "100%",
             paddingHorizontal: 10,
+            paddingBottom: SAFE_AREA.bottom,
         },
         bottomNavigationPanelContainer: {
             width: "100%",
@@ -1361,12 +1366,15 @@ const Navigation = () => {
             fontWeight: "600",
             fontSize: 18,
         },
+        recenterButton: {
+            marginBottom: 10,
+            marginRight: 0,
+        },
     });
 
     const TopNavigationPanel = () => (
         <>
             <View style={styles.topNavigationPanelContainerWithSafeAreaContainer}>
-                <SafeAreaView edges={["top"]} />
                 <View style={styles.topNavigationPanelContainer}>
                     {currentDirection.distance && (
                         <ThemedText style={styles.topNavigationPanelDistanceText}>
@@ -1391,6 +1399,7 @@ const Navigation = () => {
 
     const BottomNavigationPanel = () => (
         <View style={styles.bottomNavigationPanelContainerWithSafeAreaContainer}>
+            <RecenterButton style={styles.recenterButton} />
             <View style={styles.bottomNavigationPanelContainer}>
                 <View style={styles.bottomNavigationPanelTitle}>
                     <ThemedText style={styles.onGoingNavigationText}>
@@ -1410,7 +1419,6 @@ const Navigation = () => {
                     </ThemedText>
                 </View>
             </View>
-            <SafeAreaView edges={["bottom"]} />
         </View>
     );
 
