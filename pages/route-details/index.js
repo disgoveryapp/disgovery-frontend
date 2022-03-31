@@ -8,6 +8,8 @@ import * as Location from "expo-location";
 import RecenterButton from "../../components/recenter-button";
 import axios from "axios";
 import { configs } from "../../configs/configs";
+import Fares from "./components/fares";
+import RouteShowDetails from "./components/route-show-details";
 
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -169,7 +171,9 @@ export default function RouteDetails() {
                 //onScroll={onScroll}
                 //onScrollBeginDrag={onScrollBeginDrag}
                 //onScrollEndDrag={onScrollEndDrag}
-            ></ScrollView>
+            >
+                <RouteShowDetails />
+            </ScrollView>
         </View>
     );
 }
