@@ -14,7 +14,7 @@ import dayjs from "dayjs";
 import { getDistanceFromLatLonInKm, snapToPolyline } from "./util";
 import RecenterButton from "../../components/recenter-button";
 
-const CHECKPOINT_SNAP_DISTANCE = 0.05;
+const CHECKPOINT_SNAP_DISTANCE = 0.1;
 
 const ROUTE_DETAILS = {
     schedule: {
@@ -1004,9 +1004,10 @@ const Navigation = () => {
     const [mapsCurrentLocationRegion, setMapCurrentLocationRegion] = useState(undefined);
     const [locationErrorMessage, setLocationErrorMessage] = useState(null);
     const [polylines, setPolylines] = useState([]);
+    const [passedPolylines, setPassedPolylines] = useState([]);
     const [directions, setDirections] = useState([]);
     const [currentDirection, setCurrentDirection] = useState("");
-    const [nearestPoint, setNearestPoint] = useState(undefined);
+    const [nearestPointOnPolyline, setNearestPoint] = useState(undefined);
     const [offRoad, setOffRoad] = useState(false);
 
     useEffect(() => {
@@ -1023,7 +1024,7 @@ const Navigation = () => {
                 parseDirections();
             }
 
-            setInterval(async () => fetchNewLocation(false), 3000);
+            setInterval(async () => fetchNewLocation(false), 500);
         }
 
         return () => {
@@ -1040,15 +1041,16 @@ const Navigation = () => {
                 let snapped = snapToPolyline(polylines, location);
                 if (snapped) {
                     if (
-                        !nearestPoint ||
-                        (nearestPoint.latitude !==
+                        !nearestPointOnPolyline ||
+                        (nearestPointOnPolyline.latitude !==
                             snapped.interpolatedCoordinatesOnPolyline.latitude &&
-                            nearestPoint.longitude !==
+                            nearestPointOnPolyline.longitude !==
                                 snapped.interpolatedCoordinatesOnPolyline.longitude)
                     ) {
                         setNearestPoint(snapped.interpolatedCoordinatesOnPolyline);
                         setOffRoad(snapped.offRoad);
                         determineCurrentDirection();
+                        addToPassedPolylines(snapped.interpolatedCoordinatesOnPolyline);
                     }
                 }
             }
@@ -1060,10 +1062,12 @@ const Navigation = () => {
     }, [location]);
 
     useEffect(() => {
-        if (nearestPoint) {
-            console.log(`NEAREST ${nearestPoint.latitude} ${nearestPoint.longitude}`);
+        if (nearestPointOnPolyline) {
+            console.log(
+                `NEAREST ${nearestPointOnPolyline.latitude} ${nearestPointOnPolyline.longitude}`,
+            );
         }
-    }, [nearestPoint]);
+    }, [nearestPointOnPolyline]);
 
     async function fetchNewLocation(doRecenter) {
         let { status } = await Location.requestForegroundPermissionsAsync().catch(() => {});
@@ -1125,8 +1129,7 @@ const Navigation = () => {
     }
 
     function determineCurrentDirection() {
-        if (nearestPoint) {
-            // if (!nearestPoint.offRoad) {
+        if (nearestPointOnPolyline) {
             let nearestDistance = Infinity;
             let nearestKey = "";
 
@@ -1134,8 +1137,8 @@ const Navigation = () => {
                 let distance = getDistanceFromLatLonInKm(
                     directions[key].near.lat,
                     directions[key].near.lng,
-                    nearestPoint.latitude,
-                    nearestPoint.longitude,
+                    nearestPointOnPolyline.latitude,
+                    nearestPointOnPolyline.longitude,
                 );
 
                 if (distance < nearestDistance) {
@@ -1144,9 +1147,9 @@ const Navigation = () => {
                 }
             });
 
-            if (nearestDistance <= CHECKPOINT_SNAP_DISTANCE) setCurrentDirection(directions[key]);
+            if (nearestDistance <= CHECKPOINT_SNAP_DISTANCE)
+                setCurrentDirection(directions[nearestKey]);
         }
-        // }
     }
 
     async function parsePolylines() {
@@ -1201,19 +1204,36 @@ const Navigation = () => {
 
         for (let i in ROUTE_DETAILS.directions) {
             if (ROUTE_DETAILS.directions[i].type === "board") {
-                tempDirections.push({
+                let boardDirection = {
                     text: `Board ${getRouteTypeString(
                         ROUTE_DETAILS.directions[i].via_line.type || "0",
                         false,
                     )} from ${ROUTE_DETAILS.directions[i].from.station.name.en} to ${
                         ROUTE_DETAILS.directions[i].to.station.name.en
                     }`,
-                    near: ROUTE_DETAILS.directions[i].from.coordinates,
-                });
-                tempDirections.push({
+                };
+
+                let alightDirection = {
                     text: `Alight at ${ROUTE_DETAILS.directions[i].to.station.name.en}`,
-                    near: ROUTE_DETAILS.directions[i].to.coordinates,
-                });
+                };
+
+                for (let j in ROUTE_DETAILS.directions[i].passing) {
+                    if (parseInt(j) < ROUTE_DETAILS.directions[i].passing.length - 2) {
+                        tempDirections.push({
+                            ...boardDirection,
+                            near: ROUTE_DETAILS.directions[i].passing[j].coordinates,
+                            subtext: `Next: ${
+                                ROUTE_DETAILS.directions[i].passing[parseInt(j) + 1].station.name.en
+                            }`,
+                        });
+                    } else {
+                        tempDirections.push({
+                            ...alightDirection,
+                            near: ROUTE_DETAILS.directions[i].passing[j].coordinates,
+                        });
+                        break;
+                    }
+                }
             } else if (ROUTE_DETAILS.directions[i].type === "walk") {
                 for (let step of ROUTE_DETAILS.directions[i].route.steps) {
                     tempDirections.push({
@@ -1252,6 +1272,10 @@ const Navigation = () => {
 
         setDirections([...tempDirections]);
         setCurrentDirection(tempDirections[0]);
+    }
+
+    function addToPassedPolylines(coordinates) {
+        setPassedPolylines([...passedPolylines, coordinates]);
     }
 
     function htmlToText(html) {
@@ -1378,7 +1402,6 @@ const Navigation = () => {
             fontSize: 24,
         },
         offRoadContainer: {
-            maxWidth: "25%",
             alignSelf: "flex-end",
             marginTop: 10,
             borderRadius: 12,
@@ -1404,6 +1427,30 @@ const Navigation = () => {
             marginBottom: 10,
             marginRight: 0,
         },
+        topNavigationPanelSubtextContainer: {
+            width: "auto",
+            borderRadius: 12,
+            backgroundColor: colors.background,
+            paddingHorizontal: 18,
+            paddingVertical: 14,
+            marginTop: 5,
+
+            shadowColor: colors.shadow,
+            shadowOffset: {
+                width: 0,
+                height: 5,
+            },
+            shadowOpacity: 0.34,
+            shadowRadius: 6.27,
+
+            elevation: 10,
+        },
+        topNavigationPanelSubtext: {
+            marginTop: 5,
+            color: colors.subtitle,
+            fontWeight: "600",
+            fontSize: 16,
+        },
     });
 
     const TopNavigationPanel = () => (
@@ -1418,6 +1465,12 @@ const Navigation = () => {
                     {currentDirection.text && (
                         <ThemedText style={styles.topNavigationPanelDirectionText}>
                             {currentDirection.text}
+                        </ThemedText>
+                    )}
+
+                    {currentDirection.subtext && (
+                        <ThemedText style={styles.topNavigationPanelSubtext}>
+                            {currentDirection.subtext}
                         </ThemedText>
                     )}
                 </View>
@@ -1476,11 +1529,11 @@ const Navigation = () => {
                 showsUserLocation
                 followsUserLocation
             >
-                {nearestPoint && (
+                {nearestPointOnPolyline && (
                     <Marker
                         coordinate={{
-                            latitude: nearestPoint.latitude,
-                            longitude: nearestPoint.longitude,
+                            latitude: nearestPointOnPolyline.latitude,
+                            longitude: nearestPointOnPolyline.longitude,
                         }}
                         anchor={{ x: 0.5, y: 0.5 }}
                     >
@@ -1548,6 +1601,21 @@ const Navigation = () => {
                         </Marker>
                     </>
                 ))}
+
+                {passedPolylines.length !== 0 && (
+                    <>
+                        <Polyline
+                            coordinates={passedPolylines}
+                            strokeWidth={14}
+                            strokeColor={pSBC(-0.5, colors.middle_grey)}
+                        />
+                        <Polyline
+                            coordinates={passedPolylines}
+                            strokeWidth={8}
+                            strokeColor={colors.middle_grey}
+                        />
+                    </>
+                )}
             </MapView>
 
             <TopNavigationPanel />
