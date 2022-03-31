@@ -11,8 +11,10 @@ import { decode } from "@googlemaps/polyline-codec";
 import ArrowIcon from "../../assets/svgs/arrow-forward-18px";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import dayjs from "dayjs";
-import { snapToPolyline } from "./util";
+import { getDistanceFromLatLonInKm, snapToPolyline } from "./util";
 import RecenterButton from "../../components/recenter-button";
+
+const CHECKPOINT_SNAP_DISTANCE = 0.05;
 
 const ROUTE_DETAILS = {
     schedule: {
@@ -1046,6 +1048,7 @@ const Navigation = () => {
                     ) {
                         setNearestPoint(snapped.interpolatedCoordinatesOnPolyline);
                         setOffRoad(snapped.offRoad);
+                        determineCurrentDirection();
                     }
                 }
             }
@@ -1119,6 +1122,31 @@ const Navigation = () => {
         });
 
         return decodedPolyline;
+    }
+
+    function determineCurrentDirection() {
+        if (nearestPoint) {
+            // if (!nearestPoint.offRoad) {
+            let nearestDistance = Infinity;
+            let nearestKey = "";
+
+            Object.keys(directions).map((key) => {
+                let distance = getDistanceFromLatLonInKm(
+                    directions[key].near.lat,
+                    directions[key].near.lng,
+                    nearestPoint.latitude,
+                    nearestPoint.longitude,
+                );
+
+                if (distance < nearestDistance) {
+                    nearestDistance = distance;
+                    nearestKey = key;
+                }
+            });
+
+            if (nearestDistance <= CHECKPOINT_SNAP_DISTANCE) setCurrentDirection(directions[key]);
+        }
+        // }
     }
 
     async function parsePolylines() {
