@@ -51,7 +51,8 @@ export default function App() {
                             headerShown: false,
                         }}
                     >
-                        <Stack.Screen name="Home" component={RouteSelection} />
+                        <Stack.Screen name="RouteDetails" component={RouteDetails} />
+                        <Stack.Screen name="Home" component={Home} />
                         <Stack.Screen name="TripDetails" component={TripDetails} />
                         <Stack.Screen
                             name="Search"
@@ -69,7 +70,6 @@ export default function App() {
                             options={{ animation: "fade" }}
                         />
                         <Stack.Screen name="RouteSelection" component={RouteSelection} />
-                        <Stack.Screen name="ROuteDetails" component={RouteDetails} />
                     </Stack.Navigator>
                 </NavigationContainer>
             </>
