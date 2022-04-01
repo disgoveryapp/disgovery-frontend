@@ -5,6 +5,7 @@ import { useTheme } from "@react-navigation/native";
 import PlaceIcon from "../../../../assets/svgs/place-icon";
 import WalkIcon from "../../../../assets/svgs/walk-icon";
 import SubwayIcon from "../../../../assets/svgs/subway-icon";
+import TransitLine from "../../../../components/transit-line";
 
 export default function RouteShowDetails(props) {
     const { colors } = useTheme();
@@ -12,7 +13,6 @@ export default function RouteShowDetails(props) {
         container: {
             paddingHorizontal: props.containerPadding,
             justifyContent: "flex-start",
-            alignItems: "flex-start",
         },
         titleText: {
             fontWeight: "600",
@@ -26,6 +26,7 @@ export default function RouteShowDetails(props) {
         subContainer: {},
         tabContainer: {
             flexDirection: "row",
+            paddingVertical: 2,
         },
         iconTabContainer: {
             width: 30,
@@ -33,6 +34,9 @@ export default function RouteShowDetails(props) {
             alignItems: "center",
             paddingVertical: 3,
             marginRight: 5,
+        },
+        textTabContainer: {
+            flex: 1,
         },
     });
 
@@ -42,8 +46,10 @@ export default function RouteShowDetails(props) {
                 <View style={styles.iconTabContainer}>
                     <WalkIcon fill={colors.text} />
                 </View>
-                <View>
-                    <ThemedText style={styles.titleText}>Walk to Bang Sue MRT Station</ThemedText>
+                <View style={styles.textTabContainer}>
+                    <ThemedText style={styles.titleText}>
+                        Exit the station and enter Mo Chit BTS station via entrance 2
+                    </ThemedText>
                     <ThemedText style={styles.subtitleText}>750 m · 9 minutes</ThemedText>
                 </View>
             </View>
@@ -57,6 +63,9 @@ export default function RouteShowDetails(props) {
                 </View>
                 <View>
                     <ThemedText style={styles.titleText}>Depart on a subway</ThemedText>
+                    <ThemedText style={styles.subtitleText}>
+                        To Tha Phra · Every 5 minutes
+                    </ThemedText>
                 </View>
             </View>
         );
