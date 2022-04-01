@@ -1,8 +1,8 @@
-import { Easing, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import React, { useRef, useEffect, useState } from "react";
 import ThemedText from "../../components/themed-text";
 import { useTheme } from "@react-navigation/native";
-import MapView, { AnimatedRegion, Animated, Marker, Polyline } from "react-native-maps";
+import MapView, { AnimatedRegion, Marker, Polyline } from "react-native-maps";
 import { googleMapsStyling } from "../../maps/google-maps-styling";
 import * as Location from "expo-location";
 import axios from "axios";
@@ -14,7 +14,6 @@ import dayjs from "dayjs";
 import { getDistanceFromLatLonInKm, snapToPolyline } from "./util";
 import RecenterButton from "../../components/recenter-button";
 import ExpandDownIcon18px from "../../assets/svgs/expand-down-icon-18px";
-import AnimatedPolyline from "react-native-maps-animated-polyline";
 
 const CHECKPOINT_SNAP_DISTANCE = 0.1;
 
