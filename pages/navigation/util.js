@@ -58,6 +58,10 @@ export function snapToPolyline(polylines, currentCoordinates) {
 function interpolatePolyline(allPolylines, closestPoint, currentLocation, candidate, iteration) {
     if (iteration === 0) return closestPoint;
 
+    if (allPolylines.length === 0) {
+        return closestPoint;
+    }
+
     if (!candidate) {
         candidate = {
             latitude: 0,

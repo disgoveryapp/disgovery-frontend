@@ -1,18 +1,20 @@
-import { StyleSheet, View } from "react-native";
+import { Easing, StyleSheet, View } from "react-native";
 import React, { useRef, useEffect, useState } from "react";
 import ThemedText from "../../components/themed-text";
 import { useTheme } from "@react-navigation/native";
-import MapView, { Marker, Polyline } from "react-native-maps";
+import MapView, { AnimatedRegion, Animated, Marker, Polyline } from "react-native-maps";
 import { googleMapsStyling } from "../../maps/google-maps-styling";
 import * as Location from "expo-location";
 import axios from "axios";
 import { configs, getRouteTypeString, pSBC } from "../../configs/configs";
 import { decode } from "@googlemaps/polyline-codec";
 import ArrowIcon from "../../assets/svgs/arrow-forward-18px";
-import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import dayjs from "dayjs";
 import { getDistanceFromLatLonInKm, snapToPolyline } from "./util";
 import RecenterButton from "../../components/recenter-button";
+import ExpandDownIcon18px from "../../assets/svgs/expand-down-icon-18px";
+import AnimatedPolyline from "react-native-maps-animated-polyline";
 
 const CHECKPOINT_SNAP_DISTANCE = 0.1;
 
@@ -995,7 +997,8 @@ const INITIAL_MAP_REGION = {
 const Navigation = () => {
     const { colors, dark } = useTheme();
     let firstRun = true;
-    const mapRef = useRef();
+    const mapRef = useRef(null);
+    const currentLocationMarkerRef = useRef(null);
     const SAFE_AREA = useSafeAreaInsets();
 
     const [isRecentered, setIsRecentered] = useState(true);
@@ -1017,14 +1020,14 @@ const Navigation = () => {
             if (firstRun) {
                 (async () => {
                     fetchNewLocation(true);
-                })().catch(() => {});
+                    parsePolylines();
+                })()
+                    .then(() => parseDirections())
+                    .catch(() => {});
                 firstRun = false;
-
-                parsePolylines();
-                parseDirections();
             }
 
-            setInterval(async () => fetchNewLocation(false), 500);
+            setInterval(async () => fetchNewLocation(false), 100);
         }
 
         return () => {
@@ -1033,7 +1036,6 @@ const Navigation = () => {
     }, []);
 
     useEffect(() => {
-        // console.log(location);
         let subscribed = true;
 
         if (subscribed) {
@@ -1047,10 +1049,42 @@ const Navigation = () => {
                             nearestPointOnPolyline.longitude !==
                                 snapped.interpolatedCoordinatesOnPolyline.longitude)
                     ) {
-                        setNearestPoint(snapped.interpolatedCoordinatesOnPolyline);
+                        if (!nearestPointOnPolyline) {
+                            setNearestPoint(
+                                new AnimatedRegion({
+                                    ...snapped.interpolatedCoordinatesOnPolyline,
+                                }),
+                            );
+                        } else {
+                            if (Platform.OS === "android") {
+                                if (marker) {
+                                    currentLocationMarkerRef.animateMarkerToCoordinate(
+                                        snapped.interpolatedCoordinatesOnPolyline,
+                                        10,
+                                    );
+                                }
+                                addToPassedPolylines(snapped.interpolatedCoordinatesOnPolyline);
+                            } else {
+                                nearestPointOnPolyline
+                                    .timing({
+                                        latitude:
+                                            snapped.interpolatedCoordinatesOnPolyline.latitude,
+                                        longitude:
+                                            snapped.interpolatedCoordinatesOnPolyline.longitude,
+                                        duration: 50,
+                                    })
+                                    .start((finished) => {
+                                        if (finished) {
+                                            addToPassedPolylines(
+                                                snapped.interpolatedCoordinatesOnPolyline,
+                                            );
+                                        }
+                                    });
+                            }
+                        }
+
                         setOffRoad(snapped.offRoad);
                         determineCurrentDirection();
-                        addToPassedPolylines(snapped.interpolatedCoordinatesOnPolyline);
                     }
                 }
             }
@@ -1063,9 +1097,7 @@ const Navigation = () => {
 
     useEffect(() => {
         if (nearestPointOnPolyline) {
-            console.log(
-                `NEAREST ${nearestPointOnPolyline.latitude} ${nearestPointOnPolyline.longitude}`,
-            );
+            console.log(nearestPointOnPolyline);
         }
     }, [nearestPointOnPolyline]);
 
@@ -1113,8 +1145,8 @@ const Navigation = () => {
 
     async function recenter(region) {
         console.log("recentring");
-        await mapRef.current.animateToRegion(region || INITIAL_MAP_REGION);
         setIsRecentered(true);
+        mapRef.current.animateToRegion(region || INITIAL_MAP_REGION);
     }
 
     function decodePolyline(polyline) {
@@ -1219,17 +1251,33 @@ const Navigation = () => {
 
                 for (let j in ROUTE_DETAILS.directions[i].passing) {
                     if (parseInt(j) < ROUTE_DETAILS.directions[i].passing.length - 2) {
+                        let snappedCoordinates = snapToPolyline(polylines, {
+                            latitude: ROUTE_DETAILS.directions[i].passing[j].coordinates.lat,
+                            longitude: ROUTE_DETAILS.directions[i].passing[j].coordinates.lng,
+                        });
+
                         tempDirections.push({
                             ...boardDirection,
-                            near: ROUTE_DETAILS.directions[i].passing[j].coordinates,
+                            near: {
+                                lat: snappedCoordinates.interpolatedCoordinatesOnPolyline.latitude,
+                                lng: snappedCoordinates.interpolatedCoordinatesOnPolyline.longitude,
+                            },
                             subtext: `Next: ${
                                 ROUTE_DETAILS.directions[i].passing[parseInt(j) + 1].station.name.en
                             }`,
                         });
                     } else {
+                        let snappedCoordinates = snapToPolyline(polylines, {
+                            latitude: ROUTE_DETAILS.directions[i].passing[j].coordinates.lat,
+                            longitude: ROUTE_DETAILS.directions[i].passing[j].coordinates.lng,
+                        });
+
                         tempDirections.push({
                             ...alightDirection,
-                            near: ROUTE_DETAILS.directions[i].passing[j].coordinates,
+                            near: {
+                                lat: snappedCoordinates.interpolatedCoordinatesOnPolyline.latitude,
+                                lng: snappedCoordinates.interpolatedCoordinatesOnPolyline.longitude,
+                            },
                         });
                         break;
                     }
@@ -1243,9 +1291,17 @@ const Navigation = () => {
                     });
                 }
             } else if (ROUTE_DETAILS.directions[i].type === "transfer") {
+                let snappedCoordinates = snapToPolyline(polylines, {
+                    latitude: ROUTE_DETAILS.directions[i].from.coordinates.lat,
+                    longitude: ROUTE_DETAILS.directions[i].from.coordinates.lng,
+                });
+
                 tempDirections.push({
                     text: `Transfer from ${ROUTE_DETAILS.directions[i].from.station.name.en} to ${ROUTE_DETAILS.directions[i].to.station.name.en}`,
-                    near: ROUTE_DETAILS.directions[i].from.coordinates,
+                    near: {
+                        lat: snappedCoordinates.interpolatedCoordinatesOnPolyline.latitude,
+                        lng: snappedCoordinates.interpolatedCoordinatesOnPolyline.longitude,
+                    },
                 });
             }
 
@@ -1262,14 +1318,23 @@ const Navigation = () => {
                 } else if (
                     ROUTE_DETAILS.directions[ROUTE_DETAILS.directions.length - 1].type === "board"
                 ) {
+                    let snappedCoordinates = snapToPolyline(polylines, {
+                        latitude: ROUTE_DETAILS.destination.coordinates.lat,
+                        longitude: ROUTE_DETAILS.destination.coordinates.lng,
+                    });
+
                     tempDirections.push({
                         text: `You have arrived at ${ROUTE_DETAILS.destination.station.name.en}`,
-                        near: ROUTE_DETAILS.destination.coordinates,
+                        near: {
+                            lat: snappedCoordinates.interpolatedCoordinatesOnPolyline.latitude,
+                            lng: snappedCoordinates.interpolatedCoordinatesOnPolyline.longitude,
+                        },
                     });
                 }
             }
         }
 
+        console.log(tempDirections);
         setDirections([...tempDirections]);
         setCurrentDirection(tempDirections[0]);
     }
@@ -1451,6 +1516,20 @@ const Navigation = () => {
             fontWeight: "600",
             fontSize: 16,
         },
+        bottomNavigationExpandUpIcon: {
+            alignSelf: "flex-end",
+            marginRight: 0,
+            marginLeft: "auto",
+        },
+        currentLocationMarker: {
+            width: 20,
+            height: 20,
+            borderRadius: 30,
+            borderWidth: 2.5,
+            backgroundColor: colors.go_button,
+            borderColor: colors.white,
+            zIndex: 100,
+        },
     });
 
     const TopNavigationPanel = () => (
@@ -1491,7 +1570,11 @@ const Navigation = () => {
                     style={styles.recenterButton}
                     recentered={isRecentered}
                     onPress={() => {
-                        fetchNewLocation(true);
+                        recenter({
+                            ...nearestPointOnPolyline,
+                            latitudeDelta: 0.005,
+                            longitudeDelta: 0.005,
+                        });
                     }}
                 />
             )}
@@ -1501,6 +1584,7 @@ const Navigation = () => {
                         On-going navigation
                     </ThemedText>
                     <ArrowIcon style={styles.bottomNaviationPanelTitleArrowIcon} />
+                    <ExpandDownIcon18px style={styles.bottomNavigationExpandUpIcon} />
                 </View>
                 <View style={styles.bottomNavigationPanelArrivingInContainer}>
                     <ThemedText style={styles.bottomNavigationPanelArrivingInText}>
@@ -1523,30 +1607,42 @@ const Navigation = () => {
                 ref={mapRef}
                 style={styles.maps}
                 initialRegion={INITIAL_MAP_REGION}
-                provider="google"
+                // provider="google"
                 customMapStyle={dark ? googleMapsStyling.dark : googleMapsStyling.light}
-                onRegionChange={onMapRegionChange}
-                showsUserLocation
-                followsUserLocation
+                onTouchEnd={onMapRegionChange}
+                showsUserLocation={offRoad}
+                followsUserLocation={isRecentered}
             >
                 {nearestPointOnPolyline && (
-                    <Marker
-                        coordinate={{
-                            latitude: nearestPointOnPolyline.latitude,
-                            longitude: nearestPointOnPolyline.longitude,
-                        }}
+                    <Marker.Animated
+                        ref={currentLocationMarkerRef}
+                        coordinate={nearestPointOnPolyline}
                         anchor={{ x: 0.5, y: 0.5 }}
                     >
+                        <View style={styles.currentLocationMarker} />
+                    </Marker.Animated>
+                )}
+
+                {Object.keys(directions).map((key) => (
+                    <Marker
+                        style={styles.marker}
+                        key={`marker_test_${key}`}
+                        anchor={{ x: 0.5, y: 0.5 }}
+                        coordinate={{
+                            latitude: directions[key].near.lat,
+                            longitude: directions[key].near.lng,
+                        }}
+                    >
                         <View
+                            key={`marker_test_view_${key}`}
                             style={{
                                 ...styles.marker,
-                                backgroundColor: colors.primary,
+                                backgroundColor: colors.white,
                                 borderColor: colors.middle_grey,
-                                zIndex: 100,
                             }}
                         />
                     </Marker>
-                )}
+                ))}
 
                 {Object.keys(polylines).map((key) => (
                     <>
@@ -1605,14 +1701,17 @@ const Navigation = () => {
                 {passedPolylines.length !== 0 && (
                     <>
                         <Polyline
+                            style={{ zIndex: 50 }}
                             coordinates={passedPolylines}
                             strokeWidth={14}
                             strokeColor={pSBC(-0.5, colors.middle_grey)}
                         />
                         <Polyline
+                            style={{ zIndex: 51 }}
                             coordinates={passedPolylines}
                             strokeWidth={8}
                             strokeColor={colors.middle_grey}
+                            interval={10}
                         />
                     </>
                 )}

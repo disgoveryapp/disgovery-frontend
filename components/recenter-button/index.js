@@ -34,10 +34,11 @@ export default function RecenterButton(props) {
     });
 
     return (
-        <View style={{ ...styles.container, ...props.style }}>
-            <TouchableOpacity onPress={props.onPress || function () {}}>
-                <RecenterIcon fill={props.recentered ? colors.primary : colors.subtitle} />
-            </TouchableOpacity>
-        </View>
+        <TouchableOpacity
+            style={{ ...styles.container, ...props.style }}
+            onPress={props.onPress || function () {}}
+        >
+            <RecenterIcon fill={props.recentered ? colors.primary : colors.subtitle} />
+        </TouchableOpacity>
     );
 }
