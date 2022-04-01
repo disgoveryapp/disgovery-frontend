@@ -33,8 +33,8 @@ export default function RouteShowDetails(props) {
             paddingVertical: 2,
         },
         iconTabContainer: {
-            width: 30,
-            justifyContent: "flex-start",
+            width: 25,
+            justifyContent: "space-between",
             alignItems: "center",
             paddingVertical: 3,
             marginRight: 5,
@@ -42,13 +42,35 @@ export default function RouteShowDetails(props) {
         textTabContainer: {
             flex: 1,
         },
+        threeDotIcon: {
+            width: 4,
+            height: 4,
+            borderRadius: 2,
+            backgroundColor: colors.text,
+        },
+        threeDotContainer: {
+            height: 18,
+            justifyContent: "space-between",
+            marginBottom: 5,
+        },
     });
+
+    function ThreeDots() {
+        return (
+            <View style={styles.threeDotContainer}>
+                <View style={styles.threeDotIcon} />
+                <View style={styles.threeDotIcon} />
+                <View style={styles.threeDotIcon} />
+            </View>
+        );
+    }
 
     function WalkTab(subprops) {
         return (
             <View style={styles.tabContainer}>
                 <View style={styles.iconTabContainer}>
                     <WalkIcon fill={colors.text} />
+                    <ThreeDots />
                 </View>
                 <View style={styles.textTabContainer}>
                     <ThemedText style={styles.titleText}>
@@ -64,6 +86,7 @@ export default function RouteShowDetails(props) {
             <View style={styles.tabContainer}>
                 <View style={styles.iconTabContainer}>
                     <SubwayIcon fill={colors.text} />
+                    <ThreeDots />
                 </View>
                 <View>
                     <ThemedText style={styles.titleText}>Depart on a subway</ThemedText>
