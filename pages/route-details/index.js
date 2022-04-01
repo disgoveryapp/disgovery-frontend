@@ -32,6 +32,7 @@ export default function RouteDetails() {
     const [locationErrorMessage, setLocationErrorMessage] = useState(null);
 
     const [nearbyStations, setNearbyStations] = useState([]);
+    const containerPadding = 12;
 
     const styles = StyleSheet.create({
         container: {
@@ -172,7 +173,7 @@ export default function RouteDetails() {
                 //onScrollBeginDrag={onScrollBeginDrag}
                 //onScrollEndDrag={onScrollEndDrag}
             >
-                <RouteShowDetails />
+                <RouteShowDetails containerPadding={containerPadding} />
             </ScrollView>
         </View>
     );
