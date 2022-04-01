@@ -15,25 +15,36 @@ export default function RouteShowDetails(props) {
             alignItems: "flex-start",
         },
         titleText: {
-            fontWeight: "bold",
-            fontSize: 24,
-            padding: 12,
+            fontWeight: "600",
+            fontSize: 18,
+        },
+        subtitleText: {
+            fontWeight: "600",
+            fontSize: 14,
+            color: colors.subtitle,
         },
         subContainer: {},
         tabContainer: {
             flexDirection: "row",
+        },
+        iconTabContainer: {
+            width: 30,
+            justifyContent: "flex-start",
+            alignItems: "center",
+            paddingVertical: 3,
+            marginRight: 5,
         },
     });
 
     function WalkTab(subprops) {
         return (
             <View style={styles.tabContainer}>
-                <View>
+                <View style={styles.iconTabContainer}>
                     <WalkIcon fill={colors.text} />
                 </View>
                 <View>
-                    <ThemedText>Walk to Bang Sue MRT Station</ThemedText>
-                    <ThemedText>750 m · 9 minutes</ThemedText>
+                    <ThemedText style={styles.titleText}>Walk to Bang Sue MRT Station</ThemedText>
+                    <ThemedText style={styles.subtitleText}>750 m · 9 minutes</ThemedText>
                 </View>
             </View>
         );
@@ -41,11 +52,11 @@ export default function RouteShowDetails(props) {
     function PublicTransitTab(subprops) {
         return (
             <View style={styles.tabContainer}>
-                <View>
+                <View style={styles.iconTabContainer}>
                     <SubwayIcon fill={colors.text} />
                 </View>
                 <View>
-                    <ThemedText>Depart on a subway</ThemedText>
+                    <ThemedText style={styles.titleText}>Depart on a subway</ThemedText>
                 </View>
             </View>
         );
@@ -54,12 +65,12 @@ export default function RouteShowDetails(props) {
     function DestinationTab(subprops) {
         return (
             <View style={styles.tabContainer}>
-                <View>
+                <View style={styles.iconTabContainer}>
                     <PlaceIcon fill={colors.text} />
                 </View>
 
                 <View>
-                    <ThemedText>Centralworld</ThemedText>
+                    <ThemedText style={styles.titleText}>Centralworld</ThemedText>
                 </View>
             </View>
         );
