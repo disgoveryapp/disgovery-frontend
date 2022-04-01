@@ -132,6 +132,7 @@ export default function RouteSelection() {
             justifyContent: "center",
             left: 12,
         },
+        subScrollView: {},
     });
 
     useEffect(() => {
@@ -240,19 +241,7 @@ export default function RouteSelection() {
                 showsUserLocation
             ></MapView>
             <BackButton />
-            <ScrollView
-                style={styles.scrollView}
-                showsHorizontalScrollIndicator={false}
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={{
-                    paddingBottom: 35,
-                }}
-                keyboardDismissMode="interactive"
-                //scrollEventThrottle={16}
-                //onScroll={onScroll}
-                //onScrollBeginDrag={onScrollBeginDrag}
-                //onScrollEndDrag={onScrollEndDrag}
-            >
+            <View style={styles.scrollView}>
                 <RouteSelectionBar containerPadding={containerPadding} />
                 <DividerLine />
                 {wearFaceMask && (
@@ -261,16 +250,29 @@ export default function RouteSelection() {
                         <DividerLine />
                     </>
                 )}
-
-                <OverViewRoute
-                    topictextStyle={styles.topictext}
-                    containerPadding={containerPadding}
-                />
-                <SuggestedRoutes
-                    topictextStyle={styles.topictext}
-                    containerPadding={containerPadding}
-                />
-            </ScrollView>
+                <ScrollView
+                    style={styles.subScrollView}
+                    showsHorizontalScrollIndicator={false}
+                    showsVerticalScrollIndicator={false}
+                    contentContainerStyle={{
+                        paddingBottom: 35,
+                    }}
+                    keyboardDismissMode="interactive"
+                    //scrollEventThrottle={16}
+                    //onScroll={onScroll}
+                    //onScrollBeginDrag={onScrollBeginDrag}
+                    //onScrollEndDrag={onScrollEndDrag}
+                >
+                    <OverViewRoute
+                        topictextStyle={styles.topictext}
+                        containerPadding={containerPadding}
+                    />
+                    <SuggestedRoutes
+                        topictextStyle={styles.topictext}
+                        containerPadding={containerPadding}
+                    />
+                </ScrollView>
+            </View>
         </View>
     );
 }
