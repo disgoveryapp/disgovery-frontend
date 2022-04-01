@@ -55,6 +55,10 @@ export default function RouteSelection() {
                 .post(`${configs.API_URL}/route/new`, {
                     origin: "coordinates:13.7623641,100.4719031",
                     destination: "coordinates:13.7546154,100.5324766",
+                    headers: {
+                        Authorization: `Bearer ${configs.PERSISTENT_JWT}`,
+                    },
+                    timeout: 10000,
                 })
                 .then(function (result) {
                     console.log(result.data);
