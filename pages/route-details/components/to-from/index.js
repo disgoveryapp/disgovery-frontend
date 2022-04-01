@@ -37,27 +37,34 @@ function ToFrom() {
         }
     
         const styles = StyleSheet.create({
-            // bottomCard: {
-            //     height: 0.7 * Dimensions.get("screen").height,
-            //     marginTop: 0.3 * Dimensions.get("screen").height,
-            //     paddingHorizontal: 15,
-            //     backgroundColor: colors.background,
-            //     borderTopLeftRadius: 22,
-            //     borderTopRightRadius: 22,
+            bottomCard: {
+                paddingBottom: 15,
+                paddingTop: 15,
+                width: 0.92 * Dimensions.get("screen").width,
+                // height: 0.7 * Dimensions.get("screen").height,
+                // marginTop: 0.3 * Dimensions.get("screen").height,
+                // paddingHorizontal: 15,
+                // backgroundColor: colors.background,
+                // borderTopLeftRadius: 22,
+                // borderTopRightRadius: 22,
     
-            //     shadowColor: "#000",
-            //     shadowOffset: {
-            //         width: 0,
-            //         height: 5,
-            //     },
-            //     shadowOpacity: 0.34,
-            //     shadowRadius: 6.27,
+                // shadowColor: "#000",
+                // shadowOffset: {
+                //     width: 0,
+                //     height: 5,
+                // },
+                // shadowOpacity: 0.34,
+                // shadowRadius: 6.27,
     
-            //     elevation: 10,
-            // },
+                // elevation: 10,
+            },
             container: {
                 display: "flex",
                 flexDirection: "row",
+            },
+            subcontainer:{
+                paddingBottom: 50,
+                paddingTop: 15,
             },
             originDestinationContainer: {
                 // width: props.time ? "80%" : "100%",
@@ -98,10 +105,10 @@ function ToFrom() {
             title: {
                 marginTop: 10,
             },
-            timeContainer: {
-                flex: 1,
+            timeContainer: {},
+            time: {
+                // width:"100%",
             },
-            time: {},
             timeText: {
                 textAlign: "right",
                 fontSize: size === "small" ? 18 : 22,
@@ -113,30 +120,12 @@ function ToFrom() {
                 // color: props.subTimeColor || colors.primary,
                 color: "black",
             },
+            arriveView:{}
         });
 
 
     return(
         <View style={styles.bottomCard}>
-            <ScrollView
-                // showsVerticalScrollIndicator={false}
-                contentContainerStyle={{
-                    paddingBottom: 50,
-                    paddingTop: 15,
-                }}
-                scrollEventThrottle={32}
-                // onScroll={(event) =>
-                //     scrollY.setValue(event.nativeEvent.contentOffset.y)
-                // }
-            >
-                {/* <OriginToDestinationTitle
-                    style={styles.title}
-                    origin={"Khu Kot"}
-                    destination={"Khu Kot"}
-                    time={3000}
-                    subTime={"On time"}
-                    subTimeColor={colors.primary}
-                /> */}
                         <View style={{ ...subprops.style, ...styles.container }}>
                             <View style={styles.originDestinationContainer}>
                                 <View style={styles.destination}>
@@ -162,11 +151,13 @@ function ToFrom() {
                                     <ThemedText style={styles.timeText}>
                                         {secondToRoundedMinuteString(subprops.time)}
                                     </ThemedText>
-                                    <ThemedText style={styles.subTimeText}>Arrived by</ThemedText>
+                                    <View style={styles.arriveView}>
+                                        <ThemedText style={styles.subTimeText}>Arrived by 16:00</ThemedText>
+                                    </View>
                                 </View>
                             </View>
                         </View>
-            </ScrollView>
+            {/* </ScrollView> */}
         </View>
     );
 }
