@@ -53,6 +53,20 @@ export default function RouteShowDetails(props) {
             justifyContent: "space-between",
             marginBottom: 5,
         },
+        dotIcon: {
+            width: 10,
+            height: 10,
+            backgroundColor: "#ffff",
+            borderRadius: 5,
+            borderColor: colors.upper_background,
+            borderWidth: 1,
+        },
+        lineColor: {
+            width: 6,
+            height: "auto",
+            flex: 1,
+            backgroundColor: "green",
+        },
     });
 
     function ThreeDots() {
@@ -83,28 +97,48 @@ export default function RouteShowDetails(props) {
     }
     function PublicTransitTab(subprops) {
         return (
+            <>
+                <View style={styles.tabContainer}>
+                    <View style={styles.iconTabContainer}>
+                        <SubwayIcon fill={colors.text} />
+                        <ThreeDots />
+                    </View>
+                    <View>
+                        <ThemedText style={styles.titleText}>Depart on a subway</ThemedText>
+                        <View style={styles.transit}>
+                            <TransitLine
+                                line={{
+                                    name: {
+                                        short_name: "Insert Props Here",
+                                        long_name: "BTS Sukhumvit Line",
+                                    },
+                                    color: "7FBF3A",
+                                }}
+                                fontSize={14}
+                            />
+                        </View>
+                        <ThemedText style={styles.subtitleText}>
+                            To Tha Phra · Every 5 minutes
+                        </ThemedText>
+                    </View>
+                </View>
+                <PublicTransitRouteTab />
+            </>
+        );
+    }
+
+    function PublicTransitRouteTab(subprops) {
+        return (
             <View style={styles.tabContainer}>
                 <View style={styles.iconTabContainer}>
-                    <SubwayIcon fill={colors.text} />
-                    <ThreeDots />
+                    <View style={styles.dotIcon} />
+                    <View style={styles.lineColor} />
+                    <View style={styles.dotIcon} />
                 </View>
                 <View>
-                    <ThemedText style={styles.titleText}>Depart on a subway</ThemedText>
-                    <View style={styles.transit}>
-                        <TransitLine
-                            line={{
-                                name: {
-                                    short_name: "Insert Props Here",
-                                    long_name: "BTS Sukhumvit Line",
-                                },
-                                color: "7FBF3A",
-                            }}
-                            fontSize={14}
-                        />
-                    </View>
-                    <ThemedText style={styles.subtitleText}>
-                        To Tha Phra · Every 5 minutes
-                    </ThemedText>
+                    <ThemedText style={styles.titleText}>Mo Chit</ThemedText>
+                    <ThemedText style={styles.subtitleText}>8 stops · 19 minutes</ThemedText>
+                    <ThemedText style={styles.titleText}>Chit Lom</ThemedText>
                 </View>
             </View>
         );
