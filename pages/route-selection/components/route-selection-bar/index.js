@@ -26,6 +26,8 @@ export default function RouteSelectionBar(props) {
         outerContainer: {
             display: "flex",
             width: "100%",
+            paddingBottom: 12,
+            paddingHorizontal: props.containerPadding,
         },
         outerSecondContainer: {
             display: "flex",
@@ -38,7 +40,7 @@ export default function RouteSelectionBar(props) {
             height: 44,
             flexDirection: "row",
             alignItems: "center",
-            padding: 5,
+            paddingVertical: 5,
         },
         body: {
             flex: 1,
@@ -95,12 +97,6 @@ export default function RouteSelectionBar(props) {
                 <TouchableOpacity>
                     <SwapIcon />
                 </TouchableOpacity>
-            </View>
-            <View style={styles.departContainer}>
-                <View style={{ marginRight: 4 }}>
-                    <ScheduleIcon />
-                </View>
-                <ThemedText>Depart now</ThemedText>
             </View>
         </View>
     );

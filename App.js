@@ -68,6 +68,8 @@ export default function App() {
                             component={StationDetails}
                             options={{ animation: "fade" }}
                         />
+                        <Stack.Screen name="RouteSelection" component={RouteSelection} />
+                        <Stack.Screen name="ROuteDetails" component={RouteDetails} />
                     </Stack.Navigator>
                 </NavigationContainer>
             </>

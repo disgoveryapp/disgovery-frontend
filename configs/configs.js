@@ -1,5 +1,8 @@
+import { API_URL, PERSISTENT_JWT } from "@env";
+
 export const configs = {
-    API_URL: "http://192.168.1.3:3000",
+    API_URL: API_URL || "http://localhost:3000",
+    PERSISTENT_JWT: PERSISTENT_JWT || "",
     INITIAL_MAP_REGION: {
         latitude: 13.764889,
         longitude: 100.538266,
