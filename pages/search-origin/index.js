@@ -101,7 +101,9 @@ export default function SearchOrigin(props) {
             const result = await axios({
                 method: "get",
                 url: `${configs.API_URL}/autocomplete/stations?query=${text}&max_result=${numberOfApi22Data}`,
-                headers: {},
+                headers: {
+                    Authorization: `Bearer ${configs.PERSISTENT_JWT}`,
+                },
             });
 
             setError22(false);
@@ -126,7 +128,9 @@ export default function SearchOrigin(props) {
             const result = await axios({
                 method: "get",
                 url: `${configs.API_URL}/autocomplete/places?query=${text}`,
-                headers: {},
+                headers: {
+                    Authorization: `Bearer ${configs.PERSISTENT_JWT}`,
+                },
             });
 
             setError21(false);
@@ -198,6 +202,20 @@ export default function SearchOrigin(props) {
             latitude: location.coords.latitude,
             longitude: location.coords.longitude,
         };
+    }
+
+    function navigateToRouteSelectionPage(
+        destination_name,
+        destination_data,
+        origin_name,
+        origin_data,
+    ) {
+        navigation.navigate("SearchOrigin", {
+            destination_name: destination_name,
+            destination_data: destination_data,
+            origin_name: origin_name,
+            origin_data: origin_data,
+        });
     }
 
     const styles = StyleSheet.create({
@@ -299,6 +317,21 @@ export default function SearchOrigin(props) {
                                                             setDestinationData(item);
                                                         }
                                                     }
+                                                    if (
+                                                        originInput !== undefined &&
+                                                        originInput !== null &&
+                                                        originInput !== "" &&
+                                                        destinationInput !== undefined &&
+                                                        originInput !== null &&
+                                                        originInput !== ""
+                                                    ) {
+                                                        navigateToRouteSelectionPage(
+                                                            destinationInput,
+                                                            destinationData,
+                                                            originInput,
+                                                            originData,
+                                                        );
+                                                    }
                                                 }}
                                             />
                                         ))}
@@ -333,6 +366,21 @@ export default function SearchOrigin(props) {
                                                         setDestinationData(item);
                                                     }
                                                 }
+                                                if (
+                                                    originInput !== undefined &&
+                                                    originInput !== null &&
+                                                    originInput !== "" &&
+                                                    destinationInput !== undefined &&
+                                                    originInput !== null &&
+                                                    originInput !== ""
+                                                ) {
+                                                    navigateToRouteSelectionPage(
+                                                        destinationInput,
+                                                        destinationData,
+                                                        originInput,
+                                                        originData,
+                                                    );
+                                                }
                                             }}
                                         />
                                     ))}
@@ -360,6 +408,21 @@ export default function SearchOrigin(props) {
                                         setDestinationInput(MyLocation);
                                         setDestinationData(currentLocation || INITIAL_MAP_REGION);
                                     }
+                                }
+                                if (
+                                    originInput !== undefined &&
+                                    originInput !== null &&
+                                    originInput !== "" &&
+                                    destinationInput !== undefined &&
+                                    originInput !== null &&
+                                    originInput !== ""
+                                ) {
+                                    navigateToRouteSelectionPage(
+                                        destinationInput,
+                                        destinationData,
+                                        originInput,
+                                        originData,
+                                    );
                                 }
                             }}
                         />
