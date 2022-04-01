@@ -24,6 +24,9 @@ export default function RouteShowDetails(props) {
             fontSize: 14,
             color: colors.subtitle,
         },
+        transit: {
+            paddingVertical: 5,
+        },
         subContainer: {},
         tabContainer: {
             flexDirection: "row",
@@ -64,6 +67,18 @@ export default function RouteShowDetails(props) {
                 </View>
                 <View>
                     <ThemedText style={styles.titleText}>Depart on a subway</ThemedText>
+                    <View style={styles.transit}>
+                        <TransitLine
+                            line={{
+                                name: {
+                                    short_name: "Insert Props Here",
+                                    long_name: "BTS Sukhumvit Line",
+                                },
+                                color: "7FBF3A",
+                            }}
+                            fontSize={14}
+                        />
+                    </View>
                     <ThemedText style={styles.subtitleText}>
                         To Tha Phra · Every 5 minutes
                     </ThemedText>
