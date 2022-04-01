@@ -3,6 +3,7 @@ import ThemedText from "../../../../components/themed-text";
 import { View, StyleSheet } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import PlaceIcon from "../../../../assets/svgs/place-icon";
+import PlaceIcon19 from "../../../../assets/svgs/place-icon-19px";
 import WalkIcon from "../../../../assets/svgs/walk-icon";
 import SubwayIcon from "../../../../assets/svgs/subway-icon";
 import TransitLine from "../../../../components/transit-line";
@@ -75,7 +76,7 @@ export default function RouteShowDetails(props) {
         return (
             <View style={styles.tabContainer}>
                 <View style={styles.iconTabContainer}>
-                    <PlaceIcon fill={colors.text} />
+                    <PlaceIcon19 fill={colors.text} />
                 </View>
 
                 <View>
