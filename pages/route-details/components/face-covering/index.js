@@ -37,7 +37,7 @@ function FaceCovering(props) {
                 <MaskIcon />
             </View>
             <ThemedText style={styles.title}>
-                Face Covering is required when travelling via public transportation
+                Face covering is required when travelling via public transportation
             </ThemedText>
         </View>
     );

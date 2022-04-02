@@ -10,6 +10,7 @@ import axios from "axios";
 import { configs } from "../../configs/configs";
 import Fares from "./components/fares";
 import RouteShowDetails from "./components/route-show-details";
+import BackButton from "../../components/back-button";
 
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -40,6 +41,13 @@ export default function RouteDetails() {
             flex: 1,
             justifyContent: "center",
             alignItems: "center",
+        },
+        backButtonContainer: {
+            position: "absolute",
+            top: 0,
+            alignSelf: "flex-start",
+            paddingHorizontal: 15,
+            zIndex: 10,
         },
         maps: {
             position: "absolute",
@@ -160,6 +168,10 @@ export default function RouteDetails() {
                 onRegionChangeComplete={(region) => onMapRegionChangeComplete(region)}
                 showsUserLocation
             ></MapView>
+            <View style={styles.backButtonContainer}>
+                <SafeAreaView edges={["top"]} />
+                <BackButton />
+            </View>
             <ScrollView
                 style={styles.scrollView}
                 showsHorizontalScrollIndicator={false}
