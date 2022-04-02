@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import ThemedText from "../../../../components/themed-text";
 import { View, StyleSheet } from "react-native";
 import { useTheme } from "@react-navigation/native";
@@ -7,9 +7,13 @@ import PlaceIcon19 from "../../../../assets/svgs/place-icon-19px";
 import WalkIcon from "../../../../assets/svgs/walk-icon";
 import SubwayIcon from "../../../../assets/svgs/subway-icon";
 import TransitLine from "../../../../components/transit-line";
+import ExpandDownIcon18px from "../../../../assets/svgs/expand-down-icon-18px";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 export default function RouteShowDetails(props) {
     const { colors } = useTheme();
+    const [isExpandClick, setExpandClick] = useState(false);
+
     const styles = StyleSheet.create({
         container: {
             paddingHorizontal: props.containerPadding,
@@ -68,6 +72,14 @@ export default function RouteShowDetails(props) {
             backgroundColor: "green",
         },
     });
+
+    function expandClick() {
+        if (isExpandClick == true) {
+            setExpandClick(false);
+        } else {
+            setExpandClick(true);
+        }
+    }
 
     function ThreeDots() {
         return (
@@ -137,7 +149,29 @@ export default function RouteShowDetails(props) {
                 </View>
                 <View>
                     <ThemedText style={styles.titleText}>Mo Chit</ThemedText>
-                    <ThemedText style={styles.subtitleText}>8 stops · 19 minutes</ThemedText>
+                    <View style={{ display: "flex", flexDirection: "row" }}>
+                        <ThemedText style={styles.subtitleText}>8 stops · 19 minutes</ThemedText>
+                        <TouchableOpacity onPress={expandClick}>
+                            <ExpandDownIcon18px fill={colors.subtitle} />
+                        </TouchableOpacity>
+                    </View>
+                    <View>
+                        {isExpandClick ? (
+                            <View>
+                                <ThemedText style={styles.subtitleText}>
+                                    - Inter Station1
+                                </ThemedText>
+                                <ThemedText style={styles.subtitleText}>
+                                    - Inter Station2
+                                </ThemedText>
+                                <ThemedText style={styles.subtitleText}>
+                                    - Inter Station3
+                                </ThemedText>
+                            </View>
+                        ) : (
+                            <></>
+                        )}
+                    </View>
                     <ThemedText style={styles.titleText}>Chit Lom</ThemedText>
                 </View>
             </View>
