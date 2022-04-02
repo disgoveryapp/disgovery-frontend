@@ -11,6 +11,7 @@ import { configs } from "../../configs/configs";
 import Fares from "./components/fares";
 import RouteShowDetails from "./components/route-show-details";
 import BackButton from "../../components/back-button";
+import NavigateButton from "../../components/navigate-button";
 
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -46,6 +47,13 @@ export default function RouteDetails() {
             position: "absolute",
             top: 0,
             alignSelf: "flex-start",
+            paddingHorizontal: 15,
+            zIndex: 10,
+        },
+        navigateButtonContainer: {
+            position: "absolute",
+            top: 0.29 * Dimensions.get("screen").height,
+            alignSelf: "flex-end",
             paddingHorizontal: 15,
             zIndex: 10,
         },
@@ -171,6 +179,9 @@ export default function RouteDetails() {
             <View style={styles.backButtonContainer}>
                 <SafeAreaView edges={["top"]} />
                 <BackButton />
+            </View>
+            <View style={styles.navigateButtonContainer}>
+                <NavigateButton />
             </View>
             <ScrollView
                 style={styles.scrollView}
