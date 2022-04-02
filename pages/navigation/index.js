@@ -1102,12 +1102,6 @@ const Navigation = () => {
         };
     }, [location]);
 
-    useEffect(() => {
-        if (nearestPointOnPolyline) {
-            console.log(nearestPointOnPolyline);
-        }
-    }, [nearestPointOnPolyline]);
-
     async function fetchNewLocation(doRecenter) {
         let { status } = await Location.requestForegroundPermissionsAsync().catch(() => {});
         if (status !== "granted") {
@@ -1372,6 +1366,10 @@ const Navigation = () => {
         setIsRecentered(false);
     }
 
+    function onRecenterButtonPress() {
+        setIsRecentered(true);
+    }
+
     const styles = StyleSheet.create({
         container: {
             backgroundColor: colors.background,
@@ -1608,11 +1606,7 @@ const Navigation = () => {
                     style={styles.recenterButton}
                     recentered={isRecentered}
                     onPress={() => {
-                        recenter({
-                            ...nearestPointOnPolylineAnimated,
-                            latitudeDelta: 0.005,
-                            longitudeDelta: 0.005,
-                        });
+                        onRecenterButtonPress();
                     }}
                 />
             )}
@@ -1702,6 +1696,7 @@ const Navigation = () => {
                             key={`polyline_outer_${polylines[key].polyline[0]}`}
                             coordinates={polylines[key].polyline}
                             strokeWidth={14}
+                            zIndex={-1}
                             strokeColor={pSBC(
                                 -0.5,
                                 polylines[key].color
@@ -1713,6 +1708,7 @@ const Navigation = () => {
                             key={`polyline_inner_${polylines[key].polyline[0]}`}
                             coordinates={polylines[key].polyline}
                             strokeWidth={8}
+                            zIndex={0}
                             strokeColor={polylines[key].color}
                         />
                         <Marker
@@ -1736,23 +1732,18 @@ const Navigation = () => {
                     </>
                 ))}
 
-                {passedPolylines.length !== 0 && (
-                    <>
-                        <Polyline
-                            style={{ zIndex: 50 }}
-                            coordinates={passedPolylines}
-                            strokeWidth={14}
-                            strokeColor={pSBC(-0.5, colors.middle_grey)}
-                        />
-                        <Polyline
-                            style={{ zIndex: 51 }}
-                            coordinates={passedPolylines}
-                            strokeWidth={8}
-                            strokeColor={colors.middle_grey}
-                            interval={10}
-                        />
-                    </>
-                )}
+                <Polyline
+                    zIndex={10}
+                    coordinates={passedPolylines}
+                    strokeWidth={14}
+                    strokeColor={pSBC(-0.5, colors.middle_grey)}
+                />
+                <Polyline
+                    zIndex={11}
+                    coordinates={passedPolylines}
+                    strokeWidth={8}
+                    strokeColor={colors.middle_grey}
+                />
             </MapView>
 
             <TopNavigationPanel />
