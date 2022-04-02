@@ -14,6 +14,7 @@ import dayjs from "dayjs";
 import { getDistanceFromLatLonInKm, snapToPolyline } from "./util";
 import RecenterButton from "../../components/recenter-button";
 import ExpandDownIcon18px from "../../assets/svgs/expand-down-icon-18px";
+import SvgAnimatedLinearGradient from "react-native-svg-animated-linear-gradient/src";
 
 const CHECKPOINT_SNAP_DISTANCE = 0.1;
 
@@ -1008,8 +1009,9 @@ const Navigation = () => {
     const [polylines, setPolylines] = useState([]);
     const [passedPolylines, setPassedPolylines] = useState([]);
     const [directions, setDirections] = useState([]);
-    const [currentDirection, setCurrentDirection] = useState("");
-    const [nearestPointOnPolyline, setNearestPoint] = useState(undefined);
+    const [currentDirection, setCurrentDirection] = useState(undefined);
+    const [nearestPointOnPolyline, setNearestPointOnPolyline] = useState(undefined);
+    const [nearestPointOnPolylineAnimated, setNearestPointOnPolylineAnimated] = useState(undefined);
     const [offRoad, setOffRoad] = useState(false);
 
     useEffect(() => {
@@ -1020,9 +1022,7 @@ const Navigation = () => {
                 (async () => {
                     fetchNewLocation(true);
                     parsePolylines();
-                })()
-                    .then(() => parseDirections())
-                    .catch(() => {});
+                })().catch(() => {});
                 firstRun = false;
             }
 
@@ -1035,6 +1035,10 @@ const Navigation = () => {
     }, []);
 
     useEffect(() => {
+        parseDirections();
+    }, [polylines]);
+
+    useEffect(() => {
         let subscribed = true;
 
         if (subscribed) {
@@ -1042,14 +1046,14 @@ const Navigation = () => {
                 let snapped = snapToPolyline(polylines, location);
                 if (snapped) {
                     if (
-                        !nearestPointOnPolyline ||
-                        (nearestPointOnPolyline.latitude !==
+                        !nearestPointOnPolylineAnimated ||
+                        (nearestPointOnPolylineAnimated.latitude !==
                             snapped.interpolatedCoordinatesOnPolyline.latitude &&
-                            nearestPointOnPolyline.longitude !==
+                            nearestPointOnPolylineAnimated.longitude !==
                                 snapped.interpolatedCoordinatesOnPolyline.longitude)
                     ) {
-                        if (!nearestPointOnPolyline) {
-                            setNearestPoint(
+                        if (!nearestPointOnPolylineAnimated) {
+                            setNearestPointOnPolylineAnimated(
                                 new AnimatedRegion({
                                     ...snapped.interpolatedCoordinatesOnPolyline,
                                 }),
@@ -1064,7 +1068,7 @@ const Navigation = () => {
                                 }
                                 addToPassedPolylines(snapped.interpolatedCoordinatesOnPolyline);
                             } else {
-                                nearestPointOnPolyline
+                                nearestPointOnPolylineAnimated
                                     .timing({
                                         latitude:
                                             snapped.interpolatedCoordinatesOnPolyline.latitude,
@@ -1082,6 +1086,10 @@ const Navigation = () => {
                             }
                         }
 
+                        setNearestPointOnPolyline({
+                            latitude: snapped.interpolatedCoordinatesOnPolyline.latitude,
+                            longitude: snapped.interpolatedCoordinatesOnPolyline.longitude,
+                        });
                         setOffRoad(snapped.offRoad);
                         determineCurrentDirection();
                     }
@@ -1178,8 +1186,19 @@ const Navigation = () => {
                 }
             });
 
-            if (nearestDistance <= CHECKPOINT_SNAP_DISTANCE)
+            if (!currentDirection) {
                 setCurrentDirection(directions[nearestKey]);
+                return;
+            }
+
+            if (nearestDistance <= CHECKPOINT_SNAP_DISTANCE) {
+                if (
+                    currentDirection.near.lat !== directions[nearestKey].near.lat &&
+                    currentDirection.near.lng !== directions[nearestKey].near.lng
+                ) {
+                    setCurrentDirection(directions[nearestKey]);
+                }
+            }
         }
     }
 
@@ -1335,7 +1354,6 @@ const Navigation = () => {
 
         console.log(tempDirections);
         setDirections([...tempDirections]);
-        setCurrentDirection(tempDirections[0]);
     }
 
     function addToPassedPolylines(coordinates) {
@@ -1535,21 +1553,42 @@ const Navigation = () => {
         <>
             <View style={styles.topNavigationPanelContainerWithSafeAreaContainer}>
                 <View style={styles.topNavigationPanelContainer}>
-                    {currentDirection.distance && (
-                        <ThemedText style={styles.topNavigationPanelDistanceText}>
-                            {currentDirection.distance.text}
-                        </ThemedText>
-                    )}
-                    {currentDirection.text && (
-                        <ThemedText style={styles.topNavigationPanelDirectionText}>
-                            {currentDirection.text}
-                        </ThemedText>
-                    )}
+                    {currentDirection && (
+                        <>
+                            {currentDirection.distance && (
+                                <ThemedText style={styles.topNavigationPanelDistanceText}>
+                                    {currentDirection.distance.text}
+                                </ThemedText>
+                            )}
+                            {currentDirection.text && (
+                                <ThemedText style={styles.topNavigationPanelDirectionText}>
+                                    {currentDirection.text}
+                                </ThemedText>
+                            )}
 
-                    {currentDirection.subtext && (
-                        <ThemedText style={styles.topNavigationPanelSubtext}>
-                            {currentDirection.subtext}
-                        </ThemedText>
+                            {currentDirection.subtext && (
+                                <ThemedText style={styles.topNavigationPanelSubtext}>
+                                    {currentDirection.subtext}
+                                </ThemedText>
+                            )}
+                        </>
+                    )}
+                    {!currentDirection && (
+                        <>
+                            <SvgAnimatedLinearGradient
+                                width="80%"
+                                height={20}
+                                primaryColor={colors.upper_background}
+                                secondaryColor={colors.background}
+                            />
+                            <SvgAnimatedLinearGradient
+                                style={{ marginTop: 5 }}
+                                width="50%"
+                                height={16}
+                                primaryColor={colors.upper_background}
+                                secondaryColor={colors.background}
+                            />
+                        </>
                     )}
                 </View>
 
@@ -1570,7 +1609,7 @@ const Navigation = () => {
                     recentered={isRecentered}
                     onPress={() => {
                         recenter({
-                            ...nearestPointOnPolyline,
+                            ...nearestPointOnPolylineAnimated,
                             latitudeDelta: 0.005,
                             longitudeDelta: 0.005,
                         });
@@ -1612,10 +1651,10 @@ const Navigation = () => {
                 showsUserLocation={offRoad}
                 followsUserLocation={isRecentered}
             >
-                {nearestPointOnPolyline && (
+                {nearestPointOnPolylineAnimated && (
                     <Marker.Animated
                         ref={currentLocationMarkerRef}
-                        coordinate={nearestPointOnPolyline}
+                        coordinate={nearestPointOnPolylineAnimated}
                         anchor={{ x: 0.5, y: 0.5 }}
                     >
                         <View style={styles.currentLocationMarker} />
