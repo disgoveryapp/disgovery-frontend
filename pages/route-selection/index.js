@@ -21,6 +21,7 @@ import SuggestedRoutes from "./components/suggested-routes";
 import RouteSelectionBar from "./components/route-selection-bar";
 import FaceCovering from "../route-details/components/face-covering";
 import ArrowBackwardIcon from "../../assets/svgs/arrow-backward-24px";
+import BackButton from "../../components/back-button";
 
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -86,6 +87,13 @@ export default function RouteSelection() {
             left: 0,
             width: "100%",
             height: "100%",
+        },
+        backButtonContainer: {
+            position: "absolute",
+            top: 0,
+            alignSelf: "flex-start",
+            paddingHorizontal: 15,
+            zIndex: 10,
         },
         bottomcard: {
             top: SCREEN_HEIGHT * (8.75 / 3),
@@ -214,13 +222,13 @@ export default function RouteSelection() {
         return <View style={styles.line} />;
     }
 
-    function BackButton() {
+    /*function BackButton() {
         return (
             <TouchableOpacity style={styles.backIcon}>
                 <ArrowBackwardIcon fill={colors.text} />
             </TouchableOpacity>
         );
-    }
+    }*/
 
     function onMapRegionChangeComplete(region) {
         fetchNearbyStations(region);
@@ -240,7 +248,10 @@ export default function RouteSelection() {
                 onRegionChangeComplete={(region) => onMapRegionChangeComplete(region)}
                 showsUserLocation
             ></MapView>
-            <BackButton />
+            <View style={styles.backButtonContainer}>
+                <SafeAreaView edges={["top"]} />
+                <BackButton />
+            </View>
             <View style={styles.scrollView}>
                 <RouteSelectionBar containerPadding={containerPadding} />
                 <DividerLine />
