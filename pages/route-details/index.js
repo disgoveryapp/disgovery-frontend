@@ -32,7 +32,7 @@ export default function RouteDetails() {
     const [locationErrorMessage, setLocationErrorMessage] = useState(null);
 
     const [nearbyStations, setNearbyStations] = useState([]);
-    const containerPadding = 12;
+    const containerPadding = 15;
 
     const styles = StyleSheet.create({
         container: {
@@ -160,21 +160,22 @@ export default function RouteDetails() {
                 onRegionChangeComplete={(region) => onMapRegionChangeComplete(region)}
                 showsUserLocation
             ></MapView>
-            <ScrollView
-                style={styles.scrollView}
-                showsHorizontalScrollIndicator={false}
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={{
-                    paddingBottom: 35,
-                }}
-                keyboardDismissMode="interactive"
-                //scrollEventThrottle={16}
-                //onScroll={onScroll}
-                //onScrollBeginDrag={onScrollBeginDrag}
-                //onScrollEndDrag={onScrollEndDrag}
-            >
-                <RouteShowDetails containerPadding={containerPadding} />
-            </ScrollView>
+            <View style={styles.scrollView}>
+                <ScrollView
+                    showsHorizontalScrollIndicator={false}
+                    showsVerticalScrollIndicator={false}
+                    contentContainerStyle={{
+                        paddingBottom: 35,
+                    }}
+                    keyboardDismissMode="interactive"
+                    //scrollEventThrottle={16}
+                    //onScroll={onScroll}
+                    //onScrollBeginDrag={onScrollBeginDrag}
+                    //onScrollEndDrag={onScrollEndDrag}
+                >
+                    <RouteShowDetails containerPadding={containerPadding} />
+                </ScrollView>
+            </View>
         </View>
     );
 }

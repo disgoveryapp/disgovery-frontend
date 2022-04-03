@@ -35,7 +35,7 @@ export default function RouteSelection() {
     const { dark, colors } = useTheme();
     const mapRef = useRef();
     let firstRun = true;
-    const containerPadding = 12;
+    const containerPadding = 15;
     const wearFaceMask = true;
 
     const [loading, setLoading] = useState(false);
@@ -258,10 +258,6 @@ export default function RouteSelection() {
                         paddingBottom: 35,
                     }}
                     keyboardDismissMode="interactive"
-                    //scrollEventThrottle={16}
-                    //onScroll={onScroll}
-                    //onScrollBeginDrag={onScrollBeginDrag}
-                    //onScrollEndDrag={onScrollEndDrag}
                 >
                     <OverViewRoute
                         topictextStyle={styles.topictext}
