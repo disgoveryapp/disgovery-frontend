@@ -259,7 +259,13 @@ export default function RouteSelection(props) {
                 <BackButton />
             </View>
             <View style={styles.scrollView}>
-                <RouteSelectionBar containerPadding={containerPadding} />
+                <RouteSelectionBar
+                    containerPadding={containerPadding}
+                    destinationName={destinationName}
+                    destinetionData={destinationData}
+                    originName={originName}
+                    originData={originData}
+                />
                 <DividerLine />
                 {wearFaceMask && (
                     <>
