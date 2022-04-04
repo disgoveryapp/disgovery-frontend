@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import ThemedText from "../../../../components/themed-text";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { useTheme } from "@react-navigation/native";
@@ -11,6 +11,35 @@ import BoatIcon10 from "../../../../assets/svgs/bus-icon-10px";
 
 export default function RoutesDetailedBlock(props) {
     const { colors } = useTheme();
+
+    const totalFare = props.routeData.total_fares.adult || 0;
+    const currency = props.routeData.total_fares.currency || "THB";
+    const arrivingTime = new Date(
+        props.routeData.schedule.arriving_at || "1970-01-01T16:00:00+00:00",
+    );
+    const [timeText, setTimeText] = useState("");
+
+    useEffect(() => {
+        let time = Math.round(props.routeData.schedule.duration / 60) || 0;
+        let day = 0;
+        let hour = 0;
+        let minute = 0;
+        let textData = "";
+        if (time >= 1440) {
+            day = Math.floor(time);
+            time = time % 1440;
+            textData += day + " day ";
+        } else if (time >= 60) {
+            hour = Math.floor(time);
+            time = time % 60;
+            textData += hour + " hr ";
+        } else {
+            minute = time;
+            textData += minute + " min";
+        }
+
+        setTimeText(textData);
+    }, []);
 
     const styles = StyleSheet.create({
         container: {
@@ -43,7 +72,7 @@ export default function RoutesDetailedBlock(props) {
             fontWeight: "600",
         },
         iconAndTime: {
-            justifyContent: "center",
+            justifyContent: "flex-end",
             alignItems: "center",
             paddingHorizontal: 4,
         },
@@ -97,63 +126,37 @@ export default function RoutesDetailedBlock(props) {
         return (
             <View style={styles.iconAndTime}>
                 <View styles={styles.icon}>
-                    {subprops.icon === "walk" ? (
-                        <WalkIcon fill={colors.text} />
-                    ) : (
+                    {subprops.type === "board" ? (
                         <CompactTransitLine fill={colors.text} type="1" name="BTS" />
+                    ) : (
+                        <WalkIcon fill={colors.text} />
                     )}
                 </View>
-                <ThemedText style={styles.subTimeText}>{subprops.time} min</ThemedText>
+                <ThemedText style={styles.subTimeText}>
+                    {Math.round(parseInt(subprops.time) / 60)} min
+                </ThemedText>
             </View>
         );
     }
 
     return (
-        <TouchableOpacity style={styles.container}>
-            <ThemedText style={styles.arrivedTime}>Arrive by 16:02</ThemedText>
+        <TouchableOpacity style={styles.container} onPress={props.onPress}>
+            <ThemedText style={styles.arrivedTime}>
+                Arrive by {arrivingTime.getHours()}:{arrivingTime.getMinutes()}
+            </ThemedText>
             <View style={styles.subContainer}>
                 <View style={styles.iconBlock}>
-                    <IconAndTime time="11" />
-                    <IconAndTime icon="walk" time="11" />
-                    <IconAndTime time="11" />
-                    <IconAndTime time="11" />
-                    <IconAndTime time="11" />
+                    {props.routeData.directions.map((item, key) => (
+                        <IconAndTime type={item.type} time={item.schedule.duration} />
+                    ))}
                 </View>
                 <View style={styles.detailBlock}>
-                    <ThemedText style={styles.timeText}>24 min</ThemedText>
-                    <ThemedText styles={styles.detailText}>63 THB</ThemedText>
+                    <ThemedText style={styles.timeText}>{timeText}</ThemedText>
+                    <ThemedText styles={styles.detailText}>
+                        {totalFare} {currency}
+                    </ThemedText>
                 </View>
             </View>
         </TouchableOpacity>
     );
 }
-/*
-{(() => {
-                                                                if (
-                                                                    item.type === "0" ||
-                                                                    item.type === "5"
-                                                                ) {
-                                                                    return <TramIcon />;
-                                                                } else if (item.type === "1") {
-                                                                    return <SubwayIcon />;
-                                                                } else if (
-                                                                    item.type === "2" ||
-                                                                    item.type === "12"
-                                                                ) {
-                                                                    return <RailIcon />;
-                                                                } else if (
-                                                                    item.type === "3" ||
-                                                                    item.type === "11"
-                                                                ) {
-                                                                    return <BusIcon />;
-                                                                } else if (item.type === "4") {
-                                                                    return <BoatIcon />;
-                                                                } else {
-                                                                    return (
-                                                                        <PlaceIcon
-                                                                            fill={colors.background}
-                                                                        />
-                                                                    );
-                                                                }
-                                                            })()}
-                                                            */
