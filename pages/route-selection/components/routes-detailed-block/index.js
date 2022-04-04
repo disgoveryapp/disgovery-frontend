@@ -138,7 +138,10 @@ export default function RoutesDetailedBlock(props) {
                         <CompactTransitLine
                             fill={colors.text}
                             type={subprops.data.type}
-                            name={subprops.data.name.long_name.substring(0, 3)}
+                            name={subprops.data.name.long_name.substring(
+                                0,
+                                subprops.data.name.long_name.indexOf(" "),
+                            )}
                             color={subprops.data.color}
                         />
                     ) : (
