@@ -20,7 +20,11 @@ export default function RoutesDetailedBlock(props) {
     const [timeText, setTimeText] = useState("");
 
     useEffect(() => {
-        let time = Math.round(props.routeData.schedule.duration / 60) || 0;
+        setTimeText(getTimeText(Math.round(props.routeData.schedule.duration / 60) || 0));
+    }, []);
+
+    function getTimeText(gettime) {
+        let time = gettime;
         let day = 0;
         let hour = 0;
         let minute = 0;
@@ -38,8 +42,8 @@ export default function RoutesDetailedBlock(props) {
             textData += minute + " min";
         }
 
-        setTimeText(textData);
-    }, []);
+        return textData;
+    }
 
     const styles = StyleSheet.create({
         container: {
@@ -133,7 +137,7 @@ export default function RoutesDetailedBlock(props) {
                     )}
                 </View>
                 <ThemedText style={styles.subTimeText}>
-                    {Math.round(parseInt(subprops.time) / 60)} min
+                    {getTimeText(Math.round(parseInt(subprops.time) / 60))}
                 </ThemedText>
             </View>
         );
