@@ -47,14 +47,10 @@ export default function RouteSelection(props) {
 
     const [nearbyStations, setNearbyStations] = useState([]);
 
-    const [destinationName, setDestinationName] = useState(
-        props.route.params.destination_name || "",
-    );
-    const [destinationData, setDestinationData] = useState(
-        props.route.params.destination_data || {},
-    );
-    const [originName, setOriginName] = useState(props.route.params.origin_name || "");
-    const [originData, setOriginData] = useState(props.route.params.origin_data || {});
+    const [destinationName, setDestinationName] = useState("Siam");
+    const [destinationData, setDestinationData] = useState({});
+    const [originName, setOriginName] = useState("Central World");
+    const [originData, setOriginData] = useState({});
 
     const [api31Result, setApi31Result] = useState([]);
     const [error31, setError31] = useState(false);
@@ -287,6 +283,7 @@ export default function RouteSelection(props) {
                     <SuggestedRoutes
                         topictextStyle={styles.topictext}
                         containerPadding={containerPadding}
+                        data={MockupData}
                     />
                 </ScrollView>
             </View>
