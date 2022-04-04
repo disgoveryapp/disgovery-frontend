@@ -94,7 +94,6 @@ export default function RoutesDetailedBlock(props) {
             height: 16,
             borderRadius: 6,
             flexDirection: "row",
-            backgroundColor: "green",
             paddingHorizontal: 3,
             justifyContent: "space-between",
             alignItems: "center",
@@ -107,7 +106,12 @@ export default function RoutesDetailedBlock(props) {
 
     function CompactTransitLine(subprops) {
         return (
-            <View style={styles.CompactTransitLineContainer}>
+            <View
+                style={[
+                    styles.CompactTransitLineContainer,
+                    { backgroundColor: `#${subprops.color}` },
+                ]}
+            >
                 <View style={styles.transitIcon}>
                     {(subprops.type === "0" || subprops.type === "5") && (
                         <TramIcon10 fill={colors.text} />
@@ -131,7 +135,12 @@ export default function RoutesDetailedBlock(props) {
             <View style={styles.iconAndTime}>
                 <View styles={styles.icon}>
                     {subprops.type === "board" ? (
-                        <CompactTransitLine fill={colors.text} type="1" name="BTS" />
+                        <CompactTransitLine
+                            fill={colors.text}
+                            type={subprops.data.type}
+                            name={subprops.data.name.long_name.substring(0, 3)}
+                            color={subprops.data.color}
+                        />
                     ) : (
                         <WalkIcon fill={colors.text} />
                     )}
@@ -151,7 +160,11 @@ export default function RoutesDetailedBlock(props) {
             <View style={styles.subContainer}>
                 <View style={styles.iconBlock}>
                     {props.routeData.directions.map((item, key) => (
-                        <IconAndTime type={item.type} time={item.schedule.duration} />
+                        <IconAndTime
+                            type={item.type}
+                            time={item.schedule.duration}
+                            data={item.via_line}
+                        />
                     ))}
                 </View>
                 <View style={styles.detailBlock}>
