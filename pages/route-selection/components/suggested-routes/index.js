@@ -25,7 +25,7 @@ export default function SuggestedRoutes(props) {
             <View style={styles.container}>
                 <ThemedText style={props.topictextStyle}>Suggested routes</ThemedText>
                 <View style={styles.subContainer}>
-                    <RoutesDetailedBlock />
+                    <RoutesDetailedBlock routeData={props.data} />
                 </View>
                 {HasMostComfy && (
                     <>
