@@ -7,7 +7,7 @@ import { googleMapsStyling } from "../../maps/google-maps-styling";
 import * as Location from "expo-location";
 import RecenterButton from "../../components/recenter-button";
 import axios from "axios";
-import { configs } from "../../configs/configs";
+import { configs, MockupData } from "../../configs/configs";
 import ToFrom from "./components/to-from";
 import Fares from "./components/fares";
 import RouteShowDetails from "./components/route-show-details";
@@ -34,6 +34,7 @@ export default function RouteDetails() {
     const [mapCurrentLocationRegion, setMapCurrentLocationRegion] = useState({});
     const [locationErrorMessage, setLocationErrorMessage] = useState(null);
 
+    const [api31Result, setApi31Result] = useState([]);
     const [nearbyStations, setNearbyStations] = useState([]);
     const containerPadding = 15;
 
@@ -99,6 +100,11 @@ export default function RouteDetails() {
             firstRun = false;
         }
     }, []);
+
+    useEffect(() => {
+        //api31call();
+        setApi31Result(MockupData);
+    },[]);
 
     useEffect(() => {
         mapRef._updateStyle;
@@ -197,7 +203,7 @@ export default function RouteDetails() {
                 //onScrollBeginDrag={onScrollBeginDrag}
                 //onScrollEndDrag={onScrollEndDrag}
             >
-
+                
                 <RouteShowDetails containerPadding={containerPadding} />
             </ScrollView>
         </View>
