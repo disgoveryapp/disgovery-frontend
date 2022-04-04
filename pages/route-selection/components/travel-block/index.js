@@ -23,7 +23,7 @@ export default function TravelBlock(props) {
             paddingVertical: 10,
             paddingHorizontal: 14,
             justifyContent: "space-between",
-            marginHorizontal: 7,
+            marginHorizontal: 6,
             marginVertical: 6,
         },
         timeText: {

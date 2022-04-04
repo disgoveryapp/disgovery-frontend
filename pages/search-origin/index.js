@@ -210,7 +210,7 @@ export default function SearchOrigin(props) {
         origin_name,
         origin_data,
     ) {
-        navigation.navigate("SearchOrigin", {
+        navigation.navigate("RouteSelection", {
             destination_name: destination_name,
             destination_data: destination_data,
             origin_name: origin_name,

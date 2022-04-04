@@ -15,7 +15,7 @@ import { googleMapsStyling } from "../../maps/google-maps-styling";
 import * as Location from "expo-location";
 import RecenterButton from "../../components/recenter-button";
 import axios from "axios";
-import { configs } from "../../configs/configs";
+import { configs, MockupData } from "../../configs/configs";
 import OverViewRoute from "./components/overview-route";
 import SuggestedRoutes from "./components/suggested-routes";
 import RouteSelectionBar from "./components/route-selection-bar";
@@ -32,7 +32,7 @@ const INITIAL_MAP_REGION = {
     longitudeDelta: 0.035,
 };
 
-export default function RouteSelection() {
+export default function RouteSelection(props) {
     const { dark, colors } = useTheme();
     const mapRef = useRef();
     let firstRun = true;
@@ -46,6 +46,11 @@ export default function RouteSelection() {
     const [locationErrorMessage, setLocationErrorMessage] = useState(null);
 
     const [nearbyStations, setNearbyStations] = useState([]);
+
+    const [destinationName, setDestinationName] = useState("Siam");
+    const [destinationData, setDestinationData] = useState({});
+    const [originName, setOriginName] = useState("Central World");
+    const [originData, setOriginData] = useState({});
 
     const [api31Result, setApi31Result] = useState([]);
     const [error31, setError31] = useState(false);
@@ -152,7 +157,8 @@ export default function RouteSelection() {
         }
     }, []);
     useEffect(() => {
-        api31Call();
+        //api31Call();
+        setApi31Result(MockupData);
         console.log(api31Result, ":result");
     }, []);
 
@@ -277,6 +283,7 @@ export default function RouteSelection() {
                     <SuggestedRoutes
                         topictextStyle={styles.topictext}
                         containerPadding={containerPadding}
+                        data={MockupData}
                     />
                 </ScrollView>
             </View>
