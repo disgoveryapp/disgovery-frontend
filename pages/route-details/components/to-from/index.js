@@ -18,6 +18,12 @@ import ArrowIcon from "../../../../assets/svgs/arrow-forward-18px";
 
 function ToFrom(props) {
 
+    const DATA = props.data;
+
+    const arrivingTime = new Date(
+        DATA.schedule.arriving_at || "1970-01-01T16:00:00+00:00",
+    );
+
     const subprops = {
         style: {
             marginTop: 10,
@@ -105,7 +111,7 @@ function ToFrom(props) {
                             {size === "small" ? <ArrowIcon /> : <ArrowIcon24 />}
                             <View style={styles.destinationMarqueeContainer}>
                                 <ThemedText style={styles.destinationText}>
-                                    {subprops.destination}
+                                    {DATA.destination.station.name.en}
                                 </ThemedText>
                             </View>
                         </View>
@@ -114,7 +120,7 @@ function ToFrom(props) {
                             <ThemedText style={styles.originFromText}>From </ThemedText>
                             <View>
                                 <ThemedText style={styles.originText}>
-                                    {subprops.origin}
+                                    {DATA.origin.station.name.en}
                                 </ThemedText>
                             </View>
                         </View>
@@ -122,10 +128,10 @@ function ToFrom(props) {
                     <View>
                         <View>
                             <ThemedText style={styles.timeText}>
-                                {secondToRoundedMinuteString(subprops.time)}
+                                {secondToRoundedMinuteString(DATA.schedule.duration)}
                             </ThemedText>
                             <View>
-                                <ThemedText style={styles.subTimeText}>Arrive by 16:00</ThemedText>
+                                <ThemedText style={styles.subTimeText}>Arrive by {arrivingTime.getHours()}:{arrivingTime.getMinutes()}</ThemedText>
                             </View>
                         </View>
                     </View>

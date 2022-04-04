@@ -10,6 +10,8 @@ import TransitLine from "../../../../components/transit-line";
 
 function Fares(props) {
 
+    const DATA = props.data;
+
     const { dark, colors } = useTheme();
     const [isExpandClick, setExpandClick] = useState(false);
     const fare = 630;
@@ -45,7 +47,7 @@ function Fares(props) {
             justifyContent:"space-between",
             textAlign:"right",
             width:"100%",
-            marginBottom:3,
+            marginBottom:5,
         },
         text_container:{
             fontSize: size === "small" ? 16 : 18,
@@ -79,6 +81,26 @@ function Fares(props) {
         }
     }
 
+    const Item = ({ linename, fare }) => (
+        <View style={styles.transit}>
+            <TransitLine
+                line={{
+                    name: {
+                        short_name: linename,
+                        long_name: "BTS Sukhumvit Line",
+                    },
+                    color: "7FBF3A",
+                }}
+                fontSize={14}
+            />
+            <ThemedText style={styles.timeText}>{fare.adult} {fare.currency}</ThemedText>
+        </View>
+    );
+
+    const renderItem = (item) => {
+        return <Item linename={item.from.station.id} fare={item.fare} />;
+    };
+
     return(
         <View style={styles.container}>
             <View>
@@ -91,35 +113,12 @@ function Fares(props) {
                                     <CollapseIcon></CollapseIcon>
                                 </View>
                             </TouchableOpacity>
-                            <ThemedText style={styles.text}>{fare} THB</ThemedText>
+                            <ThemedText style={styles.text}>{DATA.total_fares.adult} {DATA.total_fares.currency}</ThemedText>
                         </View>
                         <View>
-                            <View style={styles.transit}>
-                                <TransitLine
-                                    line={{
-                                        name: {
-                                            short_name: "Insert Props Here",
-                                            long_name: "BTS Sukhumvit Line",
-                                        },
-                                        color: "7FBF3A",
-                                    }}
-                                    fontSize={14}
-                                />
-                                <ThemedText style={styles.timeText}>{fare} THB</ThemedText>
-                            </View>
-                            <View style={styles.transit}>
-                                <TransitLine
-                                    line={{
-                                        name: {
-                                            short_name: "Insert Props Here",
-                                            long_name: "BTS Sukhumvit Line",
-                                        },
-                                        color: "7FBF3A",
-                                    }}
-                                    fontSize={14}
-                                />
-                                <ThemedText style={styles.timeText}>{fare} THB</ThemedText>
-                            </View>
+                            {Object.keys(DATA.fares).map((key) => {
+                                    return <>{renderItem(DATA.fares[key])}</>;
+                                })}
                         </View>
                     </>
                 ) : (
@@ -131,7 +130,7 @@ function Fares(props) {
                                     <ExpandDownIcon></ExpandDownIcon>
                                 </View>
                             </TouchableOpacity>
-                            <ThemedText style={styles.text}>{fare} THB</ThemedText>
+                            <ThemedText style={styles.text}>{DATA.total_fares.adult} {DATA.total_fares.currency}</ThemedText>
                         </View>
                     </>
                 )}
