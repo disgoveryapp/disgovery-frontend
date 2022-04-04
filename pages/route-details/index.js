@@ -8,6 +8,7 @@ import * as Location from "expo-location";
 import RecenterButton from "../../components/recenter-button";
 import axios from "axios";
 import { configs } from "../../configs/configs";
+import ToFrom from "./components/to-from";
 import Fares from "./components/fares";
 import RouteShowDetails from "./components/route-show-details";
 import BackButton from "../../components/back-button";
@@ -196,6 +197,7 @@ export default function RouteDetails() {
                 //onScrollBeginDrag={onScrollBeginDrag}
                 //onScrollEndDrag={onScrollEndDrag}
             >
+
                 <RouteShowDetails containerPadding={containerPadding} />
             </ScrollView>
         </View>
