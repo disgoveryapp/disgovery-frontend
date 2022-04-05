@@ -64,12 +64,15 @@ export default function RouteShowDetails(props) {
             borderRadius: 5,
             borderColor: colors.upper_background,
             borderWidth: 1,
+            zIndex: 2,
         },
         lineColor: {
             width: 6,
             height: "auto",
             flex: 1,
             backgroundColor: "green",
+            marginVertical: -4,
+            zIndex: 1,
         },
     });
 
@@ -135,6 +138,11 @@ export default function RouteShowDetails(props) {
                     </View>
                 </View>
                 <PublicTransitRouteTab />
+                <View style={styles.tabContainer}>
+                    <View style={styles.iconTabContainer}>
+                        <ThreeDots />
+                    </View>
+                </View>
             </>
         );
     }
@@ -143,9 +151,15 @@ export default function RouteShowDetails(props) {
         return (
             <View style={styles.tabContainer}>
                 <View style={styles.iconTabContainer}>
-                    <View style={styles.dotIcon} />
-                    <View style={styles.lineColor} />
-                    <View style={styles.dotIcon} />
+                    {isExpandClick ? (
+                        <></>
+                    ) : (
+                        <>
+                            <View style={styles.dotIcon} />
+                            <View style={styles.lineColor} />
+                            <View style={styles.dotIcon} />
+                        </>
+                    )}
                 </View>
                 <View>
                     <ThemedText style={styles.titleText}>Mo Chit</ThemedText>
