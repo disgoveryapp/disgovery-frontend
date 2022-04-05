@@ -156,9 +156,9 @@ export default function RouteSelection(props) {
             firstRun = false;
         }
     }, []);
-    useEffect(() => {
-        //api31Call();
-        setApi31Result(MockupData);
+    useEffect(async () => {
+        console.log("Hello");
+        await api31Call();
         console.log(api31Result, ":result");
     }, []);
 
