@@ -104,7 +104,7 @@ export default function RouteDetails() {
     useEffect(() => {
         //api31call();
         setApi31Result(MockupData);
-    },[]);
+    }, []);
 
     useEffect(() => {
         mapRef._updateStyle;
@@ -203,7 +203,6 @@ export default function RouteDetails() {
                 //onScrollBeginDrag={onScrollBeginDrag}
                 //onScrollEndDrag={onScrollEndDrag}
             >
-                
                 <RouteShowDetails containerPadding={containerPadding} />
             </ScrollView>
         </View>
