@@ -240,6 +240,15 @@ export default function RouteSelection(props) {
         fetchNearbyStations(region);
     }
 
+    function swapValue() {
+        const temp = originName;
+        const temp2 = originData;
+        setOriginName(destinationName);
+        setOriginData(destinationData);
+        setDestinationName(temp);
+        setDestinationData(temp2);
+    }
+
     return (
         <View style={styles.container}>
             <SafeAreaView />
@@ -265,6 +274,7 @@ export default function RouteSelection(props) {
                     destinetionData={destinationData}
                     originName={originName}
                     originData={originData}
+                    swapValue={swapValue}
                 />
                 <DividerLine />
                 {wearFaceMask && (
