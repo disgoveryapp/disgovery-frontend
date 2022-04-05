@@ -1,4 +1,4 @@
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Animated, Easing } from "react-native";
 import React, { useRef, useEffect, useState } from "react";
 import ThemedText from "../../components/themed-text";
 import { useTheme } from "@react-navigation/native";
@@ -54,6 +54,10 @@ const Navigation = () => {
     const [ETAs, setETAs] = useState([]);
     const [currentETA, setCurrentETA] = useState(0);
 
+    const [navigationDone, setNavigationDone] = useState(false);
+    const [doneSubviewWidth, setDoneSubviewWidth] = useState(new Animated.Value(0));
+    const [bottomNavigationPanelViewWidth, setBottomNavigationPanelViewWidth] = useState(0);
+
     useEffect(() => {
         let subscribed = true;
 
@@ -82,6 +86,8 @@ const Navigation = () => {
         let subscribed = true;
 
         if (subscribed) {
+            console.log("location updated");
+
             if (polylines.length !== 0 && location) {
                 let snapped = snapToPolyline(polylines, location);
                 if (snapped) {
@@ -130,9 +136,11 @@ const Navigation = () => {
                             latitude: snapped.interpolatedCoordinatesOnPolyline.latitude,
                             longitude: snapped.interpolatedCoordinatesOnPolyline.longitude,
                         });
+
                         setOffRoad(snapped.offRoad);
                         determineCurrentDirection();
                         determineCurrentETA();
+                        determineNavigationDone();
                     }
                 }
             }
@@ -266,6 +274,14 @@ const Navigation = () => {
         }
     }
 
+    function determineNavigationDone() {
+        if (!currentDirection) return;
+
+        if (currentDirection.arrive) {
+            onNavigationDone();
+        }
+    }
+
     async function parsePolylines() {
         let tempPolylines = [];
 
@@ -351,6 +367,7 @@ const Navigation = () => {
                             subtext: `Next: ${
                                 ROUTE_DETAILS.directions[i].passing[parseInt(j) + 1].station.name.en
                             }`,
+                            arrive: false,
                         });
                     } else {
                         let snappedCoordinates = snapToPolyline(polylines, {
@@ -365,6 +382,7 @@ const Navigation = () => {
                                 lat: snappedCoordinates.interpolatedCoordinatesOnPolyline.latitude,
                                 lng: snappedCoordinates.interpolatedCoordinatesOnPolyline.longitude,
                             },
+                            arrive: false,
                         });
                         break;
                     }
@@ -387,6 +405,7 @@ const Navigation = () => {
                         route_id: `walk_from_${direction.from.coordinates.lat}_${direction.from.coordinates.lng}_to_${direction.to.coordinates.lat}_${direction.to.coordinates.lng}`,
                         text: htmlToText(step.html_instructions),
                         near: ROUTE_DETAILS.directions[i].start_location,
+                        arrive: false,
                     });
                 }
 
@@ -412,6 +431,7 @@ const Navigation = () => {
                         lat: snappedCoordinates.interpolatedCoordinatesOnPolyline.latitude,
                         lng: snappedCoordinates.interpolatedCoordinatesOnPolyline.longitude,
                     },
+                    arrive: false,
                 });
 
                 tempETAs.push({
@@ -426,6 +446,7 @@ const Navigation = () => {
                         text: `You have arrived at ${ROUTE_DETAILS.directions[i].to.place.address}`,
                         route_id: `walk_from_${direction.from.coordinates.lat}_${direction.from.coordinates.lng}_to_${direction.to.coordinates.lat}_${direction.to.coordinates.lng}`,
                         near: ROUTE_DETAILS.directions[i].to.coordinates,
+                        arrive: true,
                     });
                 } else if (ROUTE_DETAILS.directions[i].type === "board") {
                     let snappedCoordinates = snapToPolyline(polylines, {
@@ -440,6 +461,7 @@ const Navigation = () => {
                             lat: snappedCoordinates.interpolatedCoordinatesOnPolyline.latitude,
                             lng: snappedCoordinates.interpolatedCoordinatesOnPolyline.longitude,
                         },
+                        arrive: true,
                     });
                 }
             }
@@ -451,6 +473,21 @@ const Navigation = () => {
 
     function addToPassedPolylines(coordinates) {
         setPassedPolylines([...passedPolylines, coordinates]);
+    }
+
+    function onNavigationDone() {
+        if (!navigationDone) {
+            console.log("DONEDONEDONE");
+            console.log(currentDirection);
+            setNavigationDone(true);
+
+            Animated.timing(doneSubviewWidth, {
+                toValue: bottomNavigationPanelViewWidth - 20,
+                duration: 4000,
+                easing: Easing.linear,
+                useNativeDriver: false,
+            }).start();
+        }
     }
 
     function htmlToText(html) {
@@ -644,7 +681,45 @@ const Navigation = () => {
             borderColor: colors.white,
             zIndex: 100,
         },
+        doneText: {
+            color: colors.text,
+            fontSize: 18,
+            fontWeight: "600",
+            paddingVertical: 16,
+        },
+        bottomDoneSubview: {
+            alignSelf: "flex-start",
+            height: "100%",
+            backgroundColor: colors.upper_background,
+            position: "absolute",
+        },
     });
+
+    const BottomDoneNavigationPanel = () => (
+        <View
+            style={{
+                ...styles.bottomNavigationPanelContainerWithSafeAreaContainer,
+                zIndex: 10,
+            }}
+        >
+            <View
+                style={{
+                    ...styles.bottomNavigationPanelContainer,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    overflow: "hidden",
+                    padding: 0,
+                    margin: 0,
+                }}
+            >
+                <Animated.View
+                    style={[styles.bottomDoneSubview, { width: doneSubviewWidth }]}
+                ></Animated.View>
+                <ThemedText style={styles.doneText}>Done</ThemedText>
+            </View>
+        </View>
+    );
 
     const TopNavigationPanel = () => (
         <>
@@ -699,7 +774,10 @@ const Navigation = () => {
     );
 
     const BottomNavigationPanel = () => (
-        <View style={styles.bottomNavigationPanelContainerWithSafeAreaContainer}>
+        <View
+            style={styles.bottomNavigationPanelContainerWithSafeAreaContainer}
+            onLayout={(event) => setBottomNavigationPanelViewWidth(event.nativeEvent.layout.width)}
+        >
             {!isRecentered && (
                 <RecenterButton
                     style={styles.recenterButton}
@@ -753,27 +831,6 @@ const Navigation = () => {
                         <View style={styles.currentLocationMarker} />
                     </Marker.Animated>
                 )}
-
-                {Object.keys(directions).map((key) => (
-                    <Marker
-                        style={styles.marker}
-                        key={`marker_test_${key}`}
-                        anchor={{ x: 0.5, y: 0.5 }}
-                        coordinate={{
-                            latitude: directions[key].near.lat,
-                            longitude: directions[key].near.lng,
-                        }}
-                    >
-                        <View
-                            key={`marker_test_view_${key}`}
-                            style={{
-                                ...styles.marker,
-                                backgroundColor: colors.white,
-                                borderColor: colors.middle_grey,
-                            }}
-                        />
-                    </Marker>
-                ))}
 
                 {Object.keys(polylines).map((key) => (
                     <>
@@ -846,7 +903,8 @@ const Navigation = () => {
             </MapView>
 
             <TopNavigationPanel />
-            <BottomNavigationPanel />
+            {navigationDone && <BottomDoneNavigationPanel />}
+            {!navigationDone && <BottomNavigationPanel />}
         </View>
     );
 };
