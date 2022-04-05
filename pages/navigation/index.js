@@ -261,6 +261,9 @@ const Navigation = () => {
             for (let i = 0; i < tempETAs.length; i++) {
                 if (tempETAs[i].route_id === currentDirection.route_id) {
                     tempETAs[i].current_eta = etaOfCurrentRoute;
+                    break;
+                } else {
+                    tempETAs[i].current_eta = 0;
                 }
             }
 
