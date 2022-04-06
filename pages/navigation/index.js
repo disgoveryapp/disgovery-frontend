@@ -668,7 +668,6 @@ const Navigation = () => {
             borderRadius: 12,
             backgroundColor: colors.background,
             padding: 18,
-            paddingBottom: 18,
 
             shadowColor: colors.shadow,
             shadowOffset: {
@@ -813,10 +812,10 @@ const Navigation = () => {
             paddingVertical: 16,
         },
         bottomDoneSubview: {
+            position: "absolute",
             alignSelf: "flex-start",
             height: "100%",
             backgroundColor: colors.upper_background,
-            position: "absolute",
         },
         divider: {
             height: 1,
