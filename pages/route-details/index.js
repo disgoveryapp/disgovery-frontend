@@ -196,7 +196,6 @@ export default function RouteDetails() {
                 onRegionChangeComplete={(region) => onMapRegionChangeComplete(region)}
                 showsUserLocation
             ></MapView>
-
             <View style={styles.bottomDetail}>
                 <View style={styles.navigateButtonContainer}>
                     <NavigateButton />
