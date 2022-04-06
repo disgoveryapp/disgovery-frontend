@@ -79,7 +79,7 @@ export default function RouteSelectionBar(props) {
                                 <PinDropIcon />
                             </View>
                             <TouchableOpacity style={styles.textContainer}>
-                                <ThemedText style={styles.textinput}>Bang Sue Station</ThemedText>
+                                <ThemedText style={styles.textinput}>{props.originName}</ThemedText>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -89,12 +89,14 @@ export default function RouteSelectionBar(props) {
                                 <ArrowIcon24 />
                             </View>
                             <TouchableOpacity style={styles.textContainer}>
-                                <ThemedText style={styles.textinput}>Central World</ThemedText>
+                                <ThemedText style={styles.textinput}>
+                                    {props.destinationName}
+                                </ThemedText>
                             </TouchableOpacity>
                         </View>
                     </View>
                 </View>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={() => props.swapValue()}>
                     <SwapIcon />
                 </TouchableOpacity>
             </View>
