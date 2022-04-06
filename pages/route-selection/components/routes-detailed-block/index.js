@@ -164,6 +164,7 @@ export default function RoutesDetailedBlock(props) {
                 <View style={styles.iconBlock}>
                     {props.routeData.directions.map((item, key) => (
                         <IconAndTime
+                            key={key}
                             type={item.type}
                             time={item.schedule.duration}
                             data={item.via_line}

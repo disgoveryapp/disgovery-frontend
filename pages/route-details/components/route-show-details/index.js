@@ -152,7 +152,13 @@ export default function RouteShowDetails(props) {
             <View style={styles.tabContainer}>
                 <View style={styles.iconTabContainer}>
                     {isExpandClick ? (
-                        <></>
+                        <>
+                            <View style={styles.dotIcon} />
+                            <View style={styles.lineColor} />
+                            <View style={styles.dotIcon} />
+                            <View style={styles.lineColor} />
+                            <View style={styles.dotIcon} />
+                        </>
                     ) : (
                         <>
                             <View style={styles.dotIcon} />
