@@ -1,4 +1,11 @@
-import { StyleSheet, View, Animated, Easing } from "react-native";
+import {
+    StyleSheet,
+    View,
+    Animated,
+    Easing,
+    TouchableWithoutFeedback,
+    TouchableOpacity,
+} from "react-native";
 import React, { useRef, useEffect, useState } from "react";
 import ThemedText from "../../components/themed-text";
 import { useTheme } from "@react-navigation/native";
@@ -50,13 +57,20 @@ const Navigation = () => {
     const [nearestPointOnPolyline, setNearestPointOnPolyline] = useState(undefined);
     const [nearestPointOnPolylineAnimated, setNearestPointOnPolylineAnimated] = useState(undefined);
     const [offRoad, setOffRoad] = useState(false);
+    const [navigationDone, setNavigationDone] = useState(false);
 
     const [ETAs, setETAs] = useState([]);
     const [currentETA, setCurrentETA] = useState(0);
 
-    const [navigationDone, setNavigationDone] = useState(false);
     const [doneSubviewWidth, setDoneSubviewWidth] = useState(new Animated.Value(0));
     const [bottomNavigationPanelViewWidth, setBottomNavigationPanelViewWidth] = useState(0);
+    const [bottomNavigationPanelMenuIsExpanded, setBottomNavigationPanelMenuIsExpanded] =
+        useState(false);
+    const [
+        expandBottomNavigationPanelMenuIconRotation,
+        setExpandBottomNavigationPanelMenuIconRotation,
+    ] = useState(new Animated.Value(0));
+    const [bottomNavigationPanelMenuHeight, setBottomNavigationPanelMenuHeight] = useState(0);
 
     useEffect(() => {
         let subscribed = true;
@@ -86,8 +100,6 @@ const Navigation = () => {
         let subscribed = true;
 
         if (subscribed) {
-            console.log("location updated");
-
             if (polylines.length !== 0 && location) {
                 let snapped = snapToPolyline(polylines, location);
                 if (snapped) {
@@ -506,7 +518,26 @@ const Navigation = () => {
     }
 
     function onRecenterButtonPress() {
+        recenter({
+            ...location,
+            latitudeDelta: 0.005,
+            longitudeDelta: 0.005,
+        });
         setIsRecentered(true);
+    }
+
+    function onExpandBottomNavigationPanelMenuPress() {
+        setBottomNavigationPanelMenuIsExpanded(!bottomNavigationPanelMenuIsExpanded);
+        rotateExpandBottomNavigationPanelMenuIcon();
+    }
+
+    function rotateExpandBottomNavigationPanelMenuIcon() {
+        Animated.timing(expandBottomNavigationPanelMenuIconRotation, {
+            toValue: bottomNavigationPanelMenuIsExpanded ? 0 : 180,
+            duration: 100,
+            easing: Easing.linear,
+            useNativeDriver: false,
+        }).start();
     }
 
     const styles = StyleSheet.create({
@@ -564,6 +595,7 @@ const Navigation = () => {
             borderRadius: 12,
             backgroundColor: colors.background,
             padding: 18,
+            paddingBottom: bottomNavigationPanelMenuIsExpanded ? 8 : 18,
 
             shadowColor: colors.shadow,
             shadowOffset: {
@@ -579,6 +611,7 @@ const Navigation = () => {
             display: "flex",
             flexDirection: "row",
             alignItems: "center",
+            justifyContent: "space-between",
         },
         bottomNaviationPanelTitleArrowIcon: {
             marginLeft: 5,
@@ -592,6 +625,7 @@ const Navigation = () => {
             flexDirection: "row",
             alignItems: "center",
             marginTop: 5,
+            zIndex: 50,
         },
         bottomNavigationPanelArrivingInText: {
             color: colors.text,
@@ -670,10 +704,24 @@ const Navigation = () => {
             fontWeight: "600",
             fontSize: 16,
         },
-        bottomNavigationExpandUpIcon: {
+        bottomNavigationPanelFromToContainer: {
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+        },
+        bottomNavigationExpandUpIconContainer: {
             alignSelf: "flex-end",
             marginRight: 0,
             marginLeft: "auto",
+            width: 30,
+            height: 20,
+            zIndex: 1,
+        },
+        bottomNavigationExpandUpIconSubContainer: {
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            alignSelf: "flex-end",
         },
         currentLocationMarker: {
             width: 20,
@@ -695,6 +743,22 @@ const Navigation = () => {
             height: "100%",
             backgroundColor: colors.upper_background,
             position: "absolute",
+        },
+        divider: {
+            height: 1,
+            marginTop: 10,
+            backgroundColor: colors.divider,
+        },
+        exitNavigationText: {
+            color: colors.red,
+            fontWeight: "600",
+            fontSize: 18,
+        },
+        bottomNavigationPanelMenuItemContainer: {
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            height: 48,
         },
     });
 
@@ -776,6 +840,13 @@ const Navigation = () => {
         </>
     );
 
+    const expandBottomNavigationPanelMenuIconRotationDeg =
+        expandBottomNavigationPanelMenuIconRotation.interpolate({
+            inputRange: [0, 180],
+            outputRange: ["0deg", "180deg"],
+            extrapolate: "clamp",
+        });
+
     const BottomNavigationPanel = () => (
         <View
             style={styles.bottomNavigationPanelContainerWithSafeAreaContainer}
@@ -790,27 +861,70 @@ const Navigation = () => {
                     }}
                 />
             )}
-            <View style={styles.bottomNavigationPanelContainer}>
-                <View style={styles.bottomNavigationPanelTitle}>
-                    <ThemedText style={styles.onGoingNavigationText}>
-                        On-going navigation
-                    </ThemedText>
-                    <ArrowIcon style={styles.bottomNaviationPanelTitleArrowIcon} />
-                    <ExpandDownIcon18px style={styles.bottomNavigationExpandUpIcon} />
+
+            <TouchableWithoutFeedback onPressIn={onExpandBottomNavigationPanelMenuPress}>
+                <View style={styles.bottomNavigationPanelContainer}>
+                    <View style={styles.bottomNavigationPanelTitle}>
+                        <View style={styles.bottomNavigationPanelFromToContainer}>
+                            <ThemedText style={styles.onGoingNavigationText}>
+                                On-going navigation
+                            </ThemedText>
+                            <ArrowIcon style={styles.bottomNaviationPanelTitleArrowIcon} />
+                        </View>
+                        <TouchableWithoutFeedback
+                            style={styles.bottomNavigationExpandUpIconContainer}
+                            onPressIn={onExpandBottomNavigationPanelMenuPress}
+                        >
+                            <Animated.View
+                                style={[
+                                    styles.bottomNavigationExpandUpIconSubContainer,
+                                    {
+                                        transform: [
+                                            {
+                                                rotate: expandBottomNavigationPanelMenuIconRotationDeg,
+                                            },
+                                        ],
+                                    },
+                                ]}
+                            >
+                                <ExpandDownIcon18px />
+                            </Animated.View>
+                        </TouchableWithoutFeedback>
+                    </View>
+                    <View style={styles.bottomNavigationPanelArrivingInContainer}>
+                        <ThemedText style={styles.bottomNavigationPanelArrivingInText}>
+                            Arriving in
+                        </ThemedText>
+                        <ThemedText style={styles.bottomNavigationPanelTimeText}>
+                            {Math.round(currentETA / 60)} min
+                        </ThemedText>
+                        <ThemedText style={styles.bottomNavigationPanelETAText}>
+                            · {dayjs().add(currentETA, "second").format("HH:mm")}
+                        </ThemedText>
+                    </View>
+
+                    {bottomNavigationPanelMenuIsExpanded && <BottomNavigationPanelMenu />}
                 </View>
-                <View style={styles.bottomNavigationPanelArrivingInContainer}>
-                    <ThemedText style={styles.bottomNavigationPanelArrivingInText}>
-                        Arriving in
-                    </ThemedText>
-                    <ThemedText style={styles.bottomNavigationPanelTimeText}>
-                        {Math.round(currentETA / 60)} min
-                    </ThemedText>
-                    <ThemedText style={styles.bottomNavigationPanelETAText}>
-                        · {dayjs().add(currentETA, "second").format("HH:mm")}
-                    </ThemedText>
-                </View>
-            </View>
+            </TouchableWithoutFeedback>
         </View>
+    );
+
+    const BottomNavigationPanelMenu = () => (
+        <>
+            <View
+                onLayout={(event) => {
+                    setBottomNavigationPanelMenuHeight(event.nativeEvent.layout.height);
+                }}
+            >
+                <View style={styles.divider} />
+                <TouchableOpacity
+                    style={styles.bottomNavigationPanelMenuItemContainer}
+                    onPress={() => {}}
+                >
+                    <ThemedText style={styles.exitNavigationText}>Exit navigation</ThemedText>
+                </TouchableOpacity>
+            </View>
+        </>
     );
 
     return (
