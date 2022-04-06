@@ -267,6 +267,7 @@ const Navigation = () => {
 
             if (!currentDirection) {
                 setCurrentDirection(directions[nearestKey]);
+                speakDirectionWithHaptics(directions, nearestKey);
                 return;
             }
 
@@ -276,53 +277,53 @@ const Navigation = () => {
                     currentDirection.near.lng !== directions[nearestKey].near.lng
                 ) {
                     setCurrentDirection(directions[nearestKey]);
+                    speakDirectionWithHaptics(directions, nearestKey);
                 }
             }
+        }
+    }
 
-            let tempSpoken = [...spoken];
-            let hapticPlayed = false;
+    function speakDirectionWithHaptics(directions, nearestKey) {
+        let tempSpoken = [...spoken];
+        let hapticPlayed = false;
 
-            if (directions[nearestKey].text && !spoken.includes(directions[nearestKey].text)) {
-                console.log("speaking", directions[nearestKey].text);
-                Speech.speak(directions[nearestKey].text.replace(":", ","), selectedSpeechVoice);
-                tempSpoken.push(directions[nearestKey].text);
+        if (directions[nearestKey].text && !spoken.includes(directions[nearestKey].text)) {
+            console.log("speaking", directions[nearestKey].text);
+            Speech.speak(directions[nearestKey].text.replace(":", ","), selectedSpeechVoice);
+            tempSpoken.push(directions[nearestKey].text);
 
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+            hapticPlayed = true;
+        }
+
+        if (directions[nearestKey].subtext && !spoken.includes(directions[nearestKey].subtext)) {
+            console.log("speaking", directions[nearestKey].subtext);
+            Speech.speak(
+                `${
+                    parseInt(nearestKey) !== 0
+                        ? directions[parseInt(nearestKey) - 1].subtext
+                            ? `This is ${directions[parseInt(nearestKey) - 1].subtext.replace(
+                                  "Next: ",
+                                  "",
+                              )}.`
+                            : ""
+                        : ""
+                } The next station is ${
+                    directions[nearestKey].subtext
+                        ? directions[nearestKey].subtext.replace("Next: ", "")
+                        : ""
+                }`,
+                selectedSpeechVoice,
+            );
+            tempSpoken.push(directions[nearestKey].subtext);
+
+            if (!hapticPlayed) {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
                 hapticPlayed = true;
             }
-
-            if (
-                directions[nearestKey].subtext &&
-                !spoken.includes(directions[nearestKey].subtext)
-            ) {
-                console.log("speaking", directions[nearestKey].subtext);
-                Speech.speak(
-                    `${
-                        parseInt(nearestKey) !== 0
-                            ? directions[parseInt(nearestKey) - 1].subtext
-                                ? `This is ${directions[parseInt(nearestKey) - 1].subtext.replace(
-                                      "Next: ",
-                                      "",
-                                  )}.`
-                                : ""
-                            : ""
-                    } The next station is ${
-                        directions[nearestKey].subtext
-                            ? directions[nearestKey].subtext.replace("Next: ", "")
-                            : ""
-                    }`,
-                    selectedSpeechVoice,
-                );
-                tempSpoken.push(directions[nearestKey].subtext);
-
-                if (!hapticPlayed) {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                    hapticPlayed = true;
-                }
-            }
-
-            setSpoken([...tempSpoken]);
         }
+
+        setSpoken([...tempSpoken]);
     }
 
     function determineCurrentETA() {
