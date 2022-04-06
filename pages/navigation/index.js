@@ -38,6 +38,8 @@ const INITIAL_MAP_REGION = {
     longitudeDelta: 0.035,
 };
 
+const BOTTOM_NAVIGATION_PANEL_MENU_HEIGHT = 67;
+
 const Navigation = () => {
     const { colors, dark } = useTheme();
     let firstRun = true;
@@ -70,7 +72,6 @@ const Navigation = () => {
         expandBottomNavigationPanelMenuIconRotation,
         setExpandBottomNavigationPanelMenuIconRotation,
     ] = useState(new Animated.Value(0));
-    const [bottomNavigationPanelMenuHeight, setBottomNavigationPanelMenuHeight] = useState(0);
 
     useEffect(() => {
         let subscribed = true;
@@ -81,6 +82,8 @@ const Navigation = () => {
                     fetchNewLocation(true);
                     parsePolylines();
                 })().catch(() => {});
+                setBottomNavigationPanelMenuIsExpanded(true);
+                setBottomNavigationPanelMenuIsExpanded(false);
                 firstRun = false;
             }
 
@@ -95,7 +98,6 @@ const Navigation = () => {
     useEffect(() => {
         if (polylines.length !== 0) parseDirections();
     }, [polylines]);
-
     useEffect(() => {
         let subscribed = true;
 
@@ -517,6 +519,10 @@ const Navigation = () => {
         setIsRecentered(false);
     }
 
+    function onExitNavigation() {
+        console.log("exit");
+    }
+
     function onRecenterButtonPress() {
         recenter({
             ...location,
@@ -527,15 +533,15 @@ const Navigation = () => {
     }
 
     function onExpandBottomNavigationPanelMenuPress() {
-        setBottomNavigationPanelMenuIsExpanded(!bottomNavigationPanelMenuIsExpanded);
         rotateExpandBottomNavigationPanelMenuIcon();
+        setBottomNavigationPanelMenuIsExpanded(!bottomNavigationPanelMenuIsExpanded);
     }
 
     function rotateExpandBottomNavigationPanelMenuIcon() {
         Animated.timing(expandBottomNavigationPanelMenuIconRotation, {
             toValue: bottomNavigationPanelMenuIsExpanded ? 0 : 180,
             duration: 100,
-            easing: Easing.linear,
+            easing: Easing.ease,
             useNativeDriver: false,
         }).start();
     }
@@ -595,7 +601,7 @@ const Navigation = () => {
             borderRadius: 12,
             backgroundColor: colors.background,
             padding: 18,
-            paddingBottom: bottomNavigationPanelMenuIsExpanded ? 8 : 18,
+            paddingBottom: 18,
 
             shadowColor: colors.shadow,
             shadowOffset: {
@@ -606,6 +612,7 @@ const Navigation = () => {
             shadowRadius: 6.27,
 
             elevation: 10,
+            overflow: "hidden",
         },
         bottomNavigationPanelTitle: {
             display: "flex",
@@ -746,7 +753,7 @@ const Navigation = () => {
         },
         divider: {
             height: 1,
-            marginTop: 10,
+            marginTop: 18,
             backgroundColor: colors.divider,
         },
         exitNavigationText: {
@@ -840,17 +847,40 @@ const Navigation = () => {
         </>
     );
 
-    const expandBottomNavigationPanelMenuIconRotationDeg =
+    const interpolatedExpandBottomNavigationPanelMenuIconRotationDeg =
         expandBottomNavigationPanelMenuIconRotation.interpolate({
             inputRange: [0, 180],
             outputRange: ["0deg", "180deg"],
             extrapolate: "clamp",
         });
 
+    const interpolatedBottomNavigationPanelMenuHeight =
+        expandBottomNavigationPanelMenuIconRotation.interpolate({
+            inputRange: [0, 180],
+            outputRange: [0, BOTTOM_NAVIGATION_PANEL_MENU_HEIGHT],
+            extrapolate: "clamp",
+        });
+
+    const interpolatedBottomNavigationPanelPaddingBottom =
+        expandBottomNavigationPanelMenuIconRotation.interpolate({
+            inputRange: [0, 180],
+            outputRange: [18, 8],
+            extrapolate: "clamp",
+        });
+
+    const interpolatedBottomNavigationPanelDividerOpacity =
+        expandBottomNavigationPanelMenuIconRotation.interpolate({
+            inputRange: [0, 180],
+            outputRange: [0, 1],
+            extrapolate: "clamp",
+        });
+
     const BottomNavigationPanel = () => (
         <View
             style={styles.bottomNavigationPanelContainerWithSafeAreaContainer}
-            onLayout={(event) => setBottomNavigationPanelViewWidth(event.nativeEvent.layout.width)}
+            onLayout={(event) => {
+                setBottomNavigationPanelViewWidth(event.nativeEvent.layout.width);
+            }}
         >
             {!isRecentered && (
                 <RecenterButton
@@ -863,7 +893,12 @@ const Navigation = () => {
             )}
 
             <TouchableWithoutFeedback onPressIn={onExpandBottomNavigationPanelMenuPress}>
-                <View style={styles.bottomNavigationPanelContainer}>
+                <Animated.View
+                    style={[
+                        styles.bottomNavigationPanelContainer,
+                        { paddingBottom: interpolatedBottomNavigationPanelPaddingBottom },
+                    ]}
+                >
                     <View style={styles.bottomNavigationPanelTitle}>
                         <View style={styles.bottomNavigationPanelFromToContainer}>
                             <ThemedText style={styles.onGoingNavigationText}>
@@ -881,7 +916,7 @@ const Navigation = () => {
                                     {
                                         transform: [
                                             {
-                                                rotate: expandBottomNavigationPanelMenuIconRotationDeg,
+                                                rotate: interpolatedExpandBottomNavigationPanelMenuIconRotationDeg,
                                             },
                                         ],
                                     },
@@ -903,23 +938,28 @@ const Navigation = () => {
                         </ThemedText>
                     </View>
 
-                    {bottomNavigationPanelMenuIsExpanded && <BottomNavigationPanelMenu />}
-                </View>
+                    <Animated.View
+                        style={[{ height: interpolatedBottomNavigationPanelMenuHeight }]}
+                    >
+                        <BottomNavigationPanelMenu />
+                    </Animated.View>
+                </Animated.View>
             </TouchableWithoutFeedback>
         </View>
     );
 
     const BottomNavigationPanelMenu = () => (
         <>
-            <View
-                onLayout={(event) => {
-                    setBottomNavigationPanelMenuHeight(event.nativeEvent.layout.height);
-                }}
-            >
-                <View style={styles.divider} />
+            <View>
+                <Animated.View
+                    style={[
+                        styles.divider,
+                        { opacity: interpolatedBottomNavigationPanelDividerOpacity },
+                    ]}
+                />
                 <TouchableOpacity
                     style={styles.bottomNavigationPanelMenuItemContainer}
-                    onPress={() => {}}
+                    onPressIn={onExitNavigation}
                 >
                     <ThemedText style={styles.exitNavigationText}>Exit navigation</ThemedText>
                 </TouchableOpacity>
