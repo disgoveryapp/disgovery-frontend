@@ -132,10 +132,10 @@ export function getRouteTypeString(type, plural) {
         default:
             return "";
     }
-};
+}
 
-
-export const MockupData = {
+export const MockupData = [
+    {
         schedule: {
             departing_at: "2022-03-29T15:23:00+07:00",
             arriving_at: "2022-03-29T16:22:00+07:00",
@@ -1102,6 +1102,5 @@ export const MockupData = {
                 lng: 100.517166935581,
             },
         },
-    };
-
-
+    },
+];
