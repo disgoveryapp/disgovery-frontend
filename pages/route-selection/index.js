@@ -39,6 +39,7 @@ export default function RouteSelection(props) {
     const containerPadding = 15;
     const wearFaceMask = true;
     const navigation = useNavigation();
+    const hasOverviewRoute = false;
 
     const [loading, setLoading] = useState(false);
     const [mapsIsRecentered, setMapsIsRecentered] = useState(false);
@@ -92,11 +93,10 @@ export default function RouteSelection(props) {
             flex: 1,
         },
         maps: {
-            position: "absolute",
-            top: 0,
-            left: 0,
+            flex: 1,
             width: "100%",
-            height: "100%",
+            height: "auto",
+            marginBottom: -25,
         },
         backButtonContainer: {
             position: "absolute",
@@ -105,18 +105,13 @@ export default function RouteSelection(props) {
             paddingHorizontal: 15,
             zIndex: 10,
         },
-        bottomcard: {
-            top: SCREEN_HEIGHT * (8.75 / 3),
-            zIndex: 5,
-        },
         scrollView: {
-            flex: 1,
+            flex: 2,
             backgroundColor: colors.background,
             borderTopLeftRadius: 22,
             borderTopRightRadius: 22,
-            top: SCREEN_HEIGHT * 0.22,
             width: "100%",
-            height: "100%",
+            height: "auto",
             zIndex: 5,
             //paddingHorizontal: 12,
             paddingVertical: 16,
@@ -150,7 +145,9 @@ export default function RouteSelection(props) {
             justifyContent: "center",
             left: 12,
         },
-        subScrollView: {},
+        subScrollView: {
+            flex: 1,
+        },
     });
 
     useEffect(() => {
@@ -255,8 +252,14 @@ export default function RouteSelection(props) {
 
     return (
         <View style={styles.container}>
-            <SafeAreaView />
-
+            <View style={styles.backButtonContainer}>
+                <SafeAreaView edges={["top"]} />
+                <BackButton
+                    onPress={() => {
+                        goBack();
+                    }}
+                />
+            </View>
             <MapView
                 ref={mapRef}
                 style={styles.maps}
@@ -267,14 +270,7 @@ export default function RouteSelection(props) {
                 onRegionChangeComplete={(region) => onMapRegionChangeComplete(region)}
                 showsUserLocation
             ></MapView>
-            <View style={styles.backButtonContainer}>
-                <SafeAreaView edges={["top"]} />
-                <BackButton
-                    onPress={() => {
-                        goBack();
-                    }}
-                />
-            </View>
+
             <View style={styles.scrollView}>
                 <RouteSelectionBar
                     containerPadding={containerPadding}
@@ -285,12 +281,7 @@ export default function RouteSelection(props) {
                     swapValue={swapValue}
                 />
                 <DividerLine />
-                {wearFaceMask && (
-                    <>
-                        <FaceCovering containerPadding={containerPadding} />
-                        <DividerLine />
-                    </>
-                )}
+
                 <ScrollView
                     style={styles.subScrollView}
                     showsHorizontalScrollIndicator={false}
@@ -300,10 +291,19 @@ export default function RouteSelection(props) {
                     }}
                     keyboardDismissMode="interactive"
                 >
-                    <OverViewRoute
-                        topictextStyle={styles.topictext}
-                        containerPadding={containerPadding}
-                    />
+                    {wearFaceMask && (
+                        <>
+                            <FaceCovering containerPadding={containerPadding} />
+                            <DividerLine />
+                        </>
+                    )}
+                    {hasOverviewRoute && (
+                        <OverViewRoute
+                            topictextStyle={styles.topictext}
+                            containerPadding={containerPadding}
+                        />
+                    )}
+
                     <SuggestedRoutes
                         topictextStyle={styles.topictext}
                         containerPadding={containerPadding}

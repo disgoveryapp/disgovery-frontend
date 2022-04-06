@@ -57,32 +57,31 @@ export default function RouteDetails() {
             zIndex: 10,
         },
         navigateButtonContainer: {
-            position: "absolute",
-            top: 0.29 * Dimensions.get("screen").height,
             alignSelf: "flex-end",
             paddingHorizontal: 15,
+            paddingBottom: 10,
             zIndex: 10,
         },
         maps: {
-            position: "absolute",
-            top: 0,
-            left: 0,
+            flex: 2,
             width: "100%",
-            height: "100%",
+            height: "auto",
+            marginBottom: -80,
         },
-        bottomcard: {
-            top: SCREEN_HEIGHT * (8.75 / 3),
-            zIndex: 5,
+        bottomDetail: {
+            flex: 3,
+            width: "100%",
+            height: "auto",
         },
         scrollView: {
-            flex: 1,
+            flex: 2,
             backgroundColor: colors.background,
             borderTopLeftRadius: 22,
             borderTopRightRadius: 22,
-            top: SCREEN_HEIGHT * 0.3,
             width: "100%",
-            height: "100%",
+            height: "auto",
             zIndex: 5,
+            paddingVertical: 16,
 
             shadowColor: colors.shadow,
             shadowOffset: {
@@ -93,6 +92,9 @@ export default function RouteDetails() {
             shadowRadius: 6.27,
 
             elevation: 10,
+        },
+        subScrollView: {
+            flex: 1,
         },
     });
 
@@ -176,7 +178,14 @@ export default function RouteDetails() {
 
     return (
         <View style={styles.container}>
-            <SafeAreaView />
+            <View style={styles.backButtonContainer}>
+                <SafeAreaView edges={["top"]} />
+                <BackButton
+                    onPress={() => {
+                        goBack();
+                    }}
+                />
+            </View>
             <MapView
                 ref={mapRef}
                 style={styles.maps}
@@ -187,32 +196,25 @@ export default function RouteDetails() {
                 onRegionChangeComplete={(region) => onMapRegionChangeComplete(region)}
                 showsUserLocation
             ></MapView>
-            <View style={styles.backButtonContainer}>
-                <SafeAreaView edges={["top"]} />
-                <BackButton
-                    onPress={() => {
-                        goBack();
-                    }}
-                />
+
+            <View style={styles.bottomDetail}>
+                <View style={styles.navigateButtonContainer}>
+                    <NavigateButton />
+                </View>
+                <View style={styles.scrollView}>
+                    <ScrollView
+                        style={styles.subScrollView}
+                        showsHorizontalScrollIndicator={false}
+                        showsVerticalScrollIndicator={false}
+                        contentContainerStyle={{
+                            paddingBottom: 35,
+                        }}
+                        keyboardDismissMode="interactive"
+                    >
+                        <RouteShowDetails containerPadding={containerPadding} />
+                    </ScrollView>
+                </View>
             </View>
-            <View style={styles.navigateButtonContainer}>
-                <NavigateButton />
-            </View>
-            <ScrollView
-                style={styles.scrollView}
-                showsHorizontalScrollIndicator={false}
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={{
-                    paddingBottom: 35,
-                }}
-                keyboardDismissMode="interactive"
-                //scrollEventThrottle={16}
-                //onScroll={onScroll}
-                //onScrollBeginDrag={onScrollBeginDrag}
-                //onScrollEndDrag={onScrollEndDrag}
-            >
-                <RouteShowDetails containerPadding={containerPadding} />
-            </ScrollView>
         </View>
     );
 }
