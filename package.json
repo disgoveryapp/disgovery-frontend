@@ -25,6 +25,7 @@
         "expo-haptics": "~11.1.0",
         "expo-linear-gradient": "^11.0.3",
         "expo-location": "^14.0.1",
+        "expo-speech": "^10.1.1",
         "expo-status-bar": "~1.2.0",
         "lodash": "^4.17.21",
         "prop-types": "^15.8.1",

@@ -5,6 +5,7 @@ import {
     Easing,
     TouchableWithoutFeedback,
     TouchableOpacity,
+    Dimensions,
 } from "react-native";
 import React, { useRef, useEffect, useState } from "react";
 import ThemedText from "../../components/themed-text";
@@ -25,6 +26,8 @@ import {
     ROUTE_DETAILS,
     snapToPolyline,
 } from "./util";
+import * as Reanimated from "react-native-reanimated";
+import * as Speech from "expo-speech";
 import RecenterButton from "../../components/recenter-button";
 import ExpandDownIcon18px from "../../assets/svgs/expand-down-icon-18px";
 import SvgAnimatedLinearGradient from "react-native-svg-animated-linear-gradient/src";
@@ -39,6 +42,9 @@ const INITIAL_MAP_REGION = {
 };
 
 const BOTTOM_NAVIGATION_PANEL_MENU_HEIGHT = 67;
+
+const SCREEN_WIDTH = Dimensions.get("window").width;
+const SCREEN_HEIGHT = Dimensions.get("window").height;
 
 const Navigation = () => {
     const { colors, dark } = useTheme();
@@ -72,6 +78,9 @@ const Navigation = () => {
         expandBottomNavigationPanelMenuIconRotation,
         setExpandBottomNavigationPanelMenuIconRotation,
     ] = useState(new Animated.Value(0));
+    const [spoken, setSpoken] = useState([]);
+    const [speechVoices, setSpeechVoices] = useState([]);
+    const [selectedSpeechVoice, setSelectedSpeechVoice] = useState({ language: "en-GB" });
 
     useEffect(() => {
         let subscribed = true;
@@ -81,6 +90,7 @@ const Navigation = () => {
                 (async () => {
                     fetchNewLocation(true);
                     parsePolylines();
+                    setSpeechVoices(await Speech.getAvailableVoicesAsync());
                 })().catch(() => {});
                 setBottomNavigationPanelMenuIsExpanded(true);
                 setBottomNavigationPanelMenuIsExpanded(false);
@@ -98,6 +108,11 @@ const Navigation = () => {
     useEffect(() => {
         if (polylines.length !== 0) parseDirections();
     }, [polylines]);
+
+    useEffect(() => {
+        setSelectedSpeechVoice(speechVoices.find((voice) => voice.language === "en-GB"));
+    }, [speechVoices]);
+
     useEffect(() => {
         let subscribed = true;
 
@@ -256,6 +271,41 @@ const Navigation = () => {
                     setCurrentDirection(directions[nearestKey]);
                 }
             }
+
+            let tempSpoken = [...spoken];
+
+            if (directions[nearestKey].text && !spoken.includes(directions[nearestKey].text)) {
+                console.log("speaking", directions[nearestKey].text);
+                Speech.speak(directions[nearestKey].text.replace(":", ","), selectedSpeechVoice);
+                tempSpoken.push(directions[nearestKey].text);
+            }
+
+            if (
+                directions[nearestKey].subtext &&
+                !spoken.includes(directions[nearestKey].subtext)
+            ) {
+                console.log("speaking", directions[nearestKey].subtext);
+                Speech.speak(
+                    `${
+                        parseInt(nearestKey) !== 0
+                            ? directions[parseInt(nearestKey) - 1].subtext
+                                ? `This is ${directions[parseInt(nearestKey) - 1].subtext.replace(
+                                      "Next: ",
+                                      "",
+                                  )}.`
+                                : ""
+                            : ""
+                    } The next station is ${
+                        directions[nearestKey].subtext
+                            ? directions[nearestKey].subtext.replace("Next: ", "")
+                            : ""
+                    }`,
+                    selectedSpeechVoice,
+                );
+                tempSpoken.push(directions[nearestKey].subtext);
+            }
+
+            setSpoken([...tempSpoken]);
         }
     }
 
