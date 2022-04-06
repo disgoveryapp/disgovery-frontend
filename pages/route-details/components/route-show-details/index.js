@@ -9,10 +9,12 @@ import SubwayIcon from "../../../../assets/svgs/subway-icon";
 import TransitLine from "../../../../components/transit-line";
 import ExpandDownIcon18px from "../../../../assets/svgs/expand-down-icon-18px";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { MockupData } from "../../../../configs/configs";
 
 export default function RouteShowDetails(props) {
     const { colors } = useTheme();
     const [isExpandClick, setExpandClick] = useState(false);
+    const mockStation = ["Mochit", "Siam", "Samyan", "Suan Amphorn", "Chit Lom"];
 
     const styles = StyleSheet.create({
         container: {
@@ -62,17 +64,35 @@ export default function RouteShowDetails(props) {
             height: 10,
             backgroundColor: "#ffff",
             borderRadius: 5,
-            borderColor: colors.upper_background,
+            borderColor: "#444444",
             borderWidth: 1,
             zIndex: 2,
+
+            shadowColor: colors.shadow,
+            shadowOffset: {
+                width: 0,
+                height: 5,
+            },
+            shadowOpacity: 0.34,
+            shadowRadius: 6.27,
+
+            elevation: 10,
         },
         lineColor: {
             width: 6,
             height: "auto",
             flex: 1,
-            backgroundColor: "green",
             marginVertical: -4,
             zIndex: 1,
+        },
+        firstlineColor: { width: 6, height: 37.5, marginVertical: -4, zIndex: 1 },
+        originDestnaionText: {
+            fontWeight: "600",
+            fontSize: 14,
+        },
+        stopDetailButton: {
+            flexDirection: "row",
+            paddingVertical: 3,
         },
     });
 
@@ -150,49 +170,71 @@ export default function RouteShowDetails(props) {
     function PublicTransitRouteTab(subprops) {
         return (
             <View style={styles.tabContainer}>
-                <View style={styles.iconTabContainer}>
+                <View style={[styles.iconTabContainer, { paddingTop: 5.5 }]}>
                     {isExpandClick ? (
                         <>
                             <View style={styles.dotIcon} />
-                            <View style={styles.lineColor} />
-                            <View style={styles.dotIcon} />
-                            <View style={styles.lineColor} />
+                            <View style={[styles.firstlineColor, { backgroundColor: "#7FBF3A" }]} />
+                            {mockStation.map((item, key) => (
+                                <>
+                                    {key === 0 || key === mockStation.length - 1 ? (
+                                        <></>
+                                    ) : (
+                                        <>
+                                            <View style={styles.dotIcon} />
+                                            <View
+                                                style={[
+                                                    styles.lineColor,
+                                                    { backgroundColor: "#7FBF3A" },
+                                                ]}
+                                            />
+                                        </>
+                                    )}
+                                </>
+                            ))}
                             <View style={styles.dotIcon} />
                         </>
                     ) : (
                         <>
                             <View style={styles.dotIcon} />
-                            <View style={styles.lineColor} />
+                            <View style={[styles.lineColor, { backgroundColor: "#7FBF3A" }]} />
                             <View style={styles.dotIcon} />
                         </>
                     )}
                 </View>
                 <View>
-                    <ThemedText style={styles.titleText}>Mo Chit</ThemedText>
+                    <ThemedText style={styles.originDestnaionText}>{mockStation[0]}</ThemedText>
                     <View style={{ display: "flex", flexDirection: "row" }}>
-                        <ThemedText style={styles.subtitleText}>8 stops · 19 minutes</ThemedText>
-                        <TouchableOpacity onPress={expandClick}>
+                        <TouchableOpacity style={styles.stopDetailButton} onPress={expandClick}>
+                            <ThemedText style={styles.subtitleText}>
+                                8 stops · 19 minutes
+                            </ThemedText>
+
                             <ExpandDownIcon18px fill={colors.subtitle} />
                         </TouchableOpacity>
                     </View>
                     <View>
                         {isExpandClick ? (
                             <View>
-                                <ThemedText style={styles.subtitleText}>
-                                    - Inter Station1
-                                </ThemedText>
-                                <ThemedText style={styles.subtitleText}>
-                                    - Inter Station2
-                                </ThemedText>
-                                <ThemedText style={styles.subtitleText}>
-                                    - Inter Station3
-                                </ThemedText>
+                                {mockStation.map((item, key) => (
+                                    <>
+                                        {key === 0 || key === mockStation.length - 1 ? (
+                                            <></>
+                                        ) : (
+                                            <ThemedText style={styles.subtitleText}>
+                                                {item}
+                                            </ThemedText>
+                                        )}
+                                    </>
+                                ))}
                             </View>
                         ) : (
                             <></>
                         )}
                     </View>
-                    <ThemedText style={styles.titleText}>Chit Lom</ThemedText>
+                    <ThemedText style={styles.originDestnaionText}>
+                        {mockStation[mockStation.length - 1]}
+                    </ThemedText>
                 </View>
             </View>
         );
