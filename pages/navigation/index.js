@@ -28,6 +28,7 @@ import {
 } from "./util";
 import * as Reanimated from "react-native-reanimated";
 import * as Speech from "expo-speech";
+import * as Haptics from "expo-haptics";
 import RecenterButton from "../../components/recenter-button";
 import ExpandDownIcon18px from "../../assets/svgs/expand-down-icon-18px";
 import SvgAnimatedLinearGradient from "react-native-svg-animated-linear-gradient/src";
@@ -110,7 +111,7 @@ const Navigation = () => {
     }, [polylines]);
 
     useEffect(() => {
-        setSelectedSpeechVoice(speechVoices.find((voice) => voice.language === "en-GB"));
+        setSelectedSpeechVoice(speechVoices.find((voice) => voice.language === "en-US"));
     }, [speechVoices]);
 
     useEffect(() => {
@@ -167,6 +168,12 @@ const Navigation = () => {
                         });
 
                         setOffRoad(snapped.offRoad);
+
+                        if (!offRoad && snapped.offRoad) {
+                            // Speech.speak("You are off the road.", selectedSpeechVoice);
+                            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+                        }
+
                         determineCurrentDirection();
                         determineCurrentETA();
                         determineNavigationDone();
@@ -273,11 +280,15 @@ const Navigation = () => {
             }
 
             let tempSpoken = [...spoken];
+            let hapticPlayed = false;
 
             if (directions[nearestKey].text && !spoken.includes(directions[nearestKey].text)) {
                 console.log("speaking", directions[nearestKey].text);
                 Speech.speak(directions[nearestKey].text.replace(":", ","), selectedSpeechVoice);
                 tempSpoken.push(directions[nearestKey].text);
+
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                hapticPlayed = true;
             }
 
             if (
@@ -303,6 +314,11 @@ const Navigation = () => {
                     selectedSpeechVoice,
                 );
                 tempSpoken.push(directions[nearestKey].subtext);
+
+                if (!hapticPlayed) {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                    hapticPlayed = true;
+                }
             }
 
             setSpoken([...tempSpoken]);
