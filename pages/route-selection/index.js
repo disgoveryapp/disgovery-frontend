@@ -9,7 +9,7 @@ import {
     TouchableOpacity,
 } from "react-native";
 import ThemedText from "../../components/themed-text";
-import { useTheme } from "@react-navigation/native";
+import { useNavigation, useTheme } from "@react-navigation/native";
 import MapView, { Polyline } from "react-native-maps";
 import { googleMapsStyling } from "../../maps/google-maps-styling";
 import * as Location from "expo-location";
@@ -38,6 +38,7 @@ export default function RouteSelection(props) {
     let firstRun = true;
     const containerPadding = 15;
     const wearFaceMask = true;
+    const navigation = useNavigation();
 
     const [loading, setLoading] = useState(false);
     const [mapsIsRecentered, setMapsIsRecentered] = useState(false);
@@ -59,12 +60,13 @@ export default function RouteSelection(props) {
         try {
             await axios
                 .post(`${configs.API_URL}/route/new`, {
-                    origin: "coordinates:13.7623641,100.4719031",
-                    destination: "coordinates:13.7546154,100.5324766",
+                    data: {
+                        origin: "coordinates:13.7623641,100.4719031",
+                        destination: "coordinates:13.7546154,100.5324766",
+                    },
                     headers: {
                         Authorization: `Bearer ${configs.PERSISTENT_JWT}`,
                     },
-                    timeout: 10000,
                 })
                 .then(function (result) {
                     console.log(result.data);
@@ -79,6 +81,9 @@ export default function RouteSelection(props) {
         } catch (error) {
             setError31(true);
         }
+    }
+    function goBack() {
+        navigation.pop();
     }
 
     const styles = StyleSheet.create({
@@ -211,7 +216,6 @@ export default function RouteSelection(props) {
                     headers: {
                         Authorization: `Bearer ${configs.PERSISTENT_JWT}`,
                     },
-                    timeout: 10000,
                 },
             )
             .then((response) => {
@@ -256,7 +260,11 @@ export default function RouteSelection(props) {
             ></MapView>
             <View style={styles.backButtonContainer}>
                 <SafeAreaView edges={["top"]} />
-                <BackButton />
+                <BackButton
+                    onPress={() => {
+                        goBack();
+                    }}
+                />
             </View>
             <View style={styles.scrollView}>
                 <RouteSelectionBar

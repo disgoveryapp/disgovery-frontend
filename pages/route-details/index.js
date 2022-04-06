@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { SafeAreaView, StyleSheet, Text, View, Dimensions, ScrollView } from "react-native";
 import ThemedText from "../../components/themed-text";
-import { useTheme } from "@react-navigation/native";
+import { useNavigation, useTheme } from "@react-navigation/native";
 import MapView, { Polyline } from "react-native-maps";
 import { googleMapsStyling } from "../../maps/google-maps-styling";
 import * as Location from "expo-location";
@@ -37,6 +37,10 @@ export default function RouteDetails() {
     const [api31Result, setApi31Result] = useState([]);
     const [nearbyStations, setNearbyStations] = useState([]);
     const containerPadding = 15;
+
+    function goBack() {
+        navigation.pop();
+    }
 
     const styles = StyleSheet.create({
         container: {
@@ -185,7 +189,11 @@ export default function RouteDetails() {
             ></MapView>
             <View style={styles.backButtonContainer}>
                 <SafeAreaView edges={["top"]} />
-                <BackButton />
+                <BackButton
+                    onPress={() => {
+                        goBack();
+                    }}
+                />
             </View>
             <View style={styles.navigateButtonContainer}>
                 <NavigateButton />
