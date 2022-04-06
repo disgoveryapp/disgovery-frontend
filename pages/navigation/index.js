@@ -885,6 +885,7 @@ const Navigation = () => {
                             )}
                         </>
                     )}
+
                     {!currentDirection && (
                         <>
                             <SvgAnimatedLinearGradient
@@ -965,50 +966,71 @@ const Navigation = () => {
                         { paddingBottom: interpolatedBottomNavigationPanelPaddingBottom },
                     ]}
                 >
-                    <View style={styles.bottomNavigationPanelTitle}>
-                        <View style={styles.bottomNavigationPanelFromToContainer}>
-                            <ThemedText style={styles.onGoingNavigationText}>
-                                On-going navigation
-                            </ThemedText>
-                            <ArrowIcon style={styles.bottomNaviationPanelTitleArrowIcon} />
-                        </View>
-                        <TouchableWithoutFeedback
-                            style={styles.bottomNavigationExpandUpIconContainer}
-                            onPressIn={onExpandBottomNavigationPanelMenuPress}
-                        >
-                            <Animated.View
-                                style={[
-                                    styles.bottomNavigationExpandUpIconSubContainer,
-                                    {
-                                        transform: [
+                    {currentDirection && (
+                        <>
+                            <View style={styles.bottomNavigationPanelTitle}>
+                                <View style={styles.bottomNavigationPanelFromToContainer}>
+                                    <ThemedText style={styles.onGoingNavigationText}>
+                                        On-going navigation
+                                    </ThemedText>
+                                    <ArrowIcon style={styles.bottomNaviationPanelTitleArrowIcon} />
+                                </View>
+                                <TouchableWithoutFeedback
+                                    style={styles.bottomNavigationExpandUpIconContainer}
+                                    onPressIn={onExpandBottomNavigationPanelMenuPress}
+                                >
+                                    <Animated.View
+                                        style={[
+                                            styles.bottomNavigationExpandUpIconSubContainer,
                                             {
-                                                rotate: interpolatedExpandBottomNavigationPanelMenuIconRotationDeg,
+                                                transform: [
+                                                    {
+                                                        rotate: interpolatedExpandBottomNavigationPanelMenuIconRotationDeg,
+                                                    },
+                                                ],
                                             },
-                                        ],
-                                    },
-                                ]}
+                                        ]}
+                                    >
+                                        <ExpandDownIcon18px />
+                                    </Animated.View>
+                                </TouchableWithoutFeedback>
+                            </View>
+                            <View style={styles.bottomNavigationPanelArrivingInContainer}>
+                                <ThemedText style={styles.bottomNavigationPanelArrivingInText}>
+                                    Arriving in
+                                </ThemedText>
+                                <ThemedText style={styles.bottomNavigationPanelTimeText}>
+                                    {Math.round(currentETA / 60)} min
+                                </ThemedText>
+                                <ThemedText style={styles.bottomNavigationPanelETAText}>
+                                    · {dayjs().add(currentETA, "second").format("HH:mm")}
+                                </ThemedText>
+                            </View>
+                            <Animated.View
+                                style={[{ height: interpolatedBottomNavigationPanelMenuHeight }]}
                             >
-                                <ExpandDownIcon18px />
+                                <BottomNavigationPanelMenu />
                             </Animated.View>
-                        </TouchableWithoutFeedback>
-                    </View>
-                    <View style={styles.bottomNavigationPanelArrivingInContainer}>
-                        <ThemedText style={styles.bottomNavigationPanelArrivingInText}>
-                            Arriving in
-                        </ThemedText>
-                        <ThemedText style={styles.bottomNavigationPanelTimeText}>
-                            {Math.round(currentETA / 60)} min
-                        </ThemedText>
-                        <ThemedText style={styles.bottomNavigationPanelETAText}>
-                            · {dayjs().add(currentETA, "second").format("HH:mm")}
-                        </ThemedText>
-                    </View>
+                        </>
+                    )}
 
-                    <Animated.View
-                        style={[{ height: interpolatedBottomNavigationPanelMenuHeight }]}
-                    >
-                        <BottomNavigationPanelMenu />
-                    </Animated.View>
+                    {!currentDirection && (
+                        <>
+                            <SvgAnimatedLinearGradient
+                                width="80%"
+                                height={16}
+                                primaryColor={colors.upper_background}
+                                secondaryColor={colors.background}
+                            />
+                            <SvgAnimatedLinearGradient
+                                style={{ marginTop: 5 }}
+                                width="90%"
+                                height={27}
+                                primaryColor={colors.upper_background}
+                                secondaryColor={colors.background}
+                            />
+                        </>
+                    )}
                 </Animated.View>
             </TouchableWithoutFeedback>
         </View>
