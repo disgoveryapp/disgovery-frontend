@@ -23,10 +23,11 @@ const INITIAL_MAP_REGION = {
     longitudeDelta: 0.035,
 };
 
-export default function RouteDetails() {
+export default function RouteDetails(props) {
     const { dark, colors } = useTheme();
     const mapRef = useRef();
     let firstRun = true;
+    const navigation = useNavigation();
 
     const [loading, setLoading] = useState(false);
     const [mapsIsRecentered, setMapsIsRecentered] = useState(false);
@@ -36,6 +37,7 @@ export default function RouteDetails() {
 
     const [api31Result, setApi31Result] = useState([]);
     const [nearbyStations, setNearbyStations] = useState([]);
+    const routeData = props.route.params.routeData || {};
     const containerPadding = 15;
 
     function goBack() {
@@ -108,13 +110,11 @@ export default function RouteDetails() {
     }, []);
 
     useEffect(() => {
-        //api31call();
-        setApi31Result(MockupData);
-    }, []);
-
-    useEffect(() => {
         mapRef._updateStyle;
     }, [colors]);
+    useEffect(() => {
+        console.log(routeData);
+    }, []);
 
     async function fetchNewLocation() {
         let { status } = await Location.requestForegroundPermissionsAsync().catch(() => {});
