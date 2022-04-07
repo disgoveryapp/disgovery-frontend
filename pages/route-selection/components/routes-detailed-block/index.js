@@ -54,6 +54,16 @@ export default function RoutesDetailedBlock(props) {
             paddingHorizontal: 12,
             paddingVertical: 11,
             justifyContent: "space-between",
+
+            shadowColor: colors.shadow,
+            shadowOffset: {
+                width: 0,
+                height: 5,
+            },
+            shadowOpacity: 0.34,
+            shadowRadius: 6.27,
+
+            elevation: 10,
         },
         arrivedTime: {
             fontWeight: "500",
