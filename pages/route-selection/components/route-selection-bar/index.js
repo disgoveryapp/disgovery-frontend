@@ -12,12 +12,7 @@ import ScheduleIcon from "../../../../assets/svgs/schedule-icon";
 export default function RouteSelectionBar(props) {
     const { colors } = useTheme();
     const navigation = useNavigation();
-    /*function swapValue() {
-        props.setFlip(true);
-        const temp = props.value;
-        props.onChangeText(props.valueLocation);
-        props.onChangeTextLocation(temp);
-    }*/
+
     function goBack() {
         navigation.pop();
     }
@@ -78,7 +73,7 @@ export default function RouteSelectionBar(props) {
                             <View style={{ marginRight: 6 }}>
                                 <PinDropIcon />
                             </View>
-                            <TouchableOpacity style={styles.textContainer}>
+                            <TouchableOpacity style={styles.textContainer} onPress={() => goBack()}>
                                 <ThemedText style={styles.textinput}>{props.originName}</ThemedText>
                             </TouchableOpacity>
                         </View>
@@ -88,7 +83,7 @@ export default function RouteSelectionBar(props) {
                             <View style={{ marginRight: 6 }}>
                                 <ArrowIcon24 />
                             </View>
-                            <TouchableOpacity style={styles.textContainer}>
+                            <TouchableOpacity style={styles.textContainer} onPress={() => goBack()}>
                                 <ThemedText style={styles.textinput}>
                                     {props.destinationName}
                                 </ThemedText>
