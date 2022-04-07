@@ -59,6 +59,8 @@ export default function RouteSelection(props) {
     const [api31Result, setApi31Result] = useState([]);
     const [error31, setError31] = useState(false);
 
+    const [isClick, setIsClick] = useState(false);
+
     const originLatLng = {
         lat: MockupData[0].origin.coordinates.lat,
         lng: MockupData[0].origin.coordinates.lng,
@@ -168,13 +170,20 @@ export default function RouteSelection(props) {
     });
 
     useEffect(() => {
-        recenter();
-    }, []);
+        if (
+            !(selectData === {} || selectData === undefined || selectData === null) &&
+            isClick === true
+        ) {
+            navigateToRouteDetailsPage(selectData);
+        }
+        if (isClick === true) {
+            setIsClick(false);
+        }
+    }, [isClick, selectData]);
     useEffect(async () => {
-        console.log("Hello");
+        recenter();
+        setSelectData({});
         await api31Call();
-        console.log(api31Result, ":result");
-        console.log(destinationLatLng);
     }, []);
 
     useEffect(() => {
@@ -204,7 +213,6 @@ export default function RouteSelection(props) {
         let lat3 = (latitude1 + latitude2) / 2 - 0.02;
         let lng3 = (longitude1 + longitude2) / 2;
 
-        //-- Return result
         return {
             latitude: lat3,
             longitude: lng3,
@@ -387,7 +395,7 @@ export default function RouteSelection(props) {
                         data={MockupData}
                         setSelectData={setSelectData}
                         onPress={() => {
-                            navigateToRouteDetailsPage(selectData);
+                            setIsClick(true);
                         }}
                     />
                 </ScrollView>

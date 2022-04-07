@@ -54,6 +54,8 @@ export default function SearchOrigin(props) {
     const ErrorMessage = "ERR_UNESCAPED_CHARACTERS";
     const MyLocation = "My Location";
 
+    const [isClick, setIsClick] = useState(false);
+
     const [currentLocation, setCurrentLocation] = useState({
         latitude: 13.764889,
         longitude: 100.538266,
@@ -183,6 +185,13 @@ export default function SearchOrigin(props) {
         }
     }, [debouncedValue]);
 
+    useEffect(() => {
+        if (isClick === true) {
+            goNavigate();
+        }
+        setIsClick(false);
+    }, [originData, destinationData, isClick]);
+
     async function fetchNewLocation() {
         setCurrentLocation(await expoFetchNewLocation());
     }
@@ -210,6 +219,7 @@ export default function SearchOrigin(props) {
         origin_name,
         origin_data,
     ) {
+        console.log("go");
         navigation.navigate("RouteSelection", {
             destination_name: destination_name,
             destination_data: destination_data,
@@ -285,6 +295,24 @@ export default function SearchOrigin(props) {
         },
     });
 
+    function goNavigate() {
+        if (
+            originInput !== undefined &&
+            originInput !== null &&
+            originInput !== "" &&
+            destinationInput !== undefined &&
+            destinationInput !== null &&
+            destinationInput !== ""
+        ) {
+            navigateToRouteSelectionPage(
+                destinationInput,
+                destinationData,
+                originInput,
+                originData,
+            );
+        }
+    }
+
     function SearchData() {
         return (
             <>
@@ -317,21 +345,7 @@ export default function SearchOrigin(props) {
                                                             setDestinationData(item);
                                                         }
                                                     }
-                                                    if (
-                                                        originInput !== undefined &&
-                                                        originInput !== null &&
-                                                        originInput !== "" &&
-                                                        destinationInput !== undefined &&
-                                                        originInput !== null &&
-                                                        originInput !== ""
-                                                    ) {
-                                                        navigateToRouteSelectionPage(
-                                                            destinationInput,
-                                                            destinationData,
-                                                            originInput,
-                                                            originData,
-                                                        );
-                                                    }
+                                                    setIsClick(true);
                                                 }}
                                             />
                                         ))}
@@ -366,21 +380,7 @@ export default function SearchOrigin(props) {
                                                         setDestinationData(item);
                                                     }
                                                 }
-                                                if (
-                                                    originInput !== undefined &&
-                                                    originInput !== null &&
-                                                    originInput !== "" &&
-                                                    destinationInput !== undefined &&
-                                                    originInput !== null &&
-                                                    originInput !== ""
-                                                ) {
-                                                    navigateToRouteSelectionPage(
-                                                        destinationInput,
-                                                        destinationData,
-                                                        originInput,
-                                                        originData,
-                                                    );
-                                                }
+                                                setIsClick(true);
                                             }}
                                         />
                                     ))}
@@ -409,21 +409,7 @@ export default function SearchOrigin(props) {
                                         setDestinationData(currentLocation || INITIAL_MAP_REGION);
                                     }
                                 }
-                                if (
-                                    originInput !== undefined &&
-                                    originInput !== null &&
-                                    originInput !== "" &&
-                                    destinationInput !== undefined &&
-                                    originInput !== null &&
-                                    originInput !== ""
-                                ) {
-                                    navigateToRouteSelectionPage(
-                                        destinationInput,
-                                        destinationData,
-                                        originInput,
-                                        originData,
-                                    );
-                                }
+                                setIsClick(true);
                             }}
                         />
                     </>
