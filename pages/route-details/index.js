@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { SafeAreaView, StyleSheet, Text, View, Dimensions, ScrollView } from "react-native";
 import ThemedText from "../../components/themed-text";
 import { useNavigation, useTheme } from "@react-navigation/native";
-import MapView, { Polyline } from "react-native-maps";
+import MapView, { Polyline, Marker } from "react-native-maps";
 import { googleMapsStyling } from "../../maps/google-maps-styling";
 import * as Location from "expo-location";
 import RecenterButton from "../../components/recenter-button";
@@ -39,6 +39,15 @@ export default function RouteDetails(props) {
     const [nearbyStations, setNearbyStations] = useState([]);
     const routeData = props.route.params.routeData || {};
     const containerPadding = 15;
+
+    const originLatLng = {
+        lat: MockupData[0].origin.coordinates.lat,
+        lng: MockupData[0].origin.coordinates.lng,
+    };
+    const destinationLatLng = {
+        lat: MockupData[0].destination.coordinates.lat,
+        lng: MockupData[0].destination.coordinates.lng,
+    };
 
     function goBack() {
         navigation.pop();
@@ -98,6 +107,12 @@ export default function RouteDetails(props) {
         subScrollView: {
             flex: 1,
         },
+        marker: {
+            width: 20,
+            height: 20,
+            borderRadius: 30,
+            borderWidth: 2.5,
+        },
     });
 
     useEffect(() => {
@@ -141,6 +156,19 @@ export default function RouteDetails(props) {
             latitudeDelta: 0.005,
             longitudeDelta: 0.005,
         };
+    }
+
+    function getAllCoordinate(lookData) {
+        let result = [];
+        lookData = lookData || [];
+        for (let i = 0; i < lookData.length; i++) {
+            result.push({
+                latitude: lookData[i].coordinates.lat,
+                longitude: lookData[i].coordinates.lng,
+            });
+        }
+        console.log(result);
+        return result;
     }
 
     async function recenter() {
@@ -195,7 +223,52 @@ export default function RouteDetails(props) {
                 onTouchStart={() => setMapsIsRecentered(false)}
                 onRegionChangeComplete={(region) => onMapRegionChangeComplete(region)}
                 showsUserLocation
-            ></MapView>
+            >
+                {MockupData[0].directions.map((item, key) => (
+                    <>
+                        {item.type === "board" ? (
+                            <Polyline
+                                coordinates={getAllCoordinate(item.passing)}
+                                strokeColor="#000" // fallback for when `strokeColors` is not supported by the map-provider
+                                strokeColors={[`#${item.via_line.color}`]}
+                                strokeWidth={6}
+                            />
+                        ) : (
+                            <></>
+                        )}
+                        <Marker
+                            coordinate={{
+                                latitude: item.from.coordinates.lat,
+                                longitude: item.from.coordinates.lng,
+                            }}
+                            anchor={{ x: 0.5, y: 0.5 }}
+                        >
+                            <View
+                                style={{
+                                    ...styles.marker,
+                                    backgroundColor: colors.white,
+                                    borderColor: colors.middle_grey,
+                                }}
+                            />
+                        </Marker>
+                        <Marker
+                            coordinate={{
+                                latitude: item.to.coordinates.lat,
+                                longitude: item.to.coordinates.lng,
+                            }}
+                            anchor={{ x: 0.5, y: 0.5 }}
+                        >
+                            <View
+                                style={{
+                                    ...styles.marker,
+                                    backgroundColor: colors.white,
+                                    borderColor: colors.middle_grey,
+                                }}
+                            />
+                        </Marker>
+                    </>
+                ))}
+            </MapView>
             <View style={styles.bottomDetail}>
                 <View style={styles.navigateButtonContainer}>
                     <NavigateButton />
