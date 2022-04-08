@@ -121,7 +121,6 @@ export default function Home() {
                     headers: {
                         Authorization: `Bearer ${configs.PERSISTENT_JWT}`,
                     },
-                    timeout: 10000,
                 },
             )
             .then((response) => {
