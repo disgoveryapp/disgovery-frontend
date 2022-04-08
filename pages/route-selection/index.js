@@ -96,7 +96,13 @@ export default function RouteSelection(props) {
             setError31(true);
         }
     }
+
     function goBack() {
+        navigation.pop();
+    }
+
+    function goBackAndFocusOn(on) {
+        props.route.params.focus(on);
         navigation.pop();
     }
 
@@ -180,6 +186,7 @@ export default function RouteSelection(props) {
             setIsClick(false);
         }
     }, [isClick, selectData]);
+
     useEffect(async () => {
         recenter();
         setSelectData({});
@@ -364,6 +371,7 @@ export default function RouteSelection(props) {
                     originName={originName}
                     originData={originData}
                     swapValue={swapValue}
+                    goBackAndFocusOn={goBackAndFocusOn}
                 />
                 <DividerLine />
 
