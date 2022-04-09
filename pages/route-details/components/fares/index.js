@@ -6,15 +6,14 @@ import ThemedTextMarquee from "../../../../components/themed-text-marquee";
 import CollapseIcon from "../../../../assets/svgs/collapse-icon";
 import ExpandDownIcon from "../../../../assets/svgs/expand-down-icon";
 import TransitLine from "../../../../components/transit-line";
-
+import TransitLineForFares from "../fares/components/index";
 
 function Fares(props) {
 
-    const DATA = props.data;
+    const DATA = props.data[0];
 
     const { dark, colors } = useTheme();
     const [isExpandClick, setExpandClick] = useState(false);
-    const fare = 630;
     const CONTENT = [
         {
             isExpanded:false,
@@ -81,24 +80,15 @@ function Fares(props) {
         }
     }
 
-    const Item = ({ linename, fare }) => (
+    const Item = ({ linename, fare, item }) => (
         <View style={styles.transit}>
-            <TransitLine
-                line={{
-                    name: {
-                        short_name: linename,
-                        long_name: "BTS Sukhumvit Line",
-                    },
-                    color: "7FBF3A",
-                }}
-                fontSize={14}
-            />
+            <TransitLineForFares data={item} linename={linename} />
             <ThemedText style={styles.timeText}>{fare.adult} {fare.currency}</ThemedText>
         </View>
     );
 
     const renderItem = (item) => {
-        return <Item linename={item.from.station.id} fare={item.fare} />;
+        return <Item linename={item.from.station.id} fare={item.fare} item={item} />;
     };
 
     return(

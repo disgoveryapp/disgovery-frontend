@@ -18,7 +18,7 @@ import ArrowIcon from "../../../../assets/svgs/arrow-forward-18px";
 
 function ToFrom(props) {
 
-    const DATA = props.data;
+    const DATA = props.data[0];
 
     const arrivingTime = new Date(
         DATA.schedule.arriving_at || "1970-01-01T16:00:00+00:00",

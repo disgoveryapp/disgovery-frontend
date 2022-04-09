@@ -283,6 +283,8 @@ export default function RouteDetails(props) {
                         }}
                         keyboardDismissMode="interactive"
                     >
+                        {/* <ToFrom containerPadding={containerPadding} data={routeData}/>
+                        <Fares containerPadding={containerPadding} data={routeData}/> */}
                         <RouteShowDetails containerPadding={containerPadding} />
                     </ScrollView>
                 </View>
