@@ -37,7 +37,7 @@ export default function RouteDetails(props) {
 
     const [api31Result, setApi31Result] = useState([]);
     const [nearbyStations, setNearbyStations] = useState([]);
-    const routeData = props.route.params.routeData || {};
+    const [routeData, setRouteData] = useState(props.route.params.routeData || {});
     const containerPadding = 15;
 
     const originLatLng = {
@@ -128,6 +128,7 @@ export default function RouteDetails(props) {
         mapRef._updateStyle;
     }, [colors]);
     useEffect(() => {
+        setRouteData(props.route.params.routeData);
         console.log(routeData);
     }, []);
 
@@ -167,7 +168,6 @@ export default function RouteDetails(props) {
                 longitude: lookData[i].coordinates.lng,
             });
         }
-        console.log(result);
         return result;
     }
 
@@ -224,50 +224,57 @@ export default function RouteDetails(props) {
                 onRegionChangeComplete={(region) => onMapRegionChangeComplete(region)}
                 showsUserLocation
             >
-                {MockupData[0].directions.map((item, key) => (
-                    <>
-                        {item.type === "board" ? (
-                            <Polyline
-                                coordinates={getAllCoordinate(item.passing)}
-                                strokeColor="#000" // fallback for when `strokeColors` is not supported by the map-provider
-                                strokeColors={[`#${item.via_line.color}`]}
-                                strokeWidth={6}
-                            />
-                        ) : (
-                            <></>
-                        )}
-                        <Marker
-                            coordinate={{
-                                latitude: item.from.coordinates.lat,
-                                longitude: item.from.coordinates.lng,
-                            }}
-                            anchor={{ x: 0.5, y: 0.5 }}
-                        >
-                            <View
-                                style={{
-                                    ...styles.marker,
-                                    backgroundColor: colors.white,
-                                    borderColor: colors.middle_grey,
-                                }}
-                            />
-                        </Marker>
-                        <Marker
-                            coordinate={{
-                                latitude: item.to.coordinates.lat,
-                                longitude: item.to.coordinates.lng,
-                            }}
-                            anchor={{ x: 0.5, y: 0.5 }}
-                        >
-                            <View
-                                style={{
-                                    ...styles.marker,
-                                    backgroundColor: colors.white,
-                                    borderColor: colors.middle_grey,
-                                }}
-                            />
-                        </Marker>
-                    </>
-                ))}
+                {routeData !== undefined &&
+                    routeData !== null &&
+                    routeData !== {} &&
+                    "destination" in routeData && (
+                        <>
+                            {routeData.directions.map((item, key) => (
+                                <>
+                                    {item.type === "board" ? (
+                                        <Polyline
+                                            coordinates={getAllCoordinate(item.passing)}
+                                            strokeColor="#000" // fallback for when `strokeColors` is not supported by the map-provider
+                                            strokeColors={[`#${item.via_line.color}`]}
+                                            strokeWidth={6}
+                                        />
+                                    ) : (
+                                        <></>
+                                    )}
+                                    <Marker
+                                        coordinate={{
+                                            latitude: item.from.coordinates.lat,
+                                            longitude: item.from.coordinates.lng,
+                                        }}
+                                        anchor={{ x: 0.5, y: 0.5 }}
+                                    >
+                                        <View
+                                            style={{
+                                                ...styles.marker,
+                                                backgroundColor: colors.white,
+                                                borderColor: colors.middle_grey,
+                                            }}
+                                        />
+                                    </Marker>
+                                    <Marker
+                                        coordinate={{
+                                            latitude: item.to.coordinates.lat,
+                                            longitude: item.to.coordinates.lng,
+                                        }}
+                                        anchor={{ x: 0.5, y: 0.5 }}
+                                    >
+                                        <View
+                                            style={{
+                                                ...styles.marker,
+                                                backgroundColor: colors.white,
+                                                borderColor: colors.middle_grey,
+                                            }}
+                                        />
+                                    </Marker>
+                                </>
+                            ))}
+                        </>
+                    )}
             </MapView>
             <View style={styles.bottomDetail}>
                 <View style={styles.navigateButtonContainer}>
@@ -283,9 +290,7 @@ export default function RouteDetails(props) {
                         }}
                         keyboardDismissMode="interactive"
                     >
-                        {/* <ToFrom containerPadding={containerPadding} data={routeData}/>
-                        <Fares containerPadding={containerPadding} data={routeData}/> */}
-                        <RouteShowDetails containerPadding={containerPadding} />
+                        <RouteShowDetails containerPadding={containerPadding} data={routeData} />
                     </ScrollView>
                 </View>
             </View>

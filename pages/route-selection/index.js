@@ -42,6 +42,7 @@ export default function RouteSelection(props) {
     const hasOverviewRoute = false;
 
     const [loading, setLoading] = useState(false);
+    const [loadingDataFromApi, setLoadingDataFromApi] = useState(false);
     const [mapsIsRecentered, setMapsIsRecentered] = useState(false);
     const [location, setLocation] = useState(null);
     const [mapCurrentLocationRegion, setMapCurrentLocationRegion] = useState({});
@@ -59,6 +60,8 @@ export default function RouteSelection(props) {
     const [api31Result, setApi31Result] = useState([]);
     const [error31, setError31] = useState(false);
 
+    const [isClick, setIsClick] = useState(false);
+
     const originLatLng = {
         lat: MockupData[0].origin.coordinates.lat,
         lng: MockupData[0].origin.coordinates.lng,
@@ -71,19 +74,21 @@ export default function RouteSelection(props) {
     async function api31Call() {
         try {
             await axios
-                .post(`${configs.API_URL}/route/new`, {
-                    data: {
+                .post(
+                    `${configs.API_URL}/route/new`,
+                    {
                         origin: "coordinates:13.7623641,100.4719031",
                         destination: "coordinates:13.7546154,100.5324766",
                     },
-                    headers: {
-                        Authorization: `Bearer ${configs.PERSISTENT_JWT}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${configs.PERSISTENT_JWT}`,
+                        },
                     },
-                })
+                )
                 .then(function (result) {
-                    console.log(result.data);
                     setError31(false);
-
+                    console.log("hello");
                     if (result.data.data === undefined || result.data.data === null) {
                         setApi31Result([]);
                     } else {
@@ -94,7 +99,13 @@ export default function RouteSelection(props) {
             setError31(true);
         }
     }
+
     function goBack() {
+        navigation.pop();
+    }
+
+    function goBackAndFocusOn(on) {
+        props.route.params.focus(on);
         navigation.pop();
     }
 
@@ -168,14 +179,29 @@ export default function RouteSelection(props) {
     });
 
     useEffect(() => {
-        recenter();
-    }, []);
+        if (
+            !(selectData === {} || selectData === undefined || selectData === null) &&
+            isClick === true
+        ) {
+            navigateToRouteDetailsPage(selectData);
+        }
+        if (isClick === true) {
+            setIsClick(false);
+        }
+    }, [isClick, selectData]);
+
     useEffect(async () => {
-        console.log("Hello");
+        recenter();
+        setSelectData({});
+        setLoadingDataFromApi(true);
         await api31Call();
-        console.log(api31Result, ":result");
-        console.log(destinationLatLng);
+        console.log(api31Result);
+        setLoadingDataFromApi(false);
     }, []);
+
+    useEffect(() => {
+        recenter();
+    }, [api31Result]);
 
     useEffect(() => {
         mapRef._updateStyle;
@@ -204,7 +230,6 @@ export default function RouteSelection(props) {
         let lat3 = (latitude1 + latitude2) / 2 - 0.02;
         let lng3 = (longitude1 + longitude2) / 2;
 
-        //-- Return result
         return {
             latitude: lat3,
             longitude: lng3,
@@ -286,14 +311,7 @@ export default function RouteSelection(props) {
             <MapView
                 ref={mapRef}
                 style={styles.maps}
-                initialRegion={
-                    middlePoint(
-                        originLatLng.lat,
-                        originLatLng.lng,
-                        destinationLatLng.lat,
-                        destinationLatLng.lng,
-                    ) || INITIAL_MAP_REGION
-                }
+                initialRegion={INITIAL_MAP_REGION}
                 provider="google"
                 customMapStyle={dark ? googleMapsStyling.dark : googleMapsStyling.light}
                 onTouchStart={() => setMapsIsRecentered(false)}
@@ -313,7 +331,7 @@ export default function RouteSelection(props) {
                         },
                     ]}
                     strokeColor="#000" // fallback for when `strokeColors` is not supported by the map-provider
-                    strokeColors={["#66c500"]}
+                    strokeColors={[colors.primary]}
                     strokeWidth={6}
                 />
                 <Marker
@@ -356,6 +374,7 @@ export default function RouteSelection(props) {
                     originName={originName}
                     originData={originData}
                     swapValue={swapValue}
+                    goBackAndFocusOn={goBackAndFocusOn}
                 />
                 <DividerLine />
 
@@ -381,15 +400,17 @@ export default function RouteSelection(props) {
                         />
                     )}
 
-                    <SuggestedRoutes
-                        topictextStyle={styles.topictext}
-                        containerPadding={containerPadding}
-                        data={MockupData}
-                        setSelectData={setSelectData}
-                        onPress={() => {
-                            navigateToRouteDetailsPage(selectData);
-                        }}
-                    />
+                    {api31Result && (
+                        <SuggestedRoutes
+                            topictextStyle={styles.topictext}
+                            containerPadding={containerPadding}
+                            data={api31Result}
+                            setSelectData={setSelectData}
+                            onPress={() => {
+                                setIsClick(true);
+                            }}
+                        />
+                    )}
                 </ScrollView>
             </View>
         </View>
