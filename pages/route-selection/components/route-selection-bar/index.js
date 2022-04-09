@@ -13,10 +13,6 @@ export default function RouteSelectionBar(props) {
     const { colors } = useTheme();
     const navigation = useNavigation();
 
-    function goBack() {
-        navigation.pop();
-    }
-
     const styles = StyleSheet.create({
         outerContainer: {
             display: "flex",
@@ -73,7 +69,10 @@ export default function RouteSelectionBar(props) {
                             <View style={{ marginRight: 6 }}>
                                 <PinDropIcon />
                             </View>
-                            <TouchableOpacity style={styles.textContainer} onPress={() => goBack()}>
+                            <TouchableOpacity
+                                style={styles.textContainer}
+                                onPress={() => props.goBackAndFocusOn("origin")}
+                            >
                                 <ThemedText style={styles.textinput}>{props.originName}</ThemedText>
                             </TouchableOpacity>
                         </View>
@@ -83,7 +82,10 @@ export default function RouteSelectionBar(props) {
                             <View style={{ marginRight: 6 }}>
                                 <ArrowIcon24 />
                             </View>
-                            <TouchableOpacity style={styles.textContainer} onPress={() => goBack()}>
+                            <TouchableOpacity
+                                style={styles.textContainer}
+                                onPress={() => props.goBackAndFocusOn("destination")}
+                            >
                                 <ThemedText style={styles.textinput}>
                                     {props.destinationName}
                                 </ThemedText>

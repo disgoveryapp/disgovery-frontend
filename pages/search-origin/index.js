@@ -192,6 +192,16 @@ export default function SearchOrigin(props) {
         setIsClick(false);
     }, [originData, destinationData, isClick]);
 
+    function focus(on) {
+        if (on === "origin") {
+            // focus on origin search box
+            console.log("focus on origin");
+        } else if (on === "destination") {
+            // focus on destination search box
+            console.log("focus on destination");
+        }
+    }
+
     async function fetchNewLocation() {
         setCurrentLocation(await expoFetchNewLocation());
     }
@@ -225,6 +235,7 @@ export default function SearchOrigin(props) {
             destination_data: destination_data,
             origin_name: origin_name,
             origin_data: origin_data,
+            focus: focus,
         });
     }
 

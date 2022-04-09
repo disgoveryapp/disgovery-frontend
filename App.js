@@ -51,8 +51,8 @@ export default function App() {
                             headerShown: false,
                         }}
                     >
-                        <Stack.Screen name="RouteDetails" component={RouteDetails} />
                         <Stack.Screen name="Home" component={Home} />
+                        <Stack.Screen name="RouteDetails" component={RouteDetails} />
                         <Stack.Screen name="TripDetails" component={TripDetails} />
                         <Stack.Screen
                             name="Search"
