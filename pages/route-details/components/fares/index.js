@@ -88,7 +88,9 @@ function Fares(props) {
     );
 
     const renderItem = (item) => {
-        return <Item linename={item.from.station.id} fare={item.fare} item={item} />;
+        return (
+        <Item linename={item.from.station.id} fare={item.fare} item={item} />
+        );
     };
 
     return(

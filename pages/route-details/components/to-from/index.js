@@ -97,8 +97,6 @@ function ToFrom(props) {
                 textAlign: "right",
                 fontSize: 14,
                 color: colors.subtitle,
-                // color: props.subTimeColor || colors.primary,
-                // color: "black",
             },
         });
 
