@@ -35,7 +35,7 @@ const INITIAL_MAP_REGION = {
 export default function RouteSelection(props) {
     const { dark, colors } = useTheme();
     const mapRef = useRef();
-    let firstRun = true;
+    const [firstRun, setFirstRun] = useState(true);
     const containerPadding = 15;
     const wearFaceMask = true;
     const navigation = useNavigation();
@@ -50,11 +50,14 @@ export default function RouteSelection(props) {
 
     const [nearbyStations, setNearbyStations] = useState([]);
 
+<<<<<<< HEAD
     //const [destinationName, setDestinationName] = useState("Siam");
     //const [destinationData, setDestinationData] = useState({});
     //const [originName, setOriginName] = useState("Central World");
     //const [originData, setOriginData] = useState({});
 
+=======
+>>>>>>> 6c6b5d9393ac9a0c29b60cddb7e21bb7505b5b68
     const [destinationName, setDestinationName] = useState(
         props.route.params.destination_name || "",
     );
@@ -66,7 +69,7 @@ export default function RouteSelection(props) {
 
     const [selectData, setSelectData] = useState({});
 
-    const [api31Result, setApi31Result] = useState([]);
+    const [routeData, setRouteData] = useState([]);
     const [error31, setError31] = useState(false);
 
     const [isClick, setIsClick] = useState(false);
@@ -113,9 +116,9 @@ export default function RouteSelection(props) {
                     setError31(false);
                     console.log("hello");
                     if (result.data.data === undefined || result.data.data === null) {
-                        setApi31Result([]);
+                        setRouteData([]);
                     } else {
-                        setApi31Result(result.data.data);
+                        setRouteData(result.data.data);
                     }
                 });
         } catch (error) {
@@ -217,8 +220,8 @@ export default function RouteSelection(props) {
     useEffect(async () => {
         setSelectData({});
         setLoadingDataFromApi(true);
-        await api31Call();
-        console.log(api31Result);
+        console.log("hi");
+        getRoute();
         setLoadingDataFromApi(false);
     }, []);
 
