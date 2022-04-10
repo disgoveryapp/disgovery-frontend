@@ -103,7 +103,7 @@ export default function SearchOriginBar(props) {
                                     tabOne();
                                     props.onPressOriginIn();
                                 }}
-                                autoFocus={props.autoFocus}
+                                autoFocus={props.tabOneFocus}
                             />
                             <View>
                                 {props.value && isKeyboardOpen && isTabOneOpen ? (
@@ -134,6 +134,7 @@ export default function SearchOriginBar(props) {
                                     tabTwo();
                                     props.onPressDestinationIn();
                                 }}
+                                autoFocus={!props.tabOneFocus}
                             />
                             <View>
                                 {props.valueLocation && isKeyboardOpen && isTabTwoOpen ? (

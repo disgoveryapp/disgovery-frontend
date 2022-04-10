@@ -55,6 +55,7 @@ export default function SearchOrigin(props) {
     const MyLocation = "My Location";
 
     const [isClick, setIsClick] = useState(false);
+    const [tabOneFocus, setTabOneFocus] = useState(true);
 
     const [currentLocation, setCurrentLocation] = useState({
         latitude: 13.764889,
@@ -195,9 +196,15 @@ export default function SearchOrigin(props) {
     function focus(on) {
         if (on === "origin") {
             // focus on origin search box
+            if (tabOneFocus == false) {
+                setTabOneFocus(true);
+            }
             console.log("focus on origin");
         } else if (on === "destination") {
             // focus on destination search box
+            if (tabOneFocus == true) {
+                setTabOneFocus(false);
+            }
             console.log("focus on destination");
         }
     }
@@ -465,8 +472,9 @@ export default function SearchOrigin(props) {
                             setIsSearchDestination(true);
                         }}
                         setFlip={setFlip}
-                        autoFocus={true}
                         swapValue={swapValue}
+                        tabOneFocus={tabOneFocus}
+                        setTabOneFocus={setTabOneFocus}
                     />
                 </View>
 
