@@ -35,7 +35,7 @@ const INITIAL_MAP_REGION = {
 export default function RouteSelection(props) {
     const { dark, colors } = useTheme();
     const mapRef = useRef();
-    let firstRun = true;
+    const [firstRun, setFirstRun] = useState(true);
     const containerPadding = 15;
     const wearFaceMask = true;
     const navigation = useNavigation();
@@ -50,28 +50,26 @@ export default function RouteSelection(props) {
 
     const [nearbyStations, setNearbyStations] = useState([]);
 
-    const [destinationName, setDestinationName] = useState("Siam");
-    const [destinationData, setDestinationData] = useState({});
-    const [originName, setOriginName] = useState("Central World");
-    const [originData, setOriginData] = useState({});
+    const [destinationName, setDestinationName] = useState(
+        props.route.params.destination_name || "",
+    );
+    const [destinationData, setDestinationData] = useState(
+        props.route.params.destination_data || {},
+    );
+    const [originName, setOriginName] = useState(props.route.params.origin_name || "");
+    const [originData, setOriginData] = useState(props.route.params.origin_data || {});
 
     const [selectData, setSelectData] = useState({});
 
-    const [api31Result, setApi31Result] = useState([]);
+    const [routeData, setRouteData] = useState([]);
     const [error31, setError31] = useState(false);
 
     const [isClick, setIsClick] = useState(false);
 
-    const originLatLng = {
-        lat: MockupData[0].origin.coordinates.lat,
-        lng: MockupData[0].origin.coordinates.lng,
-    };
-    const destinationLatLng = {
-        lat: MockupData[0].destination.coordinates.lat,
-        lng: MockupData[0].destination.coordinates.lng,
-    };
+    const [originLatLng, setOriginLatLng] = useState({});
+    const [destinationLatLng, setDestinationLatLng] = useState({});
 
-    async function api31Call() {
+    async function getRoute() {
         try {
             await axios
                 .post(
@@ -90,12 +88,13 @@ export default function RouteSelection(props) {
                     setError31(false);
                     console.log("hello");
                     if (result.data.data === undefined || result.data.data === null) {
-                        setApi31Result([]);
+                        setRouteData([]);
                     } else {
-                        setApi31Result(result.data.data);
+                        setRouteData(result.data.data);
                     }
                 });
         } catch (error) {
+            console.log("catch");
             setError31(true);
         }
     }
@@ -190,18 +189,29 @@ export default function RouteSelection(props) {
         }
     }, [isClick, selectData]);
 
-    useEffect(async () => {
+    useEffect(() => {
         recenter();
         setSelectData({});
         setLoadingDataFromApi(true);
-        await api31Call();
-        console.log(api31Result);
+        console.log("hi");
+        getRoute();
         setLoadingDataFromApi(false);
     }, []);
 
     useEffect(() => {
-        recenter();
-    }, [api31Result]);
+        console.log("ktns");
+        if (routeData !== undefined && routeData !== null && routeData.length !== 0) {
+            setOriginLatLng({
+                latitude: routeData[0].origin.coordinates.lat,
+                longitude: routeData[0].origin.coordinates.lng,
+            });
+            setDestinationLatLng({
+                latitude: routeData[0].destination.coordinates.lat,
+                longitude: routeData[0].destination.coordinates.lng,
+            });
+            recenter();
+        }
+    }, [routeData]);
 
     useEffect(() => {
         mapRef._updateStyle;
@@ -250,29 +260,6 @@ export default function RouteSelection(props) {
         setMapsIsRecentered(true);
     }
 
-    function fetchNearbyStations(region) {
-        setLoading(true);
-        axios
-            .get(
-                `${configs.API_URL}/station/nearby?lat=${region.latitude}&lng=${
-                    region.longitude
-                }&radius=${region.latitudeDelta * 111045}`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${configs.PERSISTENT_JWT}`,
-                    },
-                },
-            )
-            .then((response) => {
-                setNearbyStations(response.data.data);
-                setLoading(false);
-            })
-            .catch((error) => {
-                console.log(error);
-                setNearbyStations([]);
-                setLoading(false);
-            });
-    }
     function DividerLine() {
         return <View style={styles.line} />;
     }
@@ -284,10 +271,6 @@ export default function RouteSelection(props) {
             </TouchableOpacity>
         );
     }*/
-
-    function onMapRegionChangeComplete(region) {
-        fetchNearbyStations(region);
-    }
 
     function swapValue() {
         const temp = originName;
@@ -315,55 +298,61 @@ export default function RouteSelection(props) {
                 provider="google"
                 customMapStyle={dark ? googleMapsStyling.dark : googleMapsStyling.light}
                 onTouchStart={() => setMapsIsRecentered(false)}
-                onRegionChangeComplete={(region) => onMapRegionChangeComplete(region)}
                 showsUserLocation
                 zoomEnabled={false}
             >
-                <Polyline
-                    coordinates={[
-                        {
-                            latitude: originLatLng.lat,
-                            longitude: originLatLng.lng,
-                        },
-                        {
-                            latitude: destinationLatLng.lat,
-                            longitude: destinationLatLng.lng,
-                        },
-                    ]}
-                    strokeColor="#000" // fallback for when `strokeColors` is not supported by the map-provider
-                    strokeColors={[colors.primary]}
-                    strokeWidth={6}
-                />
-                <Marker
-                    coordinate={{
-                        latitude: destinationLatLng.lat,
-                        longitude: destinationLatLng.lng,
-                    }}
-                    anchor={{ x: 0.5, y: 0.5 }}
-                >
-                    <View
-                        style={{
-                            ...styles.marker,
-                            backgroundColor: colors.white,
-                            borderColor: colors.middle_grey,
-                        }}
-                    />
-                </Marker>
-                <Marker
-                    coordinate={{
-                        latitude: originLatLng.lat,
-                        longitude: originLatLng.lng,
-                    }}
-                    anchor={{ x: 0.5, y: 0.5 }}
-                >
-                    <View
-                        style={{
-                            ...styles.marker,
-                            backgroundColor: colors.white,
-                            borderColor: colors.middle_grey,
-                        }}
-                    />
-                </Marker>
+                {originLatLng.hasOwnProperty("latitude") &&
+                    originLatLng.hasOwnProperty("longtitude") &&
+                    destinationLatLng.hasOwnProperty("latitude") &&
+                    destinationLatLng.hasOwnProperty("longtitude") && (
+                        <>
+                            <Polyline
+                                coordinates={[
+                                    {
+                                        latitude: originLatLng.latitude,
+                                        longitude: originLatLng.longitude,
+                                    },
+                                    {
+                                        latitude: destinationLatLng.latitude,
+                                        longitude: destinationLatLng.longitude,
+                                    },
+                                ]}
+                                strokeColor="#000" // fallback for when `strokeColors` is not supported by the map-provider
+                                strokeColors={[colors.primary]}
+                                strokeWidth={6}
+                            />
+                            <Marker
+                                coordinate={{
+                                    latitude: destinationLatLng.latitude,
+                                    longitude: destinationLatLng.longitude,
+                                }}
+                                anchor={{ x: 0.5, y: 0.5 }}
+                            >
+                                <View
+                                    style={{
+                                        ...styles.marker,
+                                        backgroundColor: colors.white,
+                                        borderColor: colors.middle_grey,
+                                    }}
+                                />
+                            </Marker>
+                            <Marker
+                                coordinate={{
+                                    latitude: originLatLng.latitude,
+                                    longitude: originLatLng.longitude,
+                                }}
+                                anchor={{ x: 0.5, y: 0.5 }}
+                            >
+                                <View
+                                    style={{
+                                        ...styles.marker,
+                                        backgroundColor: colors.white,
+                                        borderColor: colors.middle_grey,
+                                    }}
+                                />
+                            </Marker>
+                        </>
+                    )}
             </MapView>
 
             <View style={styles.scrollView}>
@@ -400,17 +389,19 @@ export default function RouteSelection(props) {
                         />
                     )}
 
-                    {api31Result && (
-                        <SuggestedRoutes
-                            topictextStyle={styles.topictext}
-                            containerPadding={containerPadding}
-                            data={api31Result}
-                            setSelectData={setSelectData}
-                            onPress={() => {
-                                setIsClick(true);
-                            }}
-                        />
-                    )}
+                    {routeData !== undefined &&
+                        routeData !== null &&
+                        Object.keys(routeData).length !== 0 && (
+                            <SuggestedRoutes
+                                topictextStyle={styles.topictext}
+                                containerPadding={containerPadding}
+                                data={routeData}
+                                setSelectData={setSelectData}
+                                onPress={() => {
+                                    setIsClick(true);
+                                }}
+                            />
+                        )}
                 </ScrollView>
             </View>
         </View>
