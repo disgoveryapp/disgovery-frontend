@@ -26,12 +26,12 @@ import {
     ROUTE_DETAILS,
     snapToPolyline,
 } from "./util";
-import * as Reanimated from "react-native-reanimated";
 import * as Speech from "expo-speech";
 import * as Haptics from "expo-haptics";
 import RecenterButton from "../../components/recenter-button";
 import ExpandDownIcon18px from "../../assets/svgs/expand-down-icon-18px";
 import SvgAnimatedLinearGradient from "react-native-svg-animated-linear-gradient/src";
+import { sendNotification } from "../../functions/notification";
 
 const CHECKPOINT_SNAP_DISTANCE = 0.1;
 
@@ -268,6 +268,11 @@ const Navigation = () => {
             if (!currentDirection) {
                 setCurrentDirection(directions[nearestKey]);
                 speakDirectionWithHaptics(directions, nearestKey);
+                sendNotification(
+                    directions[nearestKey].subtext || undefined,
+                    directions[nearestKey].text,
+                    1,
+                );
                 return;
             }
 
@@ -278,6 +283,11 @@ const Navigation = () => {
                 ) {
                     setCurrentDirection(directions[nearestKey]);
                     speakDirectionWithHaptics(directions, nearestKey);
+                    sendNotification(
+                        directions[nearestKey].subtext || undefined,
+                        directions[nearestKey].text,
+                        1,
+                    );
                 }
             }
         }
