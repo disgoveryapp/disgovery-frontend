@@ -50,14 +50,11 @@ export default function RouteSelection(props) {
 
     const [nearbyStations, setNearbyStations] = useState([]);
 
-<<<<<<< HEAD
     //const [destinationName, setDestinationName] = useState("Siam");
     //const [destinationData, setDestinationData] = useState({});
     //const [originName, setOriginName] = useState("Central World");
     //const [originData, setOriginData] = useState({});
 
-=======
->>>>>>> 6c6b5d9393ac9a0c29b60cddb7e21bb7505b5b68
     const [destinationName, setDestinationName] = useState(
         props.route.params.destination_name || "",
     );
@@ -69,7 +66,7 @@ export default function RouteSelection(props) {
 
     const [selectData, setSelectData] = useState({});
 
-    const [routeData, setRouteData] = useState([]);
+    const [api31Result, setApi31Result] = useState([]);
     const [error31, setError31] = useState(false);
 
     const [isClick, setIsClick] = useState(false);
@@ -83,7 +80,7 @@ export default function RouteSelection(props) {
         if (originData.station_id) {
             origin = `station: ${originData.station_id}`;
         } else if (originData.place_id) {
-            origin = `place_id:${originData.place_id}`;
+            origin = `google:${originData.place_id}`;
         } else {
             origin = `coordinates:${originData.coordinates.lat},${originData.coordinates.lng}}`;
         }
@@ -116,9 +113,9 @@ export default function RouteSelection(props) {
                     setError31(false);
                     console.log("hello");
                     if (result.data.data === undefined || result.data.data === null) {
-                        setRouteData([]);
+                        setApi31Result([]);
                     } else {
-                        setRouteData(result.data.data);
+                        setApi31Result(result.data.data);
                     }
                 });
         } catch (error) {
