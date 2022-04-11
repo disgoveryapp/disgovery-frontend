@@ -1,4 +1,5 @@
 import "react-native-reanimated";
+import { useEffect } from "react";
 import {
     useFonts,
     Barlow_500Medium,
@@ -16,6 +17,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
 import { Text, useColorScheme, View } from "react-native";
 import { darkTheme, lightTheme } from "./themes/themes";
+import * as Location from "expo-location";
 
 import Home from "./pages/home";
 
@@ -39,6 +41,13 @@ export default function App() {
     });
 
     const Stack = createNativeStackNavigator();
+
+    useEffect(() => {
+        const requestPermissions = async () => {
+            const foreground = await Location.requestForegroundPermissionsAsync();
+        };
+        requestPermissions();
+    }, []);
 
     if (!fontLoaded) return <AppLoading />;
     else

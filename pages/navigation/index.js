@@ -55,9 +55,13 @@ const BOTTOM_NAVIGATION_PADDING_BOTTOM_COLLAPSED = 18;
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const SCREEN_HEIGHT = Dimensions.get("window").height;
 
+let foregroundSubscription = null;
+
 const Navigation = () => {
     const { colors, dark } = useTheme();
     let firstRun = true;
+    let firstRecentered = false;
+
     const mapRef = useRef(null);
     const currentLocationMarkerRef = useRef(null);
     const SAFE_AREA = useSafeAreaInsets();
@@ -101,8 +105,8 @@ const Navigation = () => {
         if (subscribed) {
             if (firstRun) {
                 (async () => {
-                    fetchNewLocation(true);
-                    parsePolylines();
+                    await parsePolylines();
+                    fetchNewLocation();
                     setSpeechVoices(await Speech.getAvailableVoicesAsync());
                 })().catch(() => {});
                 setBottomNavigationPanelMenuIsExpanded(true);
@@ -110,7 +114,7 @@ const Navigation = () => {
                 firstRun = false;
             }
 
-            setInterval(async () => fetchNewLocation(false), 100);
+            // setInterval(async () => fetchNewLocation(false), 100);
         }
 
         return () => {
@@ -127,10 +131,13 @@ const Navigation = () => {
     }, [speechVoices]);
 
     useEffect(() => {
+        console.log("location changed");
+
         let subscribed = true;
 
         if (subscribed) {
             if (polylines.length !== 0 && location) {
+                console.log("CALC");
                 let snapped = snapToPolyline(polylines, location);
                 if (snapped) {
                     if (
@@ -193,28 +200,38 @@ const Navigation = () => {
                 }
             }
         }
-
         return () => {
             subscribed = false;
         };
     }, [location]);
 
-    async function fetchNewLocation(doRecenter) {
-        let { status } = await Location.requestForegroundPermissionsAsync().catch(() => {});
+    async function fetchNewLocation() {
+        console.log("fetching");
+
+        let { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== "granted") {
-            setLocationErrorMessage("Location permission is denied");
+            console.log("fetching denied");
+
+            setLocationErrorMessage("Permission to access location was denied");
             return;
         }
 
-        Location.getCurrentPositionAsync({
-            accuracy: Location.Accuracy.BestForNavigation,
-        })
-            .then((location) => {
-                // console.log("location fetched", location);
+        console.log("fetching granted");
+
+        foregroundSubscription?.remove();
+        foregroundSubscription = await Location.watchPositionAsync(
+            {
+                accuracy: Location.Accuracy.BestForNavigation,
+                timeInterval: 100,
+            },
+            (location) => {
+                console.log("location fetched", location);
+
                 setLocation({
                     latitude: location.coords.latitude,
                     longitude: location.coords.longitude,
                 });
+
                 setMapCurrentLocationRegion({
                     latitude: location.coords.latitude,
                     longitude: location.coords.longitude,
@@ -222,23 +239,25 @@ const Navigation = () => {
                     longitudeDelta: 0.005,
                 });
 
-                if (doRecenter) {
+                if (!firstRecentered) {
                     recenter({
                         latitude: location.coords.latitude,
                         longitude: location.coords.longitude,
                         latitudeDelta: 0.005,
                         longitudeDelta: 0.005,
                     });
+
+                    firstRecentered = true;
                 }
 
-                return {
-                    latitude: location.coords.latitude,
-                    longitude: location.coords.longitude,
-                    latitudeDelta: 0.005,
-                    longitudeDelta: 0.005,
-                };
-            })
-            .catch(() => {});
+                // return {
+                //     latitude: location.coords.latitude,
+                //     longitude: location.coords.longitude,
+                //     latitudeDelta: 0.005,
+                //     longitudeDelta: 0.005,
+                // };
+            },
+        );
     }
 
     async function recenter(region) {
