@@ -1,3 +1,4 @@
+import "react-native-reanimated";
 import {
     useFonts,
     Barlow_500Medium,

@@ -14,8 +14,6 @@ Notifications.setNotificationHandler({
 });
 
 export async function sendNotification(message, title, time) {
-    console.log("sending notification", notificationGranted);
-
     if (firstRun) {
         await getNotificationPermission();
         firstRun = false;
@@ -35,8 +33,6 @@ export async function sendNotification(message, title, time) {
 }
 
 export async function getNotificationPermission() {
-    console.log("requesting permission");
-
     if (isDevice) {
         const { status: existingStatus } = await Notifications.getPermissionsAsync();
         let finalStatus = existingStatus;
@@ -52,7 +48,7 @@ export async function getNotificationPermission() {
             notificationGranted = true;
         }
     } else {
-        alert("Must use physical device for Push Notifications");
+        // alert("Must use physical device for Push Notifications");
     }
 
     if (Platform.OS === "android") {

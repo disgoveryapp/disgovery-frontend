@@ -1,8 +1,6 @@
 import {
     StyleSheet,
     View,
-    Animated,
-    Easing,
     TouchableWithoutFeedback,
     TouchableOpacity,
     Dimensions,
@@ -26,6 +24,14 @@ import {
     ROUTE_DETAILS,
     snapToPolyline,
 } from "./util";
+import Animated, {
+    Easing,
+    runOnJS,
+    runOnUI,
+    useAnimatedStyle,
+    useSharedValue,
+    withTiming,
+} from "react-native-reanimated";
 import * as Speech from "expo-speech";
 import * as Haptics from "expo-haptics";
 import RecenterButton from "../../components/recenter-button";
@@ -43,6 +49,8 @@ const INITIAL_MAP_REGION = {
 };
 
 const BOTTOM_NAVIGATION_PANEL_MENU_HEIGHT = 67;
+const BOTTOM_NAVIGATION_PADDING_BOTTOM_EXPANDED = 8;
+const BOTTOM_NAVIGATION_PADDING_BOTTOM_COLLAPSED = 18;
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const SCREEN_HEIGHT = Dimensions.get("window").height;
@@ -71,17 +79,21 @@ const Navigation = () => {
     const [ETAs, setETAs] = useState([]);
     const [currentETA, setCurrentETA] = useState(0);
 
-    const [doneSubviewWidth, setDoneSubviewWidth] = useState(new Animated.Value(0));
     const [bottomNavigationPanelViewWidth, setBottomNavigationPanelViewWidth] = useState(0);
     const [bottomNavigationPanelMenuIsExpanded, setBottomNavigationPanelMenuIsExpanded] =
         useState(false);
-    const [
-        expandBottomNavigationPanelMenuIconRotation,
-        setExpandBottomNavigationPanelMenuIconRotation,
-    ] = useState(new Animated.Value(0));
+
     const [spoken, setSpoken] = useState([]);
     const [speechVoices, setSpeechVoices] = useState([]);
     const [selectedSpeechVoice, setSelectedSpeechVoice] = useState({ language: "en-GB" });
+
+    const doneSubviewWidthReanimated = useSharedValue(0);
+    const expandBottomNavigationPanelMenuIconRotation = useSharedValue("0deg");
+    const bottomNavigationPanelMenuPaddingBottomReanimated = useSharedValue(
+        BOTTOM_NAVIGATION_PADDING_BOTTOM_COLLAPSED,
+    );
+    const bottomNavigationPanelMenuHeightReanimated = useSharedValue(0);
+    const bottomNavigationPanelMenuDividerOpacityReanimated = useSharedValue(0);
 
     useEffect(() => {
         let subscribed = true;
@@ -574,13 +586,10 @@ const Navigation = () => {
             console.log("DONEDONEDONE");
             console.log(currentDirection);
             setNavigationDone(true);
-
-            Animated.timing(doneSubviewWidth, {
-                toValue: bottomNavigationPanelViewWidth - 20,
-                duration: 4000,
-                easing: Easing.linear,
-                useNativeDriver: false,
-            }).start();
+            runOnUI(() => {
+                "worklet";
+                doneSubviewWidthReanimated.value = bottomNavigationPanelViewWidth - 20;
+            })();
         }
     }
 
@@ -610,17 +619,34 @@ const Navigation = () => {
     }
 
     function onExpandBottomNavigationPanelMenuPress() {
-        rotateExpandBottomNavigationPanelMenuIcon();
-        setBottomNavigationPanelMenuIsExpanded(!bottomNavigationPanelMenuIsExpanded);
+        "worklet";
+        if (!bottomNavigationPanelMenuIsExpanded) {
+            bottomNavigationPanelMenuHeightReanimated.value = BOTTOM_NAVIGATION_PANEL_MENU_HEIGHT;
+            bottomNavigationPanelMenuDividerOpacityReanimated.value = 1;
+            bottomNavigationPanelMenuPaddingBottomReanimated.value =
+                BOTTOM_NAVIGATION_PADDING_BOTTOM_EXPANDED;
+            expandBottomNavigationPanelMenuIconRotation.value = "180deg";
+        } else {
+            bottomNavigationPanelMenuHeightReanimated.value = 0;
+            bottomNavigationPanelMenuDividerOpacityReanimated.value = 0;
+            bottomNavigationPanelMenuPaddingBottomReanimated.value =
+                BOTTOM_NAVIGATION_PADDING_BOTTOM_COLLAPSED;
+            expandBottomNavigationPanelMenuIconRotation.value = "0deg";
+        }
+
+        // rotateExpandBottomNavigationPanelMenuIcon();
+        runOnJS(() => {
+            setBottomNavigationPanelMenuIsExpanded(!bottomNavigationPanelMenuIsExpanded);
+        })();
     }
 
     function rotateExpandBottomNavigationPanelMenuIcon() {
-        Animated.timing(expandBottomNavigationPanelMenuIconRotation, {
-            toValue: bottomNavigationPanelMenuIsExpanded ? 0 : 180,
-            duration: 100,
-            easing: Easing.ease,
-            useNativeDriver: false,
-        }).start();
+        // Animated.timing(expandBottomNavigationPanelMenuIconRotation, {
+        //     toValue: bottomNavigationPanelMenuIsExpanded ? 0 : 180,
+        //     duration: 100,
+        //     easing: Easing.ease,
+        //     useNativeDriver: false,
+        // }).start();
     }
 
     const styles = StyleSheet.create({
@@ -845,6 +871,83 @@ const Navigation = () => {
         },
     });
 
+    const animatedBottomNavigationPanelMenuHeight = useAnimatedStyle(() => {
+        return {
+            height: withTiming(bottomNavigationPanelMenuHeightReanimated.value, {
+                duration: 100,
+                easing: Easing.ease,
+            }),
+        };
+    });
+
+    const animatedBottomNavigationPanelMenuDividerOpacity = useAnimatedStyle(() => {
+        return {
+            opacity: withTiming(bottomNavigationPanelMenuDividerOpacityReanimated.value, {
+                duration: 100,
+                easing: Easing.ease,
+            }),
+        };
+    });
+
+    const animatedBottomNavigationPanelMenuPaddingBottom = useAnimatedStyle(() => {
+        return {
+            paddingBottom: withTiming(bottomNavigationPanelMenuPaddingBottomReanimated.value, {
+                duration: 100,
+                easing: Easing.ease,
+            }),
+        };
+    });
+
+    const animatedDoneSubviewWidth = useAnimatedStyle(() => {
+        return {
+            width: withTiming(doneSubviewWidthReanimated.value, {
+                duration: 4000,
+                easing: Easing.inOut(Easing.linear),
+            }),
+        };
+    });
+
+    const animatedExpandBottomNavigationPanelMenuIconRotation = useAnimatedStyle(() => {
+        return {
+            transform: [
+                {
+                    rotate: withTiming(expandBottomNavigationPanelMenuIconRotation.value, {
+                        duration: 100,
+                        easing: Easing.ease,
+                    }),
+                },
+            ],
+        };
+    });
+
+    // const interpolatedExpandBottomNavigationPanelMenuIconRotationDeg =
+    //     expandBottomNavigationPanelMenuIconRotation.interpolate({
+    //         inputRange: [0, 180],
+    //         outputRange: ["0deg", "180deg"],
+    //         extrapolate: "clamp",
+    //     });
+
+    // const interpolatedBottomNavigationPanelMenuHeight =
+    //     expandBottomNavigationPanelMenuIconRotation.interpolate({
+    //         inputRange: [0, 180],
+    //         outputRange: [0, BOTTOM_NAVIGATION_PANEL_MENU_HEIGHT],
+    //         extrapolate: "clamp",
+    //     });
+
+    // const interpolatedBottomNavigationPanelPaddingBottom =
+    //     expandBottomNavigationPanelMenuIconRotation.interpolate({
+    //         inputRange: [0, 180],
+    //         outputRange: [18, 8],
+    //         extrapolate: "clamp",
+    //     });
+
+    // const interpolatedBottomNavigationPanelDividerOpacity =
+    //     expandBottomNavigationPanelMenuIconRotation.interpolate({
+    //         inputRange: [0, 180],
+    //         outputRange: [0, 1],
+    //         extrapolate: "clamp",
+    //     });
+
     const BottomDoneNavigationPanel = () => (
         <View
             style={{
@@ -864,7 +967,7 @@ const Navigation = () => {
                 }}
             >
                 <Animated.View
-                    style={[styles.bottomDoneSubview, { width: doneSubviewWidth }]}
+                    style={[styles.bottomDoneSubview, animatedDoneSubviewWidth]}
                 ></Animated.View>
                 <ThemedText style={styles.doneText}>Done</ThemedText>
             </View>
@@ -924,34 +1027,6 @@ const Navigation = () => {
         </>
     );
 
-    const interpolatedExpandBottomNavigationPanelMenuIconRotationDeg =
-        expandBottomNavigationPanelMenuIconRotation.interpolate({
-            inputRange: [0, 180],
-            outputRange: ["0deg", "180deg"],
-            extrapolate: "clamp",
-        });
-
-    const interpolatedBottomNavigationPanelMenuHeight =
-        expandBottomNavigationPanelMenuIconRotation.interpolate({
-            inputRange: [0, 180],
-            outputRange: [0, BOTTOM_NAVIGATION_PANEL_MENU_HEIGHT],
-            extrapolate: "clamp",
-        });
-
-    const interpolatedBottomNavigationPanelPaddingBottom =
-        expandBottomNavigationPanelMenuIconRotation.interpolate({
-            inputRange: [0, 180],
-            outputRange: [18, 8],
-            extrapolate: "clamp",
-        });
-
-    const interpolatedBottomNavigationPanelDividerOpacity =
-        expandBottomNavigationPanelMenuIconRotation.interpolate({
-            inputRange: [0, 180],
-            outputRange: [0, 1],
-            extrapolate: "clamp",
-        });
-
     const BottomNavigationPanel = () => (
         <View
             style={styles.bottomNavigationPanelContainerWithSafeAreaContainer}
@@ -973,7 +1048,7 @@ const Navigation = () => {
                 <Animated.View
                     style={[
                         styles.bottomNavigationPanelContainer,
-                        { paddingBottom: interpolatedBottomNavigationPanelPaddingBottom },
+                        animatedBottomNavigationPanelMenuPaddingBottom,
                     ]}
                 >
                     {currentDirection && (
@@ -992,13 +1067,7 @@ const Navigation = () => {
                                     <Animated.View
                                         style={[
                                             styles.bottomNavigationExpandUpIconSubContainer,
-                                            {
-                                                transform: [
-                                                    {
-                                                        rotate: interpolatedExpandBottomNavigationPanelMenuIconRotationDeg,
-                                                    },
-                                                ],
-                                            },
+                                            animatedExpandBottomNavigationPanelMenuIconRotation,
                                         ]}
                                     >
                                         <ExpandDownIcon18px />
@@ -1016,9 +1085,7 @@ const Navigation = () => {
                                     · {dayjs().add(currentETA, "second").format("HH:mm")}
                                 </ThemedText>
                             </View>
-                            <Animated.View
-                                style={[{ height: interpolatedBottomNavigationPanelMenuHeight }]}
-                            >
+                            <Animated.View style={[animatedBottomNavigationPanelMenuHeight]}>
                                 <BottomNavigationPanelMenu />
                             </Animated.View>
                         </>
@@ -1050,10 +1117,7 @@ const Navigation = () => {
         <>
             <View>
                 <Animated.View
-                    style={[
-                        styles.divider,
-                        { opacity: interpolatedBottomNavigationPanelDividerOpacity },
-                    ]}
+                    style={[styles.divider, animatedBottomNavigationPanelMenuDividerOpacity]}
                 />
                 <TouchableOpacity
                     style={styles.bottomNavigationPanelMenuItemContainer}
