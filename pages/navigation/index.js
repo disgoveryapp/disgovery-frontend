@@ -48,14 +48,17 @@ const INITIAL_MAP_REGION = {
     longitudeDelta: 0.035,
 };
 
-const BOTTOM_NAVIGATION_PANEL_MENU_HEIGHT = 67;
-const BOTTOM_NAVIGATION_PADDING_BOTTOM_EXPANDED = 8;
-const BOTTOM_NAVIGATION_PADDING_BOTTOM_COLLAPSED = 18;
-
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const SCREEN_HEIGHT = Dimensions.get("window").height;
 
+const BOTTOM_NAVIGATION_PANEL_MENU_HEIGHT = 67;
+const BOTTOM_NAVIGATION_PADDING_BOTTOM_EXPANDED = 8;
+const BOTTOM_NAVIGATION_PADDING_BOTTOM_COLLAPSED = 18;
+const TOP_NAVIGATION_PANEL_HEIGHT = 0.4 * SCREEN_HEIGHT;
+const TOP_NAVIGATION_PANEL_WIDTH = SCREEN_WIDTH;
+
 let foregroundSubscription = null;
+let currentDirectionExists = null;
 
 const Navigation = () => {
     const { colors, dark } = useTheme();
@@ -86,6 +89,7 @@ const Navigation = () => {
     const [bottomNavigationPanelViewWidth, setBottomNavigationPanelViewWidth] = useState(0);
     const [bottomNavigationPanelMenuIsExpanded, setBottomNavigationPanelMenuIsExpanded] =
         useState(false);
+    const [topNavigationPanelIsExpanded, setTopNavigationPanelIsExpanded] = useState(false);
 
     const [spoken, setSpoken] = useState([]);
     const [speechVoices, setSpeechVoices] = useState([]);
@@ -98,6 +102,10 @@ const Navigation = () => {
     );
     const bottomNavigationPanelMenuHeightReanimated = useSharedValue(0);
     const bottomNavigationPanelMenuDividerOpacityReanimated = useSharedValue(0);
+    let topNavigationPanelHeight = 0;
+    let topNavigationPanelWidth = 0;
+    const topNavigationPanelHeightReanimated = useSharedValue(0);
+    const topNavigationPanelWidthReanimated = useSharedValue(0);
 
     useEffect(() => {
         let subscribed = true;
@@ -106,15 +114,22 @@ const Navigation = () => {
             if (firstRun) {
                 (async () => {
                     await parsePolylines();
-                    fetchNewLocation();
+                    await fetchNewLocation();
                     setSpeechVoices(await Speech.getAvailableVoicesAsync());
                 })().catch(() => {});
+
                 setBottomNavigationPanelMenuIsExpanded(true);
                 setBottomNavigationPanelMenuIsExpanded(false);
                 firstRun = false;
             }
 
-            // setInterval(async () => fetchNewLocation(false), 100);
+            currentDirectionExists = setInterval(async () => {
+                if (!currentDirection) {
+                    await parsePolylines();
+                    await fetchNewLocation();
+                    console.log("refetch");
+                }
+            }, 3000);
         }
 
         return () => {
@@ -130,14 +145,15 @@ const Navigation = () => {
         setSelectedSpeechVoice(speechVoices.find((voice) => voice.language === "en-US"));
     }, [speechVoices]);
 
-    useEffect(() => {
-        console.log("location changed");
-
+    useEffect(async () => {
         let subscribed = true;
 
         if (subscribed) {
+            if (polylines.length === 0) {
+                await parsePolylines();
+            }
+
             if (polylines.length !== 0 && location) {
-                console.log("CALC");
                 let snapped = snapToPolyline(polylines, location);
                 if (snapped) {
                     if (
@@ -205,18 +221,20 @@ const Navigation = () => {
         };
     }, [location]);
 
-    async function fetchNewLocation() {
-        console.log("fetching");
+    useEffect(() => {
+        if (!currentDirection) {
+            console.log(currentDirection);
+            clearInterval(currentDirectionExists);
+            console.log("unsub");
+        }
+    }, [currentDirection]);
 
+    async function fetchNewLocation() {
         let { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== "granted") {
-            console.log("fetching denied");
-
             setLocationErrorMessage("Permission to access location was denied");
             return;
         }
-
-        console.log("fetching granted");
 
         foregroundSubscription?.remove();
         foregroundSubscription = await Location.watchPositionAsync(
@@ -225,8 +243,6 @@ const Navigation = () => {
                 timeInterval: 100,
             },
             (location) => {
-                console.log("location fetched", location);
-
                 setLocation({
                     latitude: location.coords.latitude,
                     longitude: location.coords.longitude,
@@ -249,13 +265,6 @@ const Navigation = () => {
 
                     firstRecentered = true;
                 }
-
-                // return {
-                //     latitude: location.coords.latitude,
-                //     longitude: location.coords.longitude,
-                //     latitudeDelta: 0.005,
-                //     longitudeDelta: 0.005,
-                // };
             },
         );
     }
@@ -396,6 +405,8 @@ const Navigation = () => {
 
             setETAs(tempETAs);
             setCurrentETA(totalETA);
+
+            console.log(totalETA);
         }
     }
 
@@ -639,6 +650,9 @@ const Navigation = () => {
 
     function onExpandBottomNavigationPanelMenuPress() {
         "worklet";
+
+        if (!currentDirection) return;
+
         if (!bottomNavigationPanelMenuIsExpanded) {
             bottomNavigationPanelMenuHeightReanimated.value = BOTTOM_NAVIGATION_PANEL_MENU_HEIGHT;
             bottomNavigationPanelMenuDividerOpacityReanimated.value = 1;
@@ -653,19 +667,36 @@ const Navigation = () => {
             expandBottomNavigationPanelMenuIconRotation.value = "0deg";
         }
 
-        // rotateExpandBottomNavigationPanelMenuIcon();
         runOnJS(() => {
             setBottomNavigationPanelMenuIsExpanded(!bottomNavigationPanelMenuIsExpanded);
         })();
     }
 
-    function rotateExpandBottomNavigationPanelMenuIcon() {
-        // Animated.timing(expandBottomNavigationPanelMenuIconRotation, {
-        //     toValue: bottomNavigationPanelMenuIsExpanded ? 0 : 180,
-        //     duration: 100,
-        //     easing: Easing.ease,
-        //     useNativeDriver: false,
-        // }).start();
+    function onExpandTopNavigationPanelPress() {
+        "worklet";
+        if (!topNavigationPanelIsExpanded) {
+            topNavigationPanelHeightReanimated.value = TOP_NAVIGATION_PANEL_HEIGHT;
+            topNavigationPanelWidthReanimated.value = TOP_NAVIGATION_PANEL_WIDTH;
+        } else {
+            topNavigationPanelHeightReanimated.value = topNavigationPanelHeight;
+            topNavigationPanelWidthReanimated.value = topNavigationPanelWidth;
+        }
+
+        runOnJS(() => {
+            setTopNavigationPanelIsExpanded(!topNavigationPanelIsExpanded);
+        })();
+    }
+
+    function onTopNavigationPanelLayoutChange(event) {
+        if (!topNavigationPanelIsExpanded) {
+            if (event.nativeEvent.height !== topNavigationPanelHeightReanimated.value) {
+                topNavigationPanelHeight = event.nativeEvent.height;
+            }
+
+            if (event.nativeEvent.width !== topNavigationPanelWidthReanimated.value) {
+                topNavigationPanelWidth = event.nativeEvent.width;
+            }
+        }
     }
 
     const styles = StyleSheet.create({
@@ -939,33 +970,18 @@ const Navigation = () => {
         };
     });
 
-    // const interpolatedExpandBottomNavigationPanelMenuIconRotationDeg =
-    //     expandBottomNavigationPanelMenuIconRotation.interpolate({
-    //         inputRange: [0, 180],
-    //         outputRange: ["0deg", "180deg"],
-    //         extrapolate: "clamp",
-    //     });
-
-    // const interpolatedBottomNavigationPanelMenuHeight =
-    //     expandBottomNavigationPanelMenuIconRotation.interpolate({
-    //         inputRange: [0, 180],
-    //         outputRange: [0, BOTTOM_NAVIGATION_PANEL_MENU_HEIGHT],
-    //         extrapolate: "clamp",
-    //     });
-
-    // const interpolatedBottomNavigationPanelPaddingBottom =
-    //     expandBottomNavigationPanelMenuIconRotation.interpolate({
-    //         inputRange: [0, 180],
-    //         outputRange: [18, 8],
-    //         extrapolate: "clamp",
-    //     });
-
-    // const interpolatedBottomNavigationPanelDividerOpacity =
-    //     expandBottomNavigationPanelMenuIconRotation.interpolate({
-    //         inputRange: [0, 180],
-    //         outputRange: [0, 1],
-    //         extrapolate: "clamp",
-    //     });
+    const animatedTopNavigationPanelWidthHeight = useAnimatedStyle(() => {
+        return {
+            height: withTiming(topNavigationPanelHeightReanimated.value, {
+                duration: 200,
+                easing: Easing.ease,
+            }),
+            width: withTiming(topNavigationPanelWidthReanimated.value, {
+                duration: 200,
+                easing: Easing.ease,
+            }),
+        };
+    });
 
     const BottomDoneNavigationPanel = () => (
         <View
@@ -996,7 +1012,16 @@ const Navigation = () => {
     const TopNavigationPanel = () => (
         <>
             <View style={styles.topNavigationPanelContainerWithSafeAreaContainer}>
-                <View style={styles.topNavigationPanelContainer}>
+                {/* <TouchableWithoutFeedback onPress={onExpandTopNavigationPanelPress}> */}
+                <Animated.View
+                    style={[
+                        styles.topNavigationPanelContainer,
+                        // topNavigationPanelHeight === 0 && topNavigationPanelWidth === 0
+                        //     ? {}
+                        //     : animatedTopNavigationPanelWidthHeight,
+                    ]}
+                >
+                    {/* <View onLayout={onTopNavigationPanelLayoutChange}> */}
                     {currentDirection && (
                         <>
                             {currentDirection.distance && (
@@ -1035,7 +1060,9 @@ const Navigation = () => {
                             />
                         </>
                     )}
-                </View>
+                    {/* </View> */}
+                </Animated.View>
+                {/* </TouchableWithoutFeedback> */}
 
                 {offRoad && (
                     <View style={styles.offRoadContainer}>
