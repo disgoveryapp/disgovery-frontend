@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ThemedText from "../../../../components/themed-text";
 import { View, StyleSheet } from "react-native";
 import { useTheme } from "@react-navigation/native";
@@ -9,7 +9,7 @@ import SubwayIcon from "../../../../assets/svgs/subway-icon";
 import TransitLine from "../../../../components/transit-line";
 import ExpandDownIcon18px from "../../../../assets/svgs/expand-down-icon-18px";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { MockupData } from "../../../../configs/configs";
+import { MockupData, getRouteTypeString, snapToPolyline } from "../../../../configs/configs";
 
 export default function RouteShowDetails(props) {
     const { colors } = useTheme();
@@ -95,6 +95,116 @@ export default function RouteShowDetails(props) {
             paddingVertical: 3,
         },
     });
+    useEffect(() => {
+        //parseDirections();
+    }, []);
+
+    function parseDirections() {
+        let tempDirections = [];
+
+        for (let i in props.data.directions) {
+            if (props.data.directions[i].type === "board") {
+                let boardDirection = {
+                    text: `Board ${getRouteTypeString(
+                        props.data.directions[i].via_line.type || "0",
+                        false,
+                    )} from ${props.data.directions[i].from.station.name.en} to ${
+                        props.data.directions[i].to.station.name.en
+                    }`,
+                };
+
+                let alightDirection = {
+                    text: `Alight at ${props.data.directions[i].to.station.name.en}`,
+                };
+
+                for (let j in props.data.directions[i].passing) {
+                    if (parseInt(j) < props.data.directions[i].passing.length - 2) {
+                        let snappedCoordinates = snapToPolyline(polylines, {
+                            latitude: props.data.directions[i].passing[j].coordinates.lat,
+                            longitude: props.data.directions[i].passing[j].coordinates.lng,
+                        });
+
+                        tempDirections.push({
+                            ...boardDirection,
+                            near: {
+                                lat: snappedCoordinates.interpolatedCoordinatesOnPolyline.latitude,
+                                lng: snappedCoordinates.interpolatedCoordinatesOnPolyline.longitude,
+                            },
+                            subtext: `Next: ${
+                                props.data.directions[i].passing[parseInt(j) + 1].station.name.en
+                            }`,
+                        });
+                    } else {
+                        let snappedCoordinates = snapToPolyline(polylines, {
+                            latitude: props.data.directions[i].passing[j].coordinates.lat,
+                            longitude: props.data.directions[i].passing[j].coordinates.lng,
+                        });
+
+                        tempDirections.push({
+                            ...alightDirection,
+                            near: {
+                                lat: snappedCoordinates.interpolatedCoordinatesOnPolyline.latitude,
+                                lng: snappedCoordinates.interpolatedCoordinatesOnPolyline.longitude,
+                            },
+                        });
+                        break;
+                    }
+                }
+            } else if (props.data.directions[i].type === "walk") {
+                for (let step of props.data.directions[i].route.steps) {
+                    tempDirections.push({
+                        distance: { text: `In ${step.distance.text}`, value: step.distance.value },
+                        text: htmlToText(step.html_instructions),
+                        near: props.data.directions[i].start_location,
+                    });
+                }
+            } else if (props.data.directions[i].type === "transfer") {
+                let snappedCoordinates = snapToPolyline(polylines, {
+                    latitude: props.data.directions[i].from.coordinates.lat,
+                    longitude: props.data.directions[i].from.coordinates.lng,
+                });
+
+                tempDirections.push({
+                    text: `Transfer from ${props.data.directions[i].from.station.name.en} to ${props.data.directions[i].to.station.name.en}`,
+                    near: {
+                        lat: snappedCoordinates.interpolatedCoordinatesOnPolyline.latitude,
+                        lng: snappedCoordinates.interpolatedCoordinatesOnPolyline.longitude,
+                    },
+                });
+            }
+
+            if (parseInt(i) === props.data.directions.length - 1) {
+                if (props.data.directions[props.data.directions.length - 1].type === "walk") {
+                    tempDirections.push({
+                        text: `You have arrived at ${
+                            props.data.directions[props.data.directions.length - 1].to.place.address
+                        }`,
+                        near: props.data.directions[props.data.directions.length - 1].to
+                            .coordinates,
+                    });
+                } else if (
+                    props.data.directions[props.data.directions.length - 1].type === "board"
+                ) {
+                    let snappedCoordinates = snapToPolyline(polylines, {
+                        latitude: props.data.destination.coordinates.lat,
+                        longitude: props.data.destination.coordinates.lng,
+                    });
+
+                    tempDirections.push({
+                        text: `You have arrived at ${props.data.destination.station.name.en}`,
+                        near: {
+                            lat: snappedCoordinates.interpolatedCoordinatesOnPolyline.latitude,
+                            lng: snappedCoordinates.interpolatedCoordinatesOnPolyline.longitude,
+                        },
+                    });
+                }
+            }
+        }
+
+        console.log(tempDirections, "tempData");
+        setDirections([...tempDirections]);
+        setCurrentDirection(tempDirections[0]);
+    }
 
     function expandClick() {
         if (isExpandClick == true) {

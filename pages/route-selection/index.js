@@ -28,8 +28,8 @@ const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get("window");
 const INITIAL_MAP_REGION = {
     latitude: 13.764889,
     longitude: 100.538266,
-    latitudeDelta: 0.1,
-    longitudeDelta: 0.1,
+    latitudeDelta: 0.01,
+    longitudeDelta: 0.01,
 };
 
 export default function RouteSelection(props) {
@@ -50,19 +50,19 @@ export default function RouteSelection(props) {
 
     const [nearbyStations, setNearbyStations] = useState([]);
 
-    //const [destinationName, setDestinationName] = useState("Siam");
-    //const [destinationData, setDestinationData] = useState({});
-    //const [originName, setOriginName] = useState("Central World");
-    //const [originData, setOriginData] = useState({});
+    const [destinationName, setDestinationName] = useState("Siam");
+    const [destinationData, setDestinationData] = useState({});
+    const [originName, setOriginName] = useState("Central World");
+    const [originData, setOriginData] = useState({});
 
-    const [destinationName, setDestinationName] = useState(
+    /*const [destinationName, setDestinationName] = useState(
         props.route.params.destination_name || "",
     );
     const [destinationData, setDestinationData] = useState(
         props.route.params.destination_data || {},
     );
     const [originName, setOriginName] = useState(props.route.params.origin_name || "");
-    const [originData, setOriginData] = useState(props.route.params.origin_data || {});
+    const [originData, setOriginData] = useState(props.route.params.origin_data || {}); */
 
     const [selectData, setSelectData] = useState({});
 
@@ -75,6 +75,7 @@ export default function RouteSelection(props) {
     const [destinationLatLng, setDestinationLatLng] = useState({});
 
     async function api31Call() {
+        /*
         let origin = {};
         let destination = {};
         if (originData.station_id) {
@@ -93,8 +94,10 @@ export default function RouteSelection(props) {
         }
         console.log(origin, "origin");
         console.log(destination, "destination");
-
+        */
+        setApi31Result(MockupData);
         try {
+            /*
             await axios
                 .post(
                     `${configs.API_URL}/route/new`,
@@ -117,7 +120,7 @@ export default function RouteSelection(props) {
                     } else {
                         setApi31Result(result.data.data);
                     }
-                });
+                });*/
         } catch (error) {
             console.log("catch");
             setError31(true);
@@ -218,7 +221,7 @@ export default function RouteSelection(props) {
         setSelectData({});
         setLoadingDataFromApi(true);
         console.log("hi");
-        getRoute();
+        api31Call();
         setLoadingDataFromApi(false);
     }, []);
 
@@ -257,6 +260,12 @@ export default function RouteSelection(props) {
     function navigateToRouteDetailsPage(routeData) {
         navigation.navigate("RouteDetails", {
             routeData: routeData,
+            midpoint: middlePoint(
+                originLatLng.latitude,
+                originLatLng.longitude,
+                destinationLatLng.latitude,
+                destinationLatLng.longitude,
+            ),
         });
     }
 
@@ -272,10 +281,10 @@ export default function RouteSelection(props) {
         let longitude1 = parseFloat(lng1);
         let latitude2 = parseFloat(lat2);
         let longitude2 = parseFloat(lng2);
-        let latdelta = Math.abs(latitude1 - latitude2) + 0.1;
+        let latdelta = Math.abs(latitude1 - latitude2);
         let lngdelta = Math.abs(longitude1 - longitude2);
-        let lat3 = (latitude1 + latitude2) / 2;
-        let lng3 = (longitude1 + longitude2) / 2;
+        let lat3 = (latitude1 + latitude2) / 2.0 - 0.05;
+        let lng3 = (longitude1 + longitude2) / 2.0;
 
         return {
             latitude: lat3,
@@ -292,7 +301,7 @@ export default function RouteSelection(props) {
                 originLatLng.longitude,
                 destinationLatLng.latitude,
                 destinationLatLng.longitude,
-            ) || INITIAL_MAP_REGION,
+            ),
         );
         setMapsIsRecentered(true);
     }
@@ -329,6 +338,7 @@ export default function RouteSelection(props) {
                 onTouchStart={() => setMapsIsRecentered(false)}
                 showsUserLocation
                 zoomEnabled={false}
+                mapPadding={{ top: 80, right: 0, bottom: 22, left: 0 }}
             >
                 {originLatLng !== undefined &&
                     originLatLng !== null &&
@@ -352,13 +362,7 @@ export default function RouteSelection(props) {
                                 strokeColors={[colors.primary]}
                                 strokeWidth={6}
                             />
-                            <Marker
-                                coordinate={{
-                                    latitude: destinationLatLng.latitude,
-                                    longitude: destinationLatLng.longitude,
-                                }}
-                                anchor={{ x: 0.5, y: 0.5 }}
-                            >
+                            <Marker coordinate={originLatLng} anchor={{ x: 0.5, y: 0.5 }}>
                                 <View
                                     style={{
                                         ...styles.marker,
@@ -367,13 +371,7 @@ export default function RouteSelection(props) {
                                     }}
                                 />
                             </Marker>
-                            <Marker
-                                coordinate={{
-                                    latitude: originLatLng.latitude,
-                                    longitude: originLatLng.longitude,
-                                }}
-                                anchor={{ x: 0.5, y: 0.5 }}
-                            >
+                            <Marker coordinate={destinationLatLng} anchor={{ x: 0.5, y: 0.5 }}>
                                 <View
                                     style={{
                                         ...styles.marker,
@@ -419,20 +417,17 @@ export default function RouteSelection(props) {
                             containerPadding={containerPadding}
                         />
                     )}
+                    <SuggestedRoutes
+                        topictextStyle={styles.topictext}
+                        containerPadding={containerPadding}
+                        data={api31Result}
+                        setSelectData={setSelectData}
+                        onPress={() => {
+                            setIsClick(true);
+                        }}
+                    />
 
-                    {api31Result !== undefined &&
-                        api31Result !== null &&
-                        Object.keys(api31Result).length !== 0 && (
-                            <SuggestedRoutes
-                                topictextStyle={styles.topictext}
-                                containerPadding={containerPadding}
-                                data={api31Result}
-                                setSelectData={setSelectData}
-                                onPress={() => {
-                                    setIsClick(true);
-                                }}
-                            />
-                        )}
+                    {api31Result !== undefined && api31Result !== null && <></>}
                 </ScrollView>
             </View>
         </View>
