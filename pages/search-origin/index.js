@@ -429,6 +429,7 @@ export default function SearchOrigin(props) {
                                 }
                                 setIsClick(true);
                             }}
+                            icon={"your-location"}
                         />
                     </>
                 )}
