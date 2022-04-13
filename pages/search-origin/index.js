@@ -315,12 +315,12 @@ export default function SearchOrigin(props) {
 
     function goNavigate() {
         if (
-            originInput !== undefined &&
-            originInput !== null &&
-            originInput !== "" &&
-            destinationInput !== undefined &&
-            destinationInput !== null &&
-            destinationInput !== ""
+            originData !== undefined &&
+            originData !== null &&
+            Object.keys(originData).length !== 0 &&
+            destinationData !== undefined &&
+            destinationData !== null &&
+            Object.keys(destinationData).length !== 0
         ) {
             navigateToRouteSelectionPage(
                 destinationInput,
