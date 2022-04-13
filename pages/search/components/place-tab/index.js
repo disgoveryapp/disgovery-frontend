@@ -5,6 +5,7 @@ import PlaceIcon from "../../../../assets/svgs/place-icon";
 import HomeIcon from "../../../../assets/svgs/home-icon";
 import MyLocationIcon from "../../../../assets/svgs/my-location-icon";
 import WorkIcon from "../../../../assets/svgs/work-icon";
+import YourLocationIcon from "../../../../assets/svgs/your-location-icon";
 import { useTheme } from "@react-navigation/native";
 import ThemedTextMarquee from "../../../../components/themed-text-marquee";
 
@@ -66,6 +67,8 @@ function PlaceTab(props) {
                                 return <HomeIcon />;
                             } else if (props.icon == "work") {
                                 return <WorkIcon />;
+                            } else if (props.icon == "your-location") {
+                                return <YourLocationIcon />;
                             } else {
                                 return <PlaceIcon />;
                             }
