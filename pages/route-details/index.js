@@ -44,8 +44,6 @@ export default function RouteDetails(props) {
     const [mapCurrentLocationRegion, setMapCurrentLocationRegion] = useState({});
     const [locationErrorMessage, setLocationErrorMessage] = useState(null);
 
-    const [api31Result, setApi31Result] = useState([]);
-    const [nearbyStations, setNearbyStations] = useState([]);
     const [routeData, setRouteData] = useState(props.route.params.routeData || {});
 
     const [polylines, setPolylines] = useState([]);
@@ -136,9 +134,10 @@ export default function RouteDetails(props) {
         mapRef._updateStyle;
     }, [colors]);
     useEffect(() => {
-        //parseDirections();
+        parseDirections();
         parsePolylines();
         setRouteData(props.route.params.routeData);
+        console.log({} === {});
     }, []);
 
     useEffect(() => {
@@ -370,7 +369,12 @@ export default function RouteDetails(props) {
                 provider="google"
                 customMapStyle={dark ? googleMapsStyling.dark : googleMapsStyling.light}
                 onTouchStart={() => setMapsIsRecentered(false)}
-                mapPadding={{ top: 90, right: 0, bottom: 22, left: 0 }}
+                mapPadding={{
+                    top: Platform.OS === "android" ? StatusBar.currentHeight : 20,
+                    right: 0,
+                    bottom: 22,
+                    left: 0,
+                }}
             >
                 {polylines !== undefined && polylines !== null && polylines.length !== 0 && (
                     <>

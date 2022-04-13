@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import ThemedText from "../../../../components/themed-text";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Animated } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import PlaceIcon from "../../../../assets/svgs/place-icon";
 import PlaceIcon19 from "../../../../assets/svgs/place-icon-19px";
@@ -10,11 +10,15 @@ import TransitLine from "../../../../components/transit-line";
 import ExpandDownIcon18px from "../../../../assets/svgs/expand-down-icon-18px";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { MockupData, getRouteTypeString, snapToPolyline } from "../../../../configs/configs";
+import TramIcon from "../../../../assets/svgs/tram-icon";
+import BoatIcon from "../../../../assets/svgs/boat-icon";
+import RailIcon from "../../../../assets/svgs/rail-icon";
+import BusIcon from "../../../../assets/svgs/bus-icon";
 
 export default function RouteShowDetails(props) {
     const { colors } = useTheme();
-    const [isExpandClick, setExpandClick] = useState(false);
     const mockStation = ["Mochit", "Siam", "Samyan", "Suan Amphorn", "Chit Lom"];
+    const rotateIcon = new Animated.Value(0);
 
     const styles = StyleSheet.create({
         container: {
@@ -95,124 +99,18 @@ export default function RouteShowDetails(props) {
             paddingVertical: 3,
         },
     });
-    useEffect(() => {
-        //parseDirections();
-    }, []);
 
-    function parseDirections() {
-        let tempDirections = [];
-
-        for (let i in props.data.directions) {
-            if (props.data.directions[i].type === "board") {
-                let boardDirection = {
-                    text: `Board ${getRouteTypeString(
-                        props.data.directions[i].via_line.type || "0",
-                        false,
-                    )} from ${props.data.directions[i].from.station.name.en} to ${
-                        props.data.directions[i].to.station.name.en
-                    }`,
-                };
-
-                let alightDirection = {
-                    text: `Alight at ${props.data.directions[i].to.station.name.en}`,
-                };
-
-                for (let j in props.data.directions[i].passing) {
-                    if (parseInt(j) < props.data.directions[i].passing.length - 2) {
-                        let snappedCoordinates = snapToPolyline(polylines, {
-                            latitude: props.data.directions[i].passing[j].coordinates.lat,
-                            longitude: props.data.directions[i].passing[j].coordinates.lng,
-                        });
-
-                        tempDirections.push({
-                            ...boardDirection,
-                            near: {
-                                lat: snappedCoordinates.interpolatedCoordinatesOnPolyline.latitude,
-                                lng: snappedCoordinates.interpolatedCoordinatesOnPolyline.longitude,
-                            },
-                            subtext: `Next: ${
-                                props.data.directions[i].passing[parseInt(j) + 1].station.name.en
-                            }`,
-                        });
-                    } else {
-                        let snappedCoordinates = snapToPolyline(polylines, {
-                            latitude: props.data.directions[i].passing[j].coordinates.lat,
-                            longitude: props.data.directions[i].passing[j].coordinates.lng,
-                        });
-
-                        tempDirections.push({
-                            ...alightDirection,
-                            near: {
-                                lat: snappedCoordinates.interpolatedCoordinatesOnPolyline.latitude,
-                                lng: snappedCoordinates.interpolatedCoordinatesOnPolyline.longitude,
-                            },
-                        });
-                        break;
-                    }
-                }
-            } else if (props.data.directions[i].type === "walk") {
-                for (let step of props.data.directions[i].route.steps) {
-                    tempDirections.push({
-                        distance: { text: `In ${step.distance.text}`, value: step.distance.value },
-                        text: htmlToText(step.html_instructions),
-                        near: props.data.directions[i].start_location,
-                    });
-                }
-            } else if (props.data.directions[i].type === "transfer") {
-                let snappedCoordinates = snapToPolyline(polylines, {
-                    latitude: props.data.directions[i].from.coordinates.lat,
-                    longitude: props.data.directions[i].from.coordinates.lng,
-                });
-
-                tempDirections.push({
-                    text: `Transfer from ${props.data.directions[i].from.station.name.en} to ${props.data.directions[i].to.station.name.en}`,
-                    near: {
-                        lat: snappedCoordinates.interpolatedCoordinatesOnPolyline.latitude,
-                        lng: snappedCoordinates.interpolatedCoordinatesOnPolyline.longitude,
-                    },
-                });
-            }
-
-            if (parseInt(i) === props.data.directions.length - 1) {
-                if (props.data.directions[props.data.directions.length - 1].type === "walk") {
-                    tempDirections.push({
-                        text: `You have arrived at ${
-                            props.data.directions[props.data.directions.length - 1].to.place.address
-                        }`,
-                        near: props.data.directions[props.data.directions.length - 1].to
-                            .coordinates,
-                    });
-                } else if (
-                    props.data.directions[props.data.directions.length - 1].type === "board"
-                ) {
-                    let snappedCoordinates = snapToPolyline(polylines, {
-                        latitude: props.data.destination.coordinates.lat,
-                        longitude: props.data.destination.coordinates.lng,
-                    });
-
-                    tempDirections.push({
-                        text: `You have arrived at ${props.data.destination.station.name.en}`,
-                        near: {
-                            lat: snappedCoordinates.interpolatedCoordinatesOnPolyline.latitude,
-                            lng: snappedCoordinates.interpolatedCoordinatesOnPolyline.longitude,
-                        },
-                    });
-                }
-            }
-        }
-
-        console.log(tempDirections, "tempData");
-        setDirections([...tempDirections]);
-        setCurrentDirection(tempDirections[0]);
+    function onPressRotate() {
+        Animated.timing(clickToExpandIconRotation, {
+            toValue: 1,
+            duration: 1000,
+        }).start();
     }
 
-    function expandClick() {
-        if (isExpandClick == true) {
-            setExpandClick(false);
-        } else {
-            setExpandClick(true);
-        }
-    }
+    const clickToExpandIconRotation = rotateIcon.interpolate({
+        inputRange: [0, 1],
+        outputRange: ["0deg", "180deg"],
+    });
 
     function ThreeDots() {
         return (
@@ -232,10 +130,19 @@ export default function RouteShowDetails(props) {
                     <ThreeDots />
                 </View>
                 <View style={styles.textTabContainer}>
-                    <ThemedText style={styles.titleText}>
-                        Exit the station and enter Mo Chit BTS station via entrance 2
+                    {subprops.walkData.type === "transfer" && (
+                        <ThemedText style={styles.titleText}>
+                            Transfer from {subprops.walkData.from.station.name.en} to{" "}
+                            {subprops.walkData.to.station.name.en}
+                        </ThemedText>
+                    )}
+                    {subprops.walkData.type === "walk" && (
+                        <ThemedText style={styles.titleText}>????????????</ThemedText>
+                    )}
+
+                    <ThemedText style={styles.subtitleText}>
+                        ?? m · {subprops.walkData.schedule.duration / 60} minutes
                     </ThemedText>
-                    <ThemedText style={styles.subtitleText}>750 m · 9 minutes</ThemedText>
                 </View>
             </View>
         );
@@ -245,29 +152,51 @@ export default function RouteShowDetails(props) {
             <>
                 <View style={styles.tabContainer}>
                     <View style={styles.iconTabContainer}>
-                        <SubwayIcon fill={colors.text} />
-                        <ThreeDots />
+                        {(() => {
+                            if (
+                                subprops.transitData.via_line.type === "0" ||
+                                subprops.transitData.via_line.type === "5"
+                            ) {
+                                return <TramIcon fill={colors.text} />;
+                            } else if (subprops.transitData.via_line.type === "1") {
+                                return <SubwayIcon fill={colors.text} />;
+                            } else if (
+                                subprops.transitData.via_line.type === "2" ||
+                                subprops.transitData.via_line.type === "12"
+                            ) {
+                                return <RailIcon fill={colors.text} />;
+                            } else if (
+                                subprops.transitData.via_line.type === "3" ||
+                                subprops.transitData.via_line.type === "11"
+                            ) {
+                                return <BusIcon fill={colors.text} />;
+                            } else if (subprops.transitData.via_line.type === "4") {
+                                return <BoatIcon fill={colors.text} />;
+                            }
+                        })()}
                     </View>
                     <View>
-                        <ThemedText style={styles.titleText}>Depart on a subway</ThemedText>
+                        <ThemedText style={styles.titleText}>
+                            {"Board "}
+                            {getRouteTypeString(subprops.transitData.via_line.type)}
+                            {" from "}
+                            {subprops.transitData.from.station.name.en}
+                            {" to "}
+                            {subprops.transitData.to.station.name.en}
+                        </ThemedText>
                         <View style={styles.transit}>
-                            <TransitLine
-                                line={{
-                                    name: {
-                                        short_name: "Insert Props Here",
-                                        long_name: "BTS Sukhumvit Line",
-                                    },
-                                    color: "7FBF3A",
-                                }}
-                                fontSize={14}
-                            />
+                            <TransitLine line={subprops.transitData.via_line} fontSize={14} />
                         </View>
                         <ThemedText style={styles.subtitleText}>
-                            To Tha Phra · Every 5 minutes
+                            To {subprops.transitData.to.station.name.en}
                         </ThemedText>
                     </View>
                 </View>
-                <PublicTransitRouteTab />
+                <PublicTransitRouteTab
+                    lineData={subprops.transitData.passing}
+                    time={subprops.transitData.schedule.duration}
+                    color={subprops.transitData.via_line.color}
+                />
                 <View style={styles.tabContainer}>
                     <View style={styles.iconTabContainer}>
                         <ThreeDots />
@@ -278,16 +207,30 @@ export default function RouteShowDetails(props) {
     }
 
     function PublicTransitRouteTab(subprops) {
+        const [isExpandClick, setExpandClick] = useState(false);
+
+        function expandClick() {
+            if (isExpandClick == true) {
+                setExpandClick(false);
+            } else {
+                setExpandClick(true);
+            }
+        }
         return (
             <View style={styles.tabContainer}>
                 <View style={[styles.iconTabContainer, { paddingTop: 5.5 }]}>
                     {isExpandClick ? (
                         <>
                             <View style={styles.dotIcon} />
-                            <View style={[styles.firstlineColor, { backgroundColor: "#7FBF3A" }]} />
-                            {mockStation.map((item, key) => (
+                            <View
+                                style={[
+                                    styles.firstlineColor,
+                                    { backgroundColor: `#${subprops.color}` },
+                                ]}
+                            />
+                            {subprops.lineData.map((item, key) => (
                                 <>
-                                    {key === 0 || key === mockStation.length - 1 ? (
+                                    {key === 0 || key === subprops.lineData.length - 1 ? (
                                         <></>
                                     ) : (
                                         <>
@@ -295,7 +238,7 @@ export default function RouteShowDetails(props) {
                                             <View
                                                 style={[
                                                     styles.lineColor,
-                                                    { backgroundColor: "#7FBF3A" },
+                                                    { backgroundColor: `#${subprops.color}` },
                                                 ]}
                                             />
                                         </>
@@ -307,43 +250,56 @@ export default function RouteShowDetails(props) {
                     ) : (
                         <>
                             <View style={styles.dotIcon} />
-                            <View style={[styles.lineColor, { backgroundColor: "#7FBF3A" }]} />
+                            <View
+                                style={[
+                                    styles.lineColor,
+                                    { backgroundColor: `#${subprops.color}` },
+                                ]}
+                            />
                             <View style={styles.dotIcon} />
                         </>
                     )}
                 </View>
                 <View>
-                    <ThemedText style={styles.originDestnaionText}>{mockStation[0]}</ThemedText>
+                    <ThemedText style={styles.originDestnaionText}>
+                        {subprops.lineData[0].station.name.en}
+                    </ThemedText>
                     <View style={{ display: "flex", flexDirection: "row" }}>
-                        <TouchableOpacity style={styles.stopDetailButton} onPress={expandClick}>
+                        <TouchableOpacity
+                            style={styles.stopDetailButton}
+                            onPress={() => {
+                                expandClick();
+                            }}
+                        >
                             <ThemedText style={styles.subtitleText}>
-                                8 stops · 19 minutes
+                                {subprops.lineData.length} stops · {subprops.time / 60} minutes
                             </ThemedText>
-
-                            <ExpandDownIcon18px fill={colors.subtitle} />
+                            <Animated.View
+                                style={[{ transform: [{ rotate: clickToExpandIconRotation }] }]}
+                            >
+                                <ExpandDownIcon18px fill={colors.subtitle} />
+                            </Animated.View>
                         </TouchableOpacity>
                     </View>
                     <View>
-                        {isExpandClick ? (
+                        {isExpandClick && (
                             <View>
-                                {mockStation.map((item, key) => (
+                                {subprops.lineData.map((item, key) => (
                                     <>
-                                        {key === 0 || key === mockStation.length - 1 ? (
+                                        {key === 0 || key === subprops.lineData.length - 1 ? (
                                             <></>
                                         ) : (
                                             <ThemedText style={styles.subtitleText}>
-                                                {item}
+                                                {item.station.name.en}
                                             </ThemedText>
                                         )}
                                     </>
                                 ))}
                             </View>
-                        ) : (
-                            <></>
                         )}
                     </View>
                     <ThemedText style={styles.originDestnaionText}>
-                        {mockStation[mockStation.length - 1]}
+                        {subprops.lineData[subprops.lineData.length - 1].station.name.en}
                     </ThemedText>
                 </View>
             </View>
@@ -367,9 +323,17 @@ export default function RouteShowDetails(props) {
         <>
             <View style={styles.container}>
                 <View style={styles.subContainer}>
-                    <WalkTab />
-                    <PublicTransitTab />
-                    <DestinationTab />
+                    {props.data.directions.map((item, key) => (
+                        <>
+                            {item.type === "board" ? (
+                                <PublicTransitTab transitData={item} />
+                            ) : (
+                                <WalkTab walkData={item} />
+                            )}
+                        </>
+                    ))}
+
+                    <DestinationTab destination={props.data.destination} />
                 </View>
             </View>
         </>

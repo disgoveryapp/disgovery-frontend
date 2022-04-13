@@ -7,6 +7,7 @@ import {
     Dimensions,
     ScrollView,
     TouchableOpacity,
+    Platform,
 } from "react-native";
 import ThemedText from "../../components/themed-text";
 import { useNavigation, useTheme } from "@react-navigation/native";
@@ -73,6 +74,8 @@ export default function RouteSelection(props) {
 
     const [originLatLng, setOriginLatLng] = useState({});
     const [destinationLatLng, setDestinationLatLng] = useState({});
+
+    const [loadPolyline, setLoadPolyline] = useState(false);
 
     async function api31Call() {
         /*
@@ -240,17 +243,11 @@ export default function RouteSelection(props) {
     }, [api31Result]);
 
     useEffect(() => {
-        if (
-            originLatLng !== undefined &&
-            originLatLng !== null &&
-            originLatLng !== {} &&
-            destinationLatLng !== undefined &&
-            destinationLatLng !== null &&
-            destinationLatLng !== {}
-        ) {
-            console.log(originLatLng);
+        if (!firstRun) {
             recenter();
+            setLoadPolyline(true);
         }
+        setFirstRun(false);
     }, [originLatLng, destinationLatLng]);
 
     useEffect(() => {
@@ -281,9 +278,9 @@ export default function RouteSelection(props) {
         let longitude1 = parseFloat(lng1);
         let latitude2 = parseFloat(lat2);
         let longitude2 = parseFloat(lng2);
-        let latdelta = Math.abs(latitude1 - latitude2);
+        let latdelta = Math.abs(latitude1 - latitude2) + 0.1;
         let lngdelta = Math.abs(longitude1 - longitude2);
-        let lat3 = (latitude1 + latitude2) / 2.0 - 0.05;
+        let lat3 = (latitude1 + latitude2) / 2.0 - 0.02;
         let lng3 = (longitude1 + longitude2) / 2.0;
 
         return {
@@ -301,7 +298,7 @@ export default function RouteSelection(props) {
                 originLatLng.longitude,
                 destinationLatLng.latitude,
                 destinationLatLng.longitude,
-            ),
+            ) || INITIAL_MAP_REGION,
         );
         setMapsIsRecentered(true);
     }
@@ -338,7 +335,12 @@ export default function RouteSelection(props) {
                 onTouchStart={() => setMapsIsRecentered(false)}
                 showsUserLocation
                 zoomEnabled={false}
-                mapPadding={{ top: 80, right: 0, bottom: 22, left: 0 }}
+                mapPadding={{
+                    top: Platform.OS === "android" ? StatusBar.currentHeight : 20,
+                    right: 0,
+                    bottom: 22,
+                    left: 0,
+                }}
             >
                 {originLatLng !== undefined &&
                     originLatLng !== null &&
@@ -348,16 +350,7 @@ export default function RouteSelection(props) {
                     destinationLatLng !== {} && (
                         <>
                             <Polyline
-                                coordinates={[
-                                    {
-                                        latitude: originLatLng.latitude,
-                                        longitude: originLatLng.longitude,
-                                    },
-                                    {
-                                        latitude: destinationLatLng.latitude,
-                                        longitude: destinationLatLng.longitude,
-                                    },
-                                ]}
+                                coordinates={[originLatLng, destinationLatLng]}
                                 strokeColor="#000" // fallback for when `strokeColors` is not supported by the map-provider
                                 strokeColors={[colors.primary]}
                                 strokeWidth={6}
