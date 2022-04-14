@@ -17,7 +17,6 @@ import BusIcon from "../../../../assets/svgs/bus-icon";
 
 export default function RouteShowDetails(props) {
     const { colors } = useTheme();
-    const mockStation = ["Mochit", "Siam", "Samyan", "Suan Amphorn", "Chit Lom"];
     const rotateIcon = new Animated.Value(0);
 
     const styles = StyleSheet.create({
@@ -62,6 +61,7 @@ export default function RouteShowDetails(props) {
             height: 18,
             justifyContent: "space-between",
             marginBottom: 5,
+            paddingTop: 3,
         },
         dotIcon: {
             width: 10,

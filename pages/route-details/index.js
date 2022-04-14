@@ -134,15 +134,10 @@ export default function RouteDetails(props) {
         mapRef._updateStyle;
     }, [colors]);
     useEffect(() => {
-        parseDirections();
         parsePolylines();
         setRouteData(props.route.params.routeData);
         console.log({} === {});
     }, []);
-
-    useEffect(() => {
-        console.log(directions, "direction");
-    }, [directions]);
 
     async function fetchNewLocation() {
         let { status } = await Location.requestForegroundPermissionsAsync().catch(() => {});
@@ -169,18 +164,6 @@ export default function RouteDetails(props) {
             latitudeDelta: 0.005,
             longitudeDelta: 0.005,
         };
-    }
-
-    function getAllCoordinate(lookData) {
-        let result = [];
-        lookData = lookData || [];
-        for (let i = 0; i < lookData.length; i++) {
-            result.push({
-                latitude: lookData[i].coordinates.lat,
-                longitude: lookData[i].coordinates.lng,
-            });
-        }
-        return result;
     }
 
     async function recenter() {

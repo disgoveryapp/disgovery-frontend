@@ -79,10 +79,10 @@ export default function RouteSelection(props) {
 
     async function api31Call() {
         /*
-        let origin = {};
-        let destination = {};
+        let origin = "";
+        let destination = "";
         if (originData.station_id) {
-            origin = `station: ${originData.station_id}`;
+            origin = `station:${originData.station_id}`;
         } else if (originData.place_id) {
             origin = `google:${originData.place_id}`;
         } else {
@@ -98,15 +98,16 @@ export default function RouteSelection(props) {
         console.log(origin, "origin");
         console.log(destination, "destination");
         */
-        setApi31Result(MockupData);
+
         try {
-            /*
             await axios
                 .post(
                     `${configs.API_URL}/route/new`,
                     {
                         origin: "coordinates:13.7623641,100.4719031",
                         destination: "coordinates:13.7546154,100.5324766",
+                        //origin: origin,
+                        //destination: destination,
                     },
                     {
                         headers: {
@@ -123,7 +124,7 @@ export default function RouteSelection(props) {
                     } else {
                         setApi31Result(result.data.data);
                     }
-                });*/
+                });
         } catch (error) {
             console.log("catch");
             setError31(true);
