@@ -112,6 +112,28 @@ export default function RouteShowDetails(props) {
         outputRange: ["0deg", "180deg"],
     });
 
+    function getTimeText(gettime) {
+        let time = gettime;
+        let day = 0;
+        let hour = 0;
+        let minute = 0;
+        let textData = "";
+        if (time >= 1440) {
+            day = Math.floor(time);
+            time = time % 1440;
+            textData += day + " day ";
+        } else if (time >= 60) {
+            hour = Math.floor(time);
+            time = time % 60;
+            textData += hour + " hr ";
+        } else {
+            minute = Math.floor(time);
+            textData += minute + " minutes";
+        }
+
+        return textData;
+    }
+
     function ThreeDots() {
         return (
             <View style={styles.threeDotContainer}>
@@ -137,11 +159,16 @@ export default function RouteShowDetails(props) {
                         </ThemedText>
                     )}
                     {subprops.walkData.type === "walk" && (
-                        <ThemedText style={styles.titleText}>????????????</ThemedText>
+                        <ThemedText style={styles.titleText}>
+                            {"Walk along "}
+                            {subprops.walkData.route.summary}
+                        </ThemedText>
                     )}
 
                     <ThemedText style={styles.subtitleText}>
-                        ?? m · {subprops.walkData.schedule.duration / 60} minutes
+                        {subprops.walkData.type === "walk" && subprops.walkData.route.distance.text}
+                        {subprops.walkData.type === "transfer" && "??"} ·{" "}
+                        {getTimeText(subprops.walkData.schedule.duration / 60)}
                     </ThemedText>
                 </View>
             </View>
@@ -272,7 +299,7 @@ export default function RouteShowDetails(props) {
                             }}
                         >
                             <ThemedText style={styles.subtitleText}>
-                                {subprops.lineData.length} stops · {subprops.time / 60} minutes
+                                {subprops.lineData.length} stops · {getTimeText(subprops.time / 60)}
                             </ThemedText>
                             <Animated.View
                                 style={[{ transform: [{ rotate: clickToExpandIconRotation }] }]}
