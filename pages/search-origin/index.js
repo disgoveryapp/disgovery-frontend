@@ -243,6 +243,7 @@ export default function SearchOrigin(props) {
             origin_name: origin_name,
             origin_data: origin_data,
             focus: focus,
+            swapValue: swapValue,
         });
     }
 
