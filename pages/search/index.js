@@ -425,7 +425,7 @@ export default function Search() {
                                     address={item.address.en}
                                     onPress={() => {
                                         setDestination_data(item);
-                                        navigateToSearchOriginPage(item.name.en, destination_data);
+                                        navigateToSearchOriginPage(item.name.en, item);
                                     }}
                                 />
                             ))}
