@@ -225,7 +225,7 @@ export default function RouteSelection(props) {
         setSelectData({});
         setLoadingDataFromApi(true);
         console.log("hi");
-        api31Call();
+        await api31Call();
         setLoadingDataFromApi(false);
     }, []);
 
