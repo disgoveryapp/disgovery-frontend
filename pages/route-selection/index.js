@@ -78,6 +78,8 @@ export default function RouteSelection(props) {
 
     const [loadPolyline, setLoadPolyline] = useState(false);
 
+    const [isSwap, setIsSwap] = useState(false);
+
     async function api31Call() {
         /*
         let origin = "";
@@ -137,6 +139,9 @@ export default function RouteSelection(props) {
     }
 
     function goBackAndFocusOn(on) {
+        if (isSwap === true) {
+            props.route.params.swapValue();
+        }
         props.route.params.focus(on);
         navigation.pop();
     }
@@ -316,6 +321,11 @@ export default function RouteSelection(props) {
         setOriginData(destinationData);
         setDestinationName(temp);
         setDestinationData(temp2);
+        if (isSwap === true) {
+            setIsSwap(false);
+        } else {
+            setIsSwap(true);
+        }
     }
 
     return (
