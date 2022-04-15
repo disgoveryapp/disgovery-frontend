@@ -8,6 +8,7 @@ import {
     ScrollView,
     TouchableOpacity,
     Platform,
+    StatusBar,
 } from "react-native";
 import ThemedText from "../../components/themed-text";
 import { useNavigation, useTheme } from "@react-navigation/native";
