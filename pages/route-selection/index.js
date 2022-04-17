@@ -52,19 +52,19 @@ export default function RouteSelection(props) {
 
     const [nearbyStations, setNearbyStations] = useState([]);
 
-    const [destinationName, setDestinationName] = useState("Siam");
+    /*const [destinationName, setDestinationName] = useState("Siam");
     const [destinationData, setDestinationData] = useState({});
     const [originName, setOriginName] = useState("Central World");
-    const [originData, setOriginData] = useState({});
+    const [originData, setOriginData] = useState({});*/
 
-    /*const [destinationName, setDestinationName] = useState(
+    const [destinationName, setDestinationName] = useState(
         props.route.params.destination_name || "",
     );
     const [destinationData, setDestinationData] = useState(
         props.route.params.destination_data || {},
     );
     const [originName, setOriginName] = useState(props.route.params.origin_name || "");
-    const [originData, setOriginData] = useState(props.route.params.origin_data || {}); */
+    const [originData, setOriginData] = useState(props.route.params.origin_data || {});
 
     const [selectData, setSelectData] = useState({});
 
@@ -80,37 +80,21 @@ export default function RouteSelection(props) {
 
     const [isSwap, setIsSwap] = useState(false);
 
-    async function api31Call() {
-        /*
-        let origin = "";
-        let destination = "";
-        if (originData.station_id) {
-            origin = `station:${originData.station_id}`;
-        } else if (originData.place_id) {
-            origin = `google:${originData.place_id}`;
-        } else {
-            origin = `coordinates:${originData.coordinates.lat},${originData.coordinates.lng}}`;
-        }
-        if (destinationData.station_id) {
-            destination = `station: ${destinationData.station_id}`;
-        } else if (destinationData.place_id) {
-            destination = `place_id: ${destinationData.place_id}`;
-        } else {
-            destination = ` coordinates: ${destinationData.coordinates.lat},${destinationData.coordinates.lng}`;
-        }
-        console.log(origin, "origin");
-        console.log(destination, "destination");
-        */
+    const [originID, setOriginID] = useState("");
+    const [destinationID, setDestinationID] = useState("");
 
+    async function api31Call() {
+        console.log(originID);
+        console.log(destinationID);
         try {
             await axios
                 .post(
                     `${configs.API_URL}/route/new`,
                     {
-                        origin: "coordinates:13.7623641,100.4719031",
-                        destination: "coordinates:13.7546154,100.5324766",
-                        //origin: origin,
-                        //destination: destination,
+                        //origin: "coordinates:13.7623641,100.4719031",
+                        //destination: "coordinates:13.7546154,100.5324766",
+                        origin: `${originID}`,
+                        destination: `${destinationID}`,
                     },
                     {
                         headers: {
@@ -131,6 +115,26 @@ export default function RouteSelection(props) {
         } catch (error) {
             console.log("catch");
             setError31(true);
+        }
+    }
+
+    async function setOrginAndDestination() {
+        console.log(originData);
+        if (originData.station_id !== undefined && originData.station_id !== null) {
+            setOriginID(`station:${originData.station_id}`);
+        } else if (originData.place_id !== undefined && originData.place_id !== null) {
+            setOriginID(`google:${originData.place_id}`);
+        } else {
+            setOriginID(`coordinates:${originData.latitude},${originData.longitude}`);
+        }
+        if (destinationData.id !== undefined && destinationData.id !== null) {
+            setDestinationID(`station:${destinationData.id}`);
+        } else if (destinationData.place_id !== undefined && destinationData.place_id !== null) {
+            setDestinationID(`google:${destinationData.place_id}`);
+        } else {
+            setDestinationID(
+                ` coordinates: ${destinationData.latitude},${destinationData.longitude}`,
+            );
         }
     }
 
@@ -226,14 +230,25 @@ export default function RouteSelection(props) {
             setIsClick(false);
         }
     }, [isClick, selectData]);
+    useEffect(() => {
+        setOrginAndDestination();
+    }, [originData, destinationData]);
 
     useEffect(async () => {
+        if (
+            originID !== undefined &&
+            originID !== null &&
+            originID !== "" &&
+            destinationID !== undefined &&
+            destinationID !== null &&
+            destinationID !== ""
+        ) {
+            setLoadingDataFromApi(true);
+            await api31Call();
+            setLoadingDataFromApi(false);
+        }
         setSelectData({});
-        setLoadingDataFromApi(true);
-        console.log("hi");
-        await api31Call();
-        setLoadingDataFromApi(false);
-    }, []);
+    }, [originID, destinationID]);
 
     useEffect(() => {
         console.log("ktns");
@@ -253,6 +268,7 @@ export default function RouteSelection(props) {
         if (!firstRun) {
             recenter();
             setLoadPolyline(true);
+        } else {
         }
         setFirstRun(false);
     }, [originLatLng, destinationLatLng]);
