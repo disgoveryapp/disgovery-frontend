@@ -485,8 +485,8 @@ export default function RouteSelection(props) {
                         />
                     )}
                     {error31 && (
-                        <View>
-                            <ThemedText>Something went wrong.</ThemedText>
+                        <View style={styles.messageContainer}>
+                            <ThemedText style={styles.message}>Something went wrong.</ThemedText>
                         </View>
                     )}
                     {api31Result !== undefined && api31Result !== null && api31Result.length !== 0 && (
