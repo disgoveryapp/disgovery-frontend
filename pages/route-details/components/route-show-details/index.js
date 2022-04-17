@@ -349,9 +349,6 @@ export default function RouteShowDetails(props) {
                         {subprops.destination.place !== undefined &&
                             subprops.destination.place !== null &&
                             subprops.destination.place.name.en}
-                        {subprops.destination.station !== undefined &&
-                            subprops.destination.station !== null &&
-                            subprops.destination.station.name.en}
                     </ThemedText>
                 </View>
             </View>
