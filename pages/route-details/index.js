@@ -22,6 +22,7 @@ import RouteShowDetails from "./components/route-show-details";
 import BackButton from "../../components/back-button";
 import NavigateButton from "../../components/navigate-button";
 import { decode } from "@googlemaps/polyline-codec";
+import FaceCovering from "./components/face-covering";
 
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -37,6 +38,7 @@ export default function RouteDetails(props) {
     const mapRef = useRef();
     let firstRun = true;
     const navigation = useNavigation();
+    const wearFaceMask = true;
 
     const [loading, setLoading] = useState(false);
     const [mapsIsRecentered, setMapsIsRecentered] = useState(false);
@@ -124,6 +126,14 @@ export default function RouteDetails(props) {
             borderRadius: 30,
             borderWidth: 2.5,
         },
+        line: {
+            height: 1,
+            backgroundColor: colors.divider,
+        },
+        faresContainer: {
+            height: 58,
+            justifyContent: "center",
+        },
     });
 
     useEffect(() => {
@@ -164,6 +174,10 @@ export default function RouteDetails(props) {
             latitudeDelta: 0.005,
             longitudeDelta: 0.005,
         };
+    }
+
+    function DividerLine() {
+        return <View style={styles.line} />;
     }
 
     async function recenter() {
@@ -262,7 +276,7 @@ export default function RouteDetails(props) {
                                 <Polyline
                                     key={key}
                                     coordinates={item.polyline}
-                                    strokeColor="#fff" // fallback for when `strokeColors` is not supported by the map-provider
+                                    strokeColor="#fff"
                                     strokeColors={[item.color]}
                                     strokeWidth={6}
                                 />
@@ -297,6 +311,14 @@ export default function RouteDetails(props) {
                     <NavigateButton />
                 </View>
                 <View style={styles.scrollView}>
+                    <View style={styles.tofromContainer}>
+                        <ToFrom containerPadding={containerPadding} data={routeData} />
+                    </View>
+                    <DividerLine />
+                    <View style={styles.faresContainer}>
+                        <Fares containerPadding={containerPadding} data={routeData} />
+                    </View>
+                    <DividerLine />
                     <ScrollView
                         style={styles.subScrollView}
                         showsHorizontalScrollIndicator={false}
@@ -306,6 +328,12 @@ export default function RouteDetails(props) {
                         }}
                         keyboardDismissMode="interactive"
                     >
+                        {wearFaceMask && (
+                            <>
+                                <FaceCovering containerPadding={containerPadding} />
+                                <DividerLine />
+                            </>
+                        )}
                         <RouteShowDetails containerPadding={containerPadding} data={routeData} />
                     </ScrollView>
                 </View>

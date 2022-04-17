@@ -23,6 +23,7 @@ export default function RouteShowDetails(props) {
         container: {
             paddingHorizontal: props.containerPadding,
             justifyContent: "flex-start",
+            paddingTop: 10,
         },
         titleText: {
             fontWeight: "600",
@@ -341,7 +342,17 @@ export default function RouteShowDetails(props) {
                 </View>
 
                 <View>
-                    <ThemedText style={styles.titleText}>Centralworld</ThemedText>
+                    <ThemedText style={styles.titleText}>
+                        {subprops.destination.station !== undefined &&
+                            subprops.destination.station !== null &&
+                            subprops.destination.station.name.en}
+                        {subprops.destination.place !== undefined &&
+                            subprops.destination.place !== null &&
+                            subprops.destination.place.name.en}
+                        {subprops.destination.station !== undefined &&
+                            subprops.destination.station !== null &&
+                            subprops.destination.station.name.en}
+                    </ThemedText>
                 </View>
             </View>
         );

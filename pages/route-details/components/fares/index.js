@@ -1,4 +1,4 @@
-import React, { useState, useEffect }from "react";
+import React, { useState, useEffect } from "react";
 import { StyleSheet, View, Dimensions, Text, ScrollView, TouchableOpacity } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import ThemedText from "../../../../components/themed-text";
@@ -9,17 +9,16 @@ import TransitLine from "../../../../components/transit-line";
 import TransitLineForFares from "../fares/components/index";
 
 function Fares(props) {
-
-    const DATA = props.data[0];
+    const DATA = props.data;
 
     const { dark, colors } = useTheme();
     const [isExpandClick, setExpandClick] = useState(false);
     const CONTENT = [
         {
-            isExpanded:false,
-            content:"AAAAA"
-        }
-    ]
+            isExpanded: false,
+            content: "AAAAA",
+        },
+    ];
     const size = "large";
 
     const styles = StyleSheet.create({
@@ -31,39 +30,39 @@ function Fares(props) {
             paddingVertical: 5,
             display: "flex",
             flexDirection: "row",
-            justifyContent:"space-between",
+            justifyContent: "space-between",
         },
         fare_container: {
             display: "flex",
             flexDirection: "row",
-            justifyContent:"space-between",
-            textAlign:"right",
-            width:"100%",
+            justifyContent: "space-between",
+            textAlign: "right",
+            width: "100%",
         },
         fare_container_exoanded: {
             display: "flex",
             flexDirection: "row",
-            justifyContent:"space-between",
-            textAlign:"right",
-            width:"100%",
-            marginBottom:5,
+            justifyContent: "space-between",
+            textAlign: "right",
+            width: "100%",
+            marginBottom: 5,
         },
-        text_container:{
+        text_container: {
             fontSize: size === "small" ? 16 : 18,
             fontWeight: size === "small" ? "500" : "600",
             marginLeft: size === "small" ? 22 : 0,
         },
-        subtitleText:{
+        subtitleText: {
             flexDirection: "row",
         },
-        expand_sign:{
+        expand_sign: {
             display: "flex",
             flexDirection: "row",
         },
-        text:{
+        text: {
             fontSize: 18,
             fontWeight: size === "small" ? "500" : "600",
-            color: "black",
+            color: colors.text,
         },
         timeText: {
             fontWeight: "600",
@@ -73,7 +72,7 @@ function Fares(props) {
     });
 
     function expandClick() {
-        if(isExpandClick == true){
+        if (isExpandClick == true) {
             setExpandClick(false);
         } else {
             setExpandClick(true);
@@ -83,17 +82,17 @@ function Fares(props) {
     const Item = ({ linename, fare, item }) => (
         <View style={styles.transit}>
             <TransitLineForFares data={item} linename={linename} />
-            <ThemedText style={styles.timeText}>{fare.adult} {fare.currency}</ThemedText>
+            <ThemedText style={styles.timeText}>
+                {fare.adult} {fare.currency}
+            </ThemedText>
         </View>
     );
 
     const renderItem = (item) => {
-        return (
-        <Item linename={item.from.station.id} fare={item.fare} item={item} />
-        );
+        return <Item linename={item.from.station.id} fare={item.fare} item={item} />;
     };
 
-    return(
+    return (
         <View style={styles.container}>
             <View>
                 {isExpandClick ? (
@@ -105,12 +104,14 @@ function Fares(props) {
                                     <CollapseIcon></CollapseIcon>
                                 </View>
                             </TouchableOpacity>
-                            <ThemedText style={styles.text}>{DATA.total_fares.adult} {DATA.total_fares.currency}</ThemedText>
+                            <ThemedText style={styles.text}>
+                                {DATA.total_fares.adult} {DATA.total_fares.currency}
+                            </ThemedText>
                         </View>
                         <View>
                             {Object.keys(DATA.fares).map((key) => {
-                                    return <>{renderItem(DATA.fares[key])}</>;
-                                })}
+                                return <>{renderItem(DATA.fares[key])}</>;
+                            })}
                         </View>
                     </>
                 ) : (
@@ -122,7 +123,9 @@ function Fares(props) {
                                     <ExpandDownIcon></ExpandDownIcon>
                                 </View>
                             </TouchableOpacity>
-                            <ThemedText style={styles.text}>{DATA.total_fares.adult} {DATA.total_fares.currency}</ThemedText>
+                            <ThemedText style={styles.text}>
+                                {DATA.total_fares.adult} {DATA.total_fares.currency}
+                            </ThemedText>
                         </View>
                     </>
                 )}
@@ -132,4 +135,3 @@ function Fares(props) {
 }
 
 export default Fares;
-    
