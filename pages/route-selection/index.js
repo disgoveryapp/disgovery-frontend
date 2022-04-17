@@ -24,6 +24,7 @@ import RouteSelectionBar from "./components/route-selection-bar";
 import FaceCovering from "../route-details/components/face-covering";
 import ArrowBackwardIcon from "../../assets/svgs/arrow-backward-24px";
 import BackButton from "../../components/back-button";
+import { useDebounce } from "use-lodash-debounce";
 
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -44,13 +45,14 @@ export default function RouteSelection(props) {
     const hasOverviewRoute = false;
 
     const [loading, setLoading] = useState(false);
-    const [loadingDataFromApi, setLoadingDataFromApi] = useState(false);
+    const [loadingDataFromApi, setLoadingDataFromApi] = useState(true);
     const [mapsIsRecentered, setMapsIsRecentered] = useState(false);
     const [location, setLocation] = useState(null);
     const [mapCurrentLocationRegion, setMapCurrentLocationRegion] = useState({});
     const [locationErrorMessage, setLocationErrorMessage] = useState(null);
 
     const [nearbyStations, setNearbyStations] = useState([]);
+    const debouncedValue = useDebounce(isSwap, 100);
 
     /*const [destinationName, setDestinationName] = useState("Siam");
     const [destinationData, setDestinationData] = useState({});
@@ -69,6 +71,7 @@ export default function RouteSelection(props) {
     const [selectData, setSelectData] = useState({});
 
     const [api31Result, setApi31Result] = useState([]);
+    const [swapResult, setSwapResult] = useState([]);
     const [error31, setError31] = useState(false);
 
     const [isClick, setIsClick] = useState(false);
@@ -79,49 +82,74 @@ export default function RouteSelection(props) {
     const [loadPolyline, setLoadPolyline] = useState(false);
 
     const [isSwap, setIsSwap] = useState(false);
+    const [clickSwap, setClickSwap] = useState(false);
 
     const [originID, setOriginID] = useState("");
     const [destinationID, setDestinationID] = useState("");
 
     async function api31Call() {
+        if (
+            swapResult !== undefined &&
+            swapResult !== null &&
+            swapResult.length !== 0 &&
+            clickSwap
+        ) {
+            let temp = [];
+            temp = api31Result;
+            setApi31Result(swapResult);
+            setSwapResult(temp);
+            setClickSwap(false);
+            return;
+        } else if (isSwap) {
+            console.log("we");
+            setSwapResult(api31Result);
+        }
         console.log(originID);
         console.log(destinationID);
-        try {
-            await axios
-                .post(
-                    `${configs.API_URL}/route/new`,
-                    {
-                        //origin: "coordinates:13.7623641,100.4719031",
-                        //destination: "coordinates:13.7546154,100.5324766",
-                        origin: `${originID}`,
-                        destination: `${destinationID}`,
-                    },
-                    {
-                        headers: {
-                            Authorization: `Bearer ${configs.PERSISTENT_JWT}`,
+        if (
+            isSwap ||
+            api31Result === undefined ||
+            api31Result === null ||
+            api31Result.length === 0
+        ) {
+            try {
+                await axios
+                    .post(
+                        `${configs.API_URL}/route/new`,
+                        {
+                            //origin: "coordinates:13.7623641,100.4719031",
+                            //destination: "coordinates:13.7546154,100.5324766",
+                            origin: `${originID}`,
+                            destination: `${destinationID}`,
                         },
-                    },
-                )
-                .then(function (result) {
-                    console.log(result.data);
-                    setError31(false);
-                    console.log("hello");
-                    if (result.data.data === undefined || result.data.data === null) {
-                        setApi31Result([]);
-                    } else {
-                        setApi31Result(result.data.data);
-                    }
-                });
-        } catch (error) {
-            console.log("catch");
-            setError31(true);
+                        {
+                            headers: {
+                                Authorization: `Bearer ${configs.PERSISTENT_JWT}`,
+                            },
+                        },
+                    )
+                    .then(function (result) {
+                        console.log("welcome");
+                        console.log(result.data);
+                        setError31(false);
+                        if (result.data.data === undefined || result.data.data === null) {
+                            setApi31Result([]);
+                        } else {
+                            setApi31Result(result.data.data);
+                        }
+                    });
+            } catch (error) {
+                console.log("catch");
+                setError31(true);
+            }
         }
     }
 
     async function setOrginAndDestination() {
-        console.log(originData);
         if (originData.station_id !== undefined && originData.station_id !== null) {
             setOriginID(`station:${originData.station_id}`);
+        } else if (originData.id !== undefined && originData.id !== null) {
+            setOriginID(`station:${originData.id}`);
         } else if (originData.place_id !== undefined && originData.place_id !== null) {
             setOriginID(`google:${originData.place_id}`);
         } else {
@@ -129,13 +157,19 @@ export default function RouteSelection(props) {
         }
         if (destinationData.id !== undefined && destinationData.id !== null) {
             setDestinationID(`station:${destinationData.id}`);
+        } else if (
+            destinationData.station_id !== undefined &&
+            destinationData.station_id !== null
+        ) {
+            setDestinationID(`station:${destinationData.station_id}`);
         } else if (destinationData.place_id !== undefined && destinationData.place_id !== null) {
             setDestinationID(`google:${destinationData.place_id}`);
         } else {
             setDestinationID(
-                ` coordinates: ${destinationData.latitude},${destinationData.longitude}`,
+                `coordinates:${destinationData.latitude},${destinationData.longitude}`,
             );
         }
+        console.log("hi");
     }
 
     function goBack() {
@@ -217,6 +251,17 @@ export default function RouteSelection(props) {
             borderRadius: 30,
             borderWidth: 2.5,
         },
+        messageContainer: {
+            width: "100%",
+            height: 200,
+            justifyContent: "center",
+            alignItems: "center",
+        },
+        message: {
+            fontWeight: "600",
+            fontSize: 18,
+            padding: 12,
+        },
     });
 
     useEffect(() => {
@@ -232,7 +277,7 @@ export default function RouteSelection(props) {
     }, [isClick, selectData]);
     useEffect(() => {
         setOrginAndDestination();
-    }, [originData, destinationData]);
+    }, [isSwap]);
 
     useEffect(async () => {
         if (
@@ -337,6 +382,7 @@ export default function RouteSelection(props) {
         setOriginData(destinationData);
         setDestinationName(temp);
         setDestinationData(temp2);
+        setClickSwap(true);
         if (isSwap === true) {
             setIsSwap(false);
         } else {
@@ -438,17 +484,29 @@ export default function RouteSelection(props) {
                             containerPadding={containerPadding}
                         />
                     )}
-                    <SuggestedRoutes
-                        topictextStyle={styles.topictext}
-                        containerPadding={containerPadding}
-                        data={api31Result}
-                        setSelectData={setSelectData}
-                        onPress={() => {
-                            setIsClick(true);
-                        }}
-                    />
+                    {error31 && (
+                        <View>
+                            <ThemedText>Something went wrong.</ThemedText>
+                        </View>
+                    )}
+                    {api31Result !== undefined && api31Result !== null && api31Result.length !== 0 && (
+                        <SuggestedRoutes
+                            topictextStyle={styles.topictext}
+                            containerPadding={containerPadding}
+                            data={api31Result}
+                            setSelectData={setSelectData}
+                            onPress={() => {
+                                setIsClick(true);
+                            }}
+                        />
+                    )}
 
-                    {api31Result !== undefined && api31Result !== null && <></>}
+                    {loadingDataFromApi && <></>}
+                    {api31Result.length === 0 && !loadingDataFromApi && (
+                        <View style={styles.messageContainer}>
+                            <ThemedText style={styles.message}>Route not found</ThemedText>
+                        </View>
+                    )}
                 </ScrollView>
             </View>
         </View>
