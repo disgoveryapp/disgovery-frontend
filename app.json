@@ -1,8 +1,8 @@
 {
     "expo": {
-        "name": "disgovery-frontend",
-        "slug": "disgovery-frontend",
-        "version": "1.0.0",
+        "name": "Disgovery",
+        "slug": "datastone-disgovery",
+        "version": "0.1.0",
         "orientation": "portrait",
         "icon": "./assets/icon.png",
         "splash": {
