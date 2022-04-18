@@ -123,7 +123,7 @@ export default function TransitLineForFares(props) {
 
     const styles = StyleSheet.create({
         lineleft: {
-            marginRight: 2,
+            marginRight: 4,
         },
         container : {
                     display: "flex",
