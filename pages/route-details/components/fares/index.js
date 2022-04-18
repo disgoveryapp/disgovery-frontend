@@ -25,6 +25,7 @@ function Fares(props) {
         container: {
             paddingHorizontal: props.containerPadding,
             justifyContent: "flex-start",
+            paddingVertical: 19,
         },
         transit: {
             paddingVertical: 5,

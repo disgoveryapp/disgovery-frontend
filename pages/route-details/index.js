@@ -311,13 +311,9 @@ export default function RouteDetails(props) {
                     <NavigateButton />
                 </View>
                 <View style={styles.scrollView}>
-                    <View style={styles.tofromContainer}>
-                        <ToFrom containerPadding={containerPadding} data={routeData} />
-                    </View>
+                    <ToFrom containerPadding={containerPadding} data={routeData} />
                     <DividerLine />
-                    <View style={styles.faresContainer}>
-                        <Fares containerPadding={containerPadding} data={routeData} />
-                    </View>
+                    <Fares containerPadding={containerPadding} data={routeData} />
                     <DividerLine />
                     <ScrollView
                         style={styles.subScrollView}
