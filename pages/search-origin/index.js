@@ -242,7 +242,7 @@ export default function SearchOrigin(props) {
             destination_data: destination_data,
             origin_name: origin_name,
             origin_data: origin_data,
-            focus: focus,
+            setTabOneFocus: setTabOneFocus,
             swapValue: swapValue,
         });
     }
@@ -476,7 +476,6 @@ export default function SearchOrigin(props) {
                         setFlip={setFlip}
                         swapValue={swapValue}
                         tabOneFocus={tabOneFocus}
-                        setTabOneFocus={setTabOneFocus}
                     />
                 </View>
 
