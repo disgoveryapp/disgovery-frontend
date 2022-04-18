@@ -123,14 +123,14 @@ export default function RouteShowDetails(props) {
             day = Math.floor(time);
             time = time % 1440;
             textData += day + " day ";
-        } else if (time >= 60) {
+        }
+        if (time >= 60) {
             hour = Math.floor(time);
             time = time % 60;
             textData += hour + " hr ";
-        } else {
-            minute = Math.floor(time);
-            textData += minute + " minutes";
         }
+        minute = Math.floor(time);
+        textData += minute + " minutes";
 
         return textData;
     }

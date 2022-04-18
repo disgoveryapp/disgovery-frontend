@@ -29,18 +29,19 @@ export default function RoutesDetailedBlock(props) {
         let hour = 0;
         let minute = 0;
         let textData = "";
+        console.log(time);
         if (time >= 1440) {
-            day = Math.floor(time);
+            day = Math.floor(time / 1440);
             time = time % 1440;
-            textData += day + " day ";
-        } else if (time >= 60) {
-            hour = Math.floor(time);
+            textData += day + " d ";
+        }
+        if (time >= 60) {
+            hour = Math.floor(time / 60);
             time = time % 60;
             textData += hour + " hr ";
-        } else {
-            minute = time;
-            textData += minute + " min";
         }
+        minute = time;
+        textData += minute + " min";
 
         return textData;
     }
@@ -91,7 +92,7 @@ export default function RoutesDetailedBlock(props) {
             paddingHorizontal: 4,
         },
         iconBlock: {
-            maxWidth: 270,
+            maxWidth: 225,
             flexDirection: "row",
             flexWrap: "wrap",
         },
