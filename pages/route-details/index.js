@@ -143,6 +143,7 @@ export default function RouteDetails(props) {
     useEffect(() => {
         mapRef._updateStyle;
     }, [colors]);
+
     useEffect(() => {
         parsePolylines();
         setRouteData(props.route.params.routeData);
@@ -245,6 +246,13 @@ export default function RouteDetails(props) {
         return decodedPolyline;
     }
 
+    function onNavigateButtonPress() {
+        console.log(routeData);
+        navigation.navigate("Navigation", {
+            route_data: routeData,
+        });
+    }
+
     return (
         <View style={styles.container}>
             <View style={styles.backButtonContainer}>
@@ -308,7 +316,7 @@ export default function RouteDetails(props) {
             </MapView>
             <View style={styles.bottomDetail}>
                 <View style={styles.navigateButtonContainer}>
-                    <NavigateButton />
+                    <NavigateButton onPress={onNavigateButtonPress} />
                 </View>
                 <View style={styles.scrollView}>
                     <ToFrom containerPadding={containerPadding} data={routeData} />

@@ -7,7 +7,7 @@ import {
 } from "react-native";
 import React, { useRef, useEffect, useState } from "react";
 import ThemedText from "../../components/themed-text";
-import { useTheme } from "@react-navigation/native";
+import { useNavigation, useTheme } from "@react-navigation/native";
 import MapView, { AnimatedRegion, Marker, Polyline } from "react-native-maps";
 import { googleMapsStyling } from "../../maps/google-maps-styling";
 import * as Location from "expo-location";
@@ -21,7 +21,6 @@ import {
     getCurrentETA,
     getDistanceFromLatLonInKm,
     getTotalDistanceOfRoute,
-    ROUTE_DETAILS,
     snapToPolyline,
 } from "./util";
 import Animated, {
@@ -60,8 +59,11 @@ const TOP_NAVIGATION_PANEL_WIDTH = SCREEN_WIDTH;
 let foregroundSubscription = null;
 let currentDirectionExists = null;
 
-const Navigation = () => {
+function Navigation(props) {
     const { colors, dark } = useTheme();
+    const ROUTE_DETAILS = props.route.params.route_data;
+    const navigation = useNavigation();
+
     let firstRun = true;
     let firstRecentered = false;
 
@@ -108,33 +110,25 @@ const Navigation = () => {
     const topNavigationPanelWidthReanimated = useSharedValue(0);
 
     useEffect(() => {
-        let subscribed = true;
+        if (firstRun) {
+            (async () => {
+                await parsePolylines();
+                await fetchNewLocation();
+                setSpeechVoices(await Speech.getAvailableVoicesAsync());
+            })().catch(() => {});
 
-        if (subscribed) {
-            if (firstRun) {
-                (async () => {
-                    await parsePolylines();
-                    await fetchNewLocation();
-                    setSpeechVoices(await Speech.getAvailableVoicesAsync());
-                })().catch(() => {});
-
-                setBottomNavigationPanelMenuIsExpanded(true);
-                setBottomNavigationPanelMenuIsExpanded(false);
-                firstRun = false;
-            }
-
-            currentDirectionExists = setInterval(async () => {
-                if (!currentDirection) {
-                    await parsePolylines();
-                    await fetchNewLocation();
-                    console.log("refetch");
-                }
-            }, 3000);
+            setBottomNavigationPanelMenuIsExpanded(true);
+            setBottomNavigationPanelMenuIsExpanded(false);
+            firstRun = false;
         }
 
-        return () => {
-            subscribed = false;
-        };
+        currentDirectionExists = setInterval(async () => {
+            if (!currentDirection) {
+                await parsePolylines();
+                await fetchNewLocation();
+                console.log("refetch");
+            }
+        }, 3000);
     }, []);
 
     useEffect(() => {
@@ -222,7 +216,7 @@ const Navigation = () => {
     }, [location]);
 
     useEffect(() => {
-        if (!currentDirection) {
+        if (currentDirection) {
             console.log(currentDirection);
             clearInterval(currentDirectionExists);
             console.log("unsub");
@@ -471,6 +465,10 @@ const Navigation = () => {
         let tempDirections = [];
         let tempETAs = [];
 
+        if (ROUTE_DETAILS.directions[0]) {
+            if (!ROUTE_DETAILS.directions[0].via_line) return;
+        }
+
         for (let i in ROUTE_DETAILS.directions) {
             if (ROUTE_DETAILS.directions[i].type === "board") {
                 let boardDirection = {
@@ -538,7 +536,7 @@ const Navigation = () => {
                 for (let step of ROUTE_DETAILS.directions[i].route.steps) {
                     tempDirections.push({
                         distance: { text: `In ${step.distance.text}`, value: step.distance.value },
-                        route_id: `walk_from_${direction.from.coordinates.lat}_${direction.from.coordinates.lng}_to_${direction.to.coordinates.lat}_${direction.to.coordinates.lng}`,
+                        route_id: `walk_from_${ROUTE_DETAILS.directions[i].from.coordinates.lat}_${ROUTE_DETAILS.directions[i].from.coordinates.lng}_to_${ROUTE_DETAILS.directions[i].to.coordinates.lat}_${ROUTE_DETAILS.directions[i].to.coordinates.lng}`,
                         text: htmlToText(step.html_instructions),
                         near: ROUTE_DETAILS.directions[i].start_location,
                         arrive: false,
@@ -550,7 +548,7 @@ const Navigation = () => {
                 );
 
                 tempETAs.push({
-                    route_id: `walk_from_${direction.from.coordinates.lat}_${direction.from.coordinates.lng}_to_${direction.to.coordinates.lat}_${direction.to.coordinates.lng}`,
+                    route_id: `walk_from_${ROUTE_DETAILS.directions[i].from.coordinates.lat}_${ROUTE_DETAILS.directions[i].from.coordinates.lng}_to_${ROUTE_DETAILS.directions[i].to.coordinates.lat}_${ROUTE_DETAILS.directions[i].to.coordinates.lng}`,
                     eta: ROUTE_DETAILS.directions[i].schedule.duration,
                     current_eta: ROUTE_DETAILS.directions[i].schedule.duration,
                     distance: getTotalDistanceOfRoute(currentPolyline.polyline),
@@ -636,7 +634,7 @@ const Navigation = () => {
     }
 
     function onExitNavigation() {
-        console.log("exit");
+        navigation.goBack();
     }
 
     function onRecenterButtonPress() {
@@ -950,10 +948,19 @@ const Navigation = () => {
 
     const animatedDoneSubviewWidth = useAnimatedStyle(() => {
         return {
-            width: withTiming(doneSubviewWidthReanimated.value, {
-                duration: 4000,
-                easing: Easing.inOut(Easing.linear),
-            }),
+            width: withTiming(
+                doneSubviewWidthReanimated.value,
+                {
+                    duration: 4000,
+                    easing: Easing.inOut(Easing.linear),
+                },
+                (finished) => {
+                    "worklet";
+                    if (finished && doneSubviewWidthReanimated.value != 0) {
+                        runOnJS(onExitNavigation)();
+                    }
+                },
+            ),
         };
     });
 
@@ -1272,6 +1279,6 @@ const Navigation = () => {
             {!navigationDone && <BottomNavigationPanel />}
         </View>
     );
-};
+}
 
 export default Navigation;
