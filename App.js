@@ -1,3 +1,5 @@
+import "react-native-reanimated";
+import { useEffect } from "react";
 import {
     useFonts,
     Barlow_500Medium,
@@ -15,6 +17,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
 import { Text, useColorScheme, View } from "react-native";
 import { darkTheme, lightTheme } from "./themes/themes";
+import * as Location from "expo-location";
 
 import Home from "./pages/home";
 
@@ -22,6 +25,7 @@ import TripDetails from "./pages/trip-details";
 import Search from "./pages/search";
 import SearchOrigin from "./pages/search-origin";
 import StationDetails from "./pages/station-details";
+import Navigation from "./pages/navigation";
 
 import RouteDetails from "./pages/route-details";
 import RouteSelection from "./pages/route-selection";
@@ -41,6 +45,13 @@ export default function App() {
 
     const Stack = createNativeStackNavigator();
 
+    useEffect(() => {
+        const requestPermissions = async () => {
+            const foreground = await Location.requestForegroundPermissionsAsync();
+        };
+        requestPermissions();
+    }, []);
+
     if (!fontLoaded) return <AppLoading />;
     else
         return (
@@ -51,6 +62,7 @@ export default function App() {
                             headerShown: false,
                         }}
                     >
+                        <Stack.Screen name="Navigation" component={Navigation} />
                         <Stack.Screen name="Home" component={Home} />
                         <Stack.Screen name="RouteSelection" component={RouteSelection} />
 
