@@ -173,6 +173,9 @@ export default function RouteSelection(props) {
     }
 
     function goBack() {
+        if (isSwap === true) {
+            props.route.params.swapValue();
+        }
         navigation.pop();
     }
 
