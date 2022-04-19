@@ -7,9 +7,9 @@
         "icon": "./assets/disgovery-icon.png",
         "primaryColor": "#7EC13A",
         "splash": {
-            "image": "./assets/splash.png",
+            "image": "./assets/disgovery-icon.png",
             "resizeMode": "contain",
-            "backgroundColor": "#ffffff"
+            "backgroundColor": "#7EC13A"
         },
         "updates": {
             "fallbackToCacheTimeout": 0
