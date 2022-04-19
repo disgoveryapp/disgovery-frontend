@@ -1142,10 +1142,10 @@ function Navigation(props) {
                                     </ThemedText>
                                     <ArrowIcon style={styles.bottomNaviationPanelTitleArrowIcon} />
                                     <View style={styles.bottomNavigationPanelToTextContainer}>
-                                        <ThemedTextMarquee>
+                                        {/* <ThemedTextMarquee>
                                             {ROUTE_DETAILS.destination.coordinates.lat},{" "}
                                             {ROUTE_DETAILS.destination.coordinates.lng}
-                                        </ThemedTextMarquee>
+                                        </ThemedTextMarquee> */}
                                     </View>
                                 </View>
                                 <TouchableWithoutFeedback
