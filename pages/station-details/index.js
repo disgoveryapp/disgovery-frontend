@@ -145,7 +145,6 @@ export default function StationDetails(props) {
         },
         stationSignContainer: {
             minWidth: 60,
-            maxWidth: "20%",
             height: 60,
             paddingHorizontal: 7,
             borderRadius: 100,
