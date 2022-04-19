@@ -1055,15 +1055,15 @@ function Navigation(props) {
                             <SvgAnimatedLinearGradient
                                 width="80%"
                                 height={20}
-                                primaryColor={colors.upper_background}
-                                secondaryColor={colors.background}
+                                primaryColor={colors.linear_gradient_primary}
+                                secondaryColor={colors.linear_gradient_secondary}
                             />
                             <SvgAnimatedLinearGradient
                                 style={{ marginTop: 5 }}
                                 width="50%"
                                 height={16}
-                                primaryColor={colors.upper_background}
-                                secondaryColor={colors.background}
+                                primaryColor={colors.linear_gradient_primary}
+                                secondaryColor={colors.linear_gradient_secondary}
                             />
                         </>
                     )}
@@ -1149,15 +1149,15 @@ function Navigation(props) {
                             <SvgAnimatedLinearGradient
                                 width="80%"
                                 height={16}
-                                primaryColor={colors.upper_background}
-                                secondaryColor={colors.background}
+                                primaryColor={colors.linear_gradient_primary}
+                                secondaryColor={colors.linear_gradient_secondary}
                             />
                             <SvgAnimatedLinearGradient
                                 style={{ marginTop: 5 }}
                                 width="90%"
                                 height={27}
-                                primaryColor={colors.upper_background}
-                                secondaryColor={colors.background}
+                                primaryColor={colors.linear_gradient_primary}
+                                secondaryColor={colors.linear_gradient_secondary}
                             />
                         </>
                     )}
