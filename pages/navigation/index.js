@@ -37,6 +37,7 @@ import RecenterButton from "../../components/recenter-button";
 import ExpandDownIcon18px from "../../assets/svgs/expand-down-icon-18px";
 import SvgAnimatedLinearGradient from "react-native-svg-animated-linear-gradient/src";
 import { sendNotification } from "../../functions/notification";
+import ThemedTextMarquee from "../../components/themed-text-marquee";
 
 const CHECKPOINT_SNAP_DISTANCE = 0.1;
 
@@ -941,6 +942,10 @@ function Navigation(props) {
             alignItems: "center",
             height: 48,
         },
+        bottomNavigationPanelToTextContainer: {
+            flex: 1,
+            marginLeft: 3,
+        },
     });
 
     const animatedBottomNavigationPanelMenuHeight = useAnimatedStyle(() => {
@@ -1136,6 +1141,12 @@ function Navigation(props) {
                                         On-going navigation
                                     </ThemedText>
                                     <ArrowIcon style={styles.bottomNaviationPanelTitleArrowIcon} />
+                                    <View style={styles.bottomNavigationPanelToTextContainer}>
+                                        <ThemedTextMarquee>
+                                            {ROUTE_DETAILS.destination.coordinates.lat},{" "}
+                                            {ROUTE_DETAILS.destination.coordinates.lng}
+                                        </ThemedTextMarquee>
+                                    </View>
                                 </View>
                                 <TouchableWithoutFeedback
                                     style={styles.bottomNavigationExpandUpIconContainer}

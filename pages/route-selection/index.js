@@ -112,36 +112,36 @@ export default function RouteSelection(props) {
             api31Result === null ||
             api31Result.length === 0
         ) {
-            try {
-                await axios
-                    .post(
-                        `${configs.API_URL}/route/new`,
-                        {
-                            //origin: "coordinates:13.7623641,100.4719031",
-                            //destination: "coordinates:13.7546154,100.5324766",
-                            origin: `${originID}`,
-                            destination: `${destinationID}`,
+            setLoadingDataFromApi(true);
+
+            axios
+                .post(
+                    `${configs.API_URL}/route/new`,
+                    {
+                        origin: `${originID}`,
+                        destination: `${destinationID}`,
+                    },
+                    {
+                        headers: {
+                            Authorization: `Bearer ${configs.PERSISTENT_JWT}`,
                         },
-                        {
-                            headers: {
-                                Authorization: `Bearer ${configs.PERSISTENT_JWT}`,
-                            },
-                        },
-                    )
-                    .then(function (result) {
-                        console.log("welcome");
-                        console.log(result.data);
-                        setError31(false);
-                        if (result.data.data === undefined || result.data.data === null) {
-                            setApi31Result([]);
-                        } else {
-                            setApi31Result(result.data.data);
-                        }
-                    });
-            } catch (error) {
-                console.log("catch");
-                setError31(true);
-            }
+                    },
+                )
+                .then((response) => {
+                    setError31(false);
+                    if (response.data.data === undefined || response.data.data === null) {
+                        setApi31Result([]);
+                    } else {
+                        setApi31Result(response.data.data);
+                    }
+                })
+                .catch((error) => {
+                    console.log("catch", error.message);
+                    setError31(true);
+                })
+                .finally(() => {
+                    setLoadingDataFromApi(false);
+                });
         }
     }
 
@@ -298,9 +298,7 @@ export default function RouteSelection(props) {
             destinationID !== null &&
             destinationID !== ""
         ) {
-            setLoadingDataFromApi(true);
-            await api31Call();
-            setLoadingDataFromApi(false);
+            api31Call();
         }
         setSelectData({});
     }, [originID, destinationID]);
