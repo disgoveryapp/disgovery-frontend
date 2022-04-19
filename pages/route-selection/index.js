@@ -418,7 +418,6 @@ export default function RouteSelection(props) {
                 customMapStyle={dark ? googleMapsStyling.dark : googleMapsStyling.light}
                 onTouchStart={() => setMapsIsRecentered(false)}
                 showsUserLocation
-                zoomEnabled={false}
                 mapPadding={{
                     top: Platform.OS === "android" ? StatusBar.currentHeight : 20,
                     right: 0,
