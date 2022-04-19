@@ -15,7 +15,13 @@ import { googleMapsStyling } from "../../maps/google-maps-styling";
 import * as Location from "expo-location";
 import RecenterButton from "../../components/recenter-button";
 import axios from "axios";
-import { configs, MockupData, getRouteTypeString, snapToPolyline } from "../../configs/configs";
+import {
+    configs,
+    MockupData,
+    getRouteTypeString,
+    snapToPolyline,
+    pSBC,
+} from "../../configs/configs";
 import ToFrom from "./components/to-from";
 import Fares from "./components/fares";
 import RouteShowDetails from "./components/route-show-details";
@@ -283,11 +289,18 @@ export default function RouteDetails(props) {
                         {polylines.map((item, key) => (
                             <>
                                 <Polyline
-                                    key={key}
+                                    key={`${key}_outer`}
+                                    zIndex={10}
                                     coordinates={item.polyline}
-                                    strokeColor="#fff"
-                                    strokeColors={[item.color]}
-                                    strokeWidth={6}
+                                    strokeWidth={14}
+                                    strokeColor={pSBC(-0.5, item.color)}
+                                />
+                                <Polyline
+                                    key={`${key}_inner`}
+                                    zIndex={11}
+                                    coordinates={item.polyline}
+                                    strokeWidth={8}
+                                    strokeColor={item.color}
                                 />
                                 <Marker coordinate={item.polyline[0]} anchor={{ x: 0.5, y: 0.5 }}>
                                     <View

@@ -17,7 +17,7 @@ import { googleMapsStyling } from "../../maps/google-maps-styling";
 import * as Location from "expo-location";
 import RecenterButton from "../../components/recenter-button";
 import axios from "axios";
-import { configs, MockupData } from "../../configs/configs";
+import { configs, MockupData, pSBC } from "../../configs/configs";
 import OverViewRoute from "./components/overview-route";
 import SuggestedRoutes from "./components/suggested-routes";
 import RouteSelectionBar from "./components/route-selection-bar";
@@ -432,10 +432,16 @@ export default function RouteSelection(props) {
                     destinationLatLng !== {} && (
                         <>
                             <Polyline
+                                zIndex={10}
                                 coordinates={[originLatLng, destinationLatLng]}
-                                strokeColor="#000" // fallback for when `strokeColors` is not supported by the map-provider
-                                strokeColors={[colors.primary]}
-                                strokeWidth={6}
+                                strokeWidth={14}
+                                strokeColor={pSBC(-0.5, colors.primary)}
+                            />
+                            <Polyline
+                                zIndex={11}
+                                coordinates={[originLatLng, destinationLatLng]}
+                                strokeWidth={8}
+                                strokeColor={colors.primary}
                             />
                             <Marker coordinate={originLatLng} anchor={{ x: 0.5, y: 0.5 }}>
                                 <View
