@@ -454,6 +454,14 @@ function Navigation(props) {
                 } catch (error) {
                     console.error(error.message);
                 }
+            } else if (direction.type === "transfer") {
+                if (direction.encoded_polyline) {
+                    tempPolylines.push({
+                        route_id: `transfer_from_${direction.from.coordinates.lat}_${direction.from.coordinates.lng}_to_${direction.to.coordinates.lat}_${direction.to.coordinates.lng}`,
+                        polyline: decodePolyline(direction.encoded_polyline),
+                        color: colors.go_button,
+                    });
+                }
             }
         }
 
