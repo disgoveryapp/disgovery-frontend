@@ -357,8 +357,8 @@ export default function RouteSelection(props) {
         let latitude2 = parseFloat(lat2);
         let longitude2 = parseFloat(lng2);
         let latdelta = Math.abs(latitude1 - latitude2) + 0.1;
-        let lngdelta = Math.abs(longitude1 - longitude2);
-        let lat3 = (latitude1 + latitude2) / 2.0 - 0.02;
+        let lngdelta = Math.abs(longitude1 - longitude2) + 0.02;
+        let lat3 = (latitude1 + latitude2) / 2.0 - 0.015;
         let lng3 = (longitude1 + longitude2) / 2.0;
 
         return {
@@ -511,7 +511,7 @@ export default function RouteSelection(props) {
                     )}
 
                     {loadingDataFromApi && <></>}
-                    {api31Result.length === 0 && !loadingDataFromApi && (
+                    {api31Result.length === 0 && !loadingDataFromApi && !error31 && (
                         <View style={styles.messageContainer}>
                             <ThemedText style={styles.message}>Route not found</ThemedText>
                         </View>

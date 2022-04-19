@@ -90,14 +90,20 @@ export default function RouteShowDetails(props) {
             marginVertical: -4,
             zIndex: 1,
         },
-        firstlineColor: { width: 6, height: 37.5, marginVertical: -4, zIndex: 1 },
+        firstlineColor: { width: 6, height: 41.5, marginVertical: -4, zIndex: 1 },
         originDestnaionText: {
             fontWeight: "600",
             fontSize: 14,
         },
         stopDetailButton: {
             flexDirection: "row",
-            paddingVertical: 3,
+            paddingVertical: 5,
+        },
+        subStationText: {
+            fontWeight: "600",
+            fontSize: 14,
+            color: colors.subtitle,
+            paddingBottom: 4,
         },
     });
 
@@ -203,7 +209,7 @@ export default function RouteShowDetails(props) {
                             }
                         })()}
                     </View>
-                    <View>
+                    <View style={styles.textTabContainer}>
                         <ThemedText style={styles.titleText}>
                             {"Board "}
                             {getRouteTypeString(subprops.transitData.via_line.type)}
@@ -317,7 +323,7 @@ export default function RouteShowDetails(props) {
                                         {key === 0 || key === subprops.lineData.length - 1 ? (
                                             <></>
                                         ) : (
-                                            <ThemedText style={styles.subtitleText}>
+                                            <ThemedText style={styles.subStationText}>
                                                 {item.station.name.en}
                                             </ThemedText>
                                         )}
