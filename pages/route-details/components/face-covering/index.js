@@ -27,7 +27,7 @@ function FaceCovering(props) {
             flex: 1,
             fontWeight: "500",
             fontSize: 14,
-            color: "#FFBF1C",
+            color: colors.yellow,
         },
     });
 

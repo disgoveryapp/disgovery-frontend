@@ -28,7 +28,7 @@ export const lightTheme = {
         text: "#000",
         subtitle: "#555",
         red: "#EE2929",
-        yellow: "#FFBF1C",
+        yellow: "#fea621",
         primary: "#7EC13A",
         middle_grey: "#7B7B7B",
         white: "#fff",
