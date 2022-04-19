@@ -510,48 +510,48 @@ export default function BottomCardFlatList(props) {
                         <SvgAnimatedLinearGradient
                             width={0.8 * SCREEN_WIDTH}
                             height={20}
-                            primaryColor={colors.background}
-                            secondaryColor={colors.upper_background}
+                            primaryColor={colors.linear_gradient_primary}
+                            secondaryColor={colors.linear_gradient_secondary}
                         />
 
                         <SvgAnimatedLinearGradient
                             style={{ marginTop: 10 }}
                             width={0.4 * SCREEN_WIDTH}
                             height={26}
-                            primaryColor={colors.background}
-                            secondaryColor={colors.upper_background}
+                            primaryColor={colors.linear_gradient_primary}
+                            secondaryColor={colors.linear_gradient_secondary}
                         />
 
                         <SvgAnimatedLinearGradient
                             style={{ marginTop: 10 }}
                             width={0.5 * SCREEN_WIDTH}
                             height={20}
-                            primaryColor={colors.background}
-                            secondaryColor={colors.upper_background}
+                            primaryColor={colors.linear_gradient_primary}
+                            secondaryColor={colors.linear_gradient_secondary}
                         />
 
                         <SvgAnimatedLinearGradient
                             style={{ marginTop: 40 }}
                             width={0.8 * SCREEN_WIDTH}
                             height={20}
-                            primaryColor={colors.background}
-                            secondaryColor={colors.upper_background}
+                            primaryColor={colors.linear_gradient_primary}
+                            secondaryColor={colors.linear_gradient_secondary}
                         />
 
                         <SvgAnimatedLinearGradient
                             style={{ marginTop: 10 }}
                             width={0.4 * SCREEN_WIDTH}
                             height={26}
-                            primaryColor={colors.background}
-                            secondaryColor={colors.upper_background}
+                            primaryColor={colors.linear_gradient_primary}
+                            secondaryColor={colors.linear_gradient_secondary}
                         />
 
                         <SvgAnimatedLinearGradient
                             style={{ marginTop: 10 }}
                             width={0.5 * SCREEN_WIDTH}
                             height={20}
-                            primaryColor={colors.background}
-                            secondaryColor={colors.upper_background}
+                            primaryColor={colors.linear_gradient_primary}
+                            secondaryColor={colors.linear_gradient_secondary}
                         />
                     </View>
                 </>
