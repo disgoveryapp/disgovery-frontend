@@ -35,6 +35,7 @@ const NavigateButton = (props) => {
             fontWeight: "600",
             fontSize: 18,
             marginLeft: 5,
+            color: colors.white,
         },
     });
 
