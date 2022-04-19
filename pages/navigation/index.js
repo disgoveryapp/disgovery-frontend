@@ -57,7 +57,6 @@ const TOP_NAVIGATION_PANEL_HEIGHT = 0.4 * SCREEN_HEIGHT;
 const TOP_NAVIGATION_PANEL_WIDTH = SCREEN_WIDTH;
 
 let foregroundSubscription = null;
-let currentDirectionExists = null;
 
 function Navigation(props) {
     const { colors, dark } = useTheme();
@@ -113,6 +112,7 @@ function Navigation(props) {
         if (firstRun) {
             (async () => {
                 await parsePolylines();
+                await fallbackFetchNewLocation();
                 await fetchNewLocation();
                 setSpeechVoices(await Speech.getAvailableVoicesAsync());
             })().catch(() => {});
@@ -121,14 +121,6 @@ function Navigation(props) {
             setBottomNavigationPanelMenuIsExpanded(false);
             firstRun = false;
         }
-
-        currentDirectionExists = setInterval(async () => {
-            if (!currentDirection) {
-                await parsePolylines();
-                await fetchNewLocation();
-                console.log("refetch");
-            }
-        }, 3000);
     }, []);
 
     useEffect(() => {
@@ -138,6 +130,10 @@ function Navigation(props) {
     useEffect(() => {
         setSelectedSpeechVoice(speechVoices.find((voice) => voice.language === "en-US"));
     }, [speechVoices]);
+
+    useEffect(() => {
+        determineNavigationDone();
+    }, [currentDirection]);
 
     useEffect(async () => {
         let subscribed = true;
@@ -205,7 +201,6 @@ function Navigation(props) {
 
                         determineCurrentDirection();
                         determineCurrentETA();
-                        determineNavigationDone();
                     }
                 }
             }
@@ -215,13 +210,34 @@ function Navigation(props) {
         };
     }, [location]);
 
-    useEffect(() => {
-        if (currentDirection) {
-            console.log(currentDirection);
-            clearInterval(currentDirectionExists);
-            console.log("unsub");
-        }
-    }, [currentDirection]);
+    async function fallbackFetchNewLocation() {
+        Location.getCurrentPositionAsync({
+            accuracy: Location.Accuracy.BestForNavigation,
+        })
+            .then((location) => {
+                setLocation({
+                    latitude: location.coords.latitude,
+                    longitude: location.coords.longitude,
+                });
+
+                setMapCurrentLocationRegion({
+                    latitude: location.coords.latitude,
+                    longitude: location.coords.longitude,
+                    latitudeDelta: 0.005,
+                    longitudeDelta: 0.005,
+                });
+
+                recenter({
+                    latitude: location.coords.latitude,
+                    longitude: location.coords.longitude,
+                    latitudeDelta: 0.005,
+                    longitudeDelta: 0.005,
+                });
+
+                firstRecentered = true;
+            })
+            .catch(() => {});
+    }
 
     async function fetchNewLocation() {
         let { status } = await Location.requestForegroundPermissionsAsync();
