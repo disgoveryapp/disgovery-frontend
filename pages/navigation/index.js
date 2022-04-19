@@ -915,7 +915,7 @@ function Navigation(props) {
             position: "absolute",
             alignSelf: "flex-start",
             height: "100%",
-            backgroundColor: colors.upper_background,
+            backgroundColor: colors.linear_gradient_primary,
         },
         divider: {
             height: 1,
