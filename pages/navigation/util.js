@@ -973,7 +973,7 @@ export const ROUTE_DETAILS = {
 export function getTotalDistanceOfRoute(polyline) {
     let totalDistance = 0;
 
-    for (let i = 0; i < polyline.length - 1; i++) {
+    for (let i = 0; i < polyline.length; i++) {
         totalDistance += getDistanceFromLatLonInKm(
             polyline[i].latitude,
             polyline[i].longitude,
