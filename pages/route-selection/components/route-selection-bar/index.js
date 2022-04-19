@@ -10,7 +10,7 @@ import PinDropIcon from "../../../../assets/svgs/pin-drop-icon";
 import ScheduleIcon from "../../../../assets/svgs/schedule-icon";
 
 export default function RouteSelectionBar(props) {
-    const { colors } = useTheme();
+    const { dark, colors } = useTheme();
     const navigation = useNavigation();
 
     const styles = StyleSheet.create({
@@ -46,6 +46,9 @@ export default function RouteSelectionBar(props) {
             backgroundColor: colors.upper_background,
             borderRadius: 12,
             paddingHorizontal: 12,
+
+            borderWidth: dark ? 0 : 0.5,
+            borderColor: dark ? undefined : colors.middle_grey,
         },
         textinput: {
             color: colors.text,
