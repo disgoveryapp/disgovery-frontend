@@ -4,7 +4,8 @@
         "slug": "datastone-disgovery",
         "version": "0.1.0",
         "orientation": "portrait",
-        "icon": "./assets/icon.png",
+        "icon": "./assets/disgovery-icon.png",
+        "primaryColor": "#7EC13A",
         "splash": {
             "image": "./assets/splash.png",
             "resizeMode": "contain",
@@ -17,12 +18,15 @@
         "userInterfaceStyle": "automatic",
         "ios": {
             "supportsTablet": true,
-            "userInterfaceStyle": "automatic"
+            "userInterfaceStyle": "automatic",
+            "config": {
+                "googleMapsApiKey": ""
+            }
         },
         "android": {
             "adaptiveIcon": {
-                "foregroundImage": "./assets/icon.png",
-                "backgroundColor": "#FFFFFF"
+                "foregroundImage": "./assets/disgovery-icon.png",
+                "backgroundColor": "#7EC13A"
             },
             "userInterfaceStyle": "automatic"
         },
