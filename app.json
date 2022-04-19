@@ -7,7 +7,7 @@
         "icon": "./assets/disgovery-icon.png",
         "primaryColor": "#7EC13A",
         "splash": {
-            "image": "./assets/disgovery-icon.png",
+            "image": "./assets/disgovery-splash.png",
             "resizeMode": "contain",
             "backgroundColor": "#7EC13A"
         },
