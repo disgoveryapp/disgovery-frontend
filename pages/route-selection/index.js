@@ -413,6 +413,7 @@ export default function RouteSelection(props) {
                 style={styles.maps}
                 initialRegion={INITIAL_MAP_REGION}
                 // provider="google"
+                showsMyLocationButton={false}
                 customMapStyle={dark ? googleMapsStyling.dark : googleMapsStyling.light}
                 onTouchStart={() => setMapsIsRecentered(false)}
                 showsUserLocation

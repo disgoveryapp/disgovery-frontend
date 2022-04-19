@@ -1226,6 +1226,7 @@ function Navigation(props) {
                 // provider="google"
                 customMapStyle={dark ? googleMapsStyling.dark : googleMapsStyling.light}
                 onTouchEnd={onMapRegionChange}
+                showsMyLocationButton={false}
                 showsUserLocation={offRoad}
                 followsUserLocation={isRecentered}
             >

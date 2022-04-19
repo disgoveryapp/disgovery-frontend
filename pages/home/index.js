@@ -149,6 +149,7 @@ export default function Home() {
                 customMapStyle={dark ? googleMapsStyling.dark : googleMapsStyling.light}
                 onTouchStart={() => setMapsIsRecentered(false)}
                 onRegionChangeComplete={(region) => onMapRegionChangeComplete(region)}
+                showsMyLocationButton={false}
                 showsUserLocation
             ></MapView>
             <RecenterButton recentered={mapsIsRecentered} onPress={recenter} />

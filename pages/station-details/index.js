@@ -295,6 +295,7 @@ export default function StationDetails(props) {
                 ref={mapRef}
                 style={styles.topMap}
                 // provider={PROVIDER_GOOGLE}
+                showsMyLocationButton={false}
                 customMapStyle={dark ? googleMapsStyling.dark : googleMapsStyling.light}
                 initialRegion={configs.INITIAL_MAP_REGION}
                 mapPadding={{ bottom: 0.05 * Dimensions.get("screen").height }}

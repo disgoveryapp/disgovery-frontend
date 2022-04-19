@@ -268,6 +268,7 @@ export default function RouteDetails(props) {
                 style={styles.maps}
                 initialRegion={INITIAL_MAP_REGION}
                 // provider="google"
+                showsMyLocationButton={false}
                 customMapStyle={dark ? googleMapsStyling.dark : googleMapsStyling.light}
                 onTouchStart={() => setMapsIsRecentered(false)}
                 mapPadding={{
