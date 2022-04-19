@@ -11,7 +11,7 @@ import { useKeyboard } from "../../../search/components/check-keyboard";
 import ArrowBackwardIcon from "../../../../assets/svgs/arrow-backward-24px";
 
 export default function SearchOriginBar(props) {
-    const { colors } = useTheme();
+    const { dark, colors } = useTheme();
     const isKeyboardOpen = useKeyboard();
     const [isTabOneOpen, setTabOne] = useState(true);
     const [isTabTwoOpen, setTabTwo] = useState(false);
@@ -68,6 +68,9 @@ export default function SearchOriginBar(props) {
             backgroundColor: colors.background,
             borderRadius: 12,
             paddingRight: 4,
+
+            borderWidth: dark ? 0 : 0.5,
+            borderColor: dark ? undefined : colors.middle_grey,
         },
         textinput: {
             height: 39,
