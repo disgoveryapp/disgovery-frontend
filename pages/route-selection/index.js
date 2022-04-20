@@ -510,13 +510,23 @@ export default function RouteSelection(props) {
                     )}
 
                     {loadingDataFromApi && (
-                        <SvgAnimatedLinearGradient
-                            style={{ marginTop: 30 }}
-                            width={0.8 * Dimensions.get("screen").width}
-                            height={30}
-                            primaryColor={colors.linear_gradient_primary}
-                            secondaryColor={colors.linear_gradient_secondary}
-                        ></SvgAnimatedLinearGradient>
+                        <>
+                            <SvgAnimatedLinearGradient
+                                style={{ marginHorizontal: 15, marginTop: 20, marginBottom: 10 }}
+                                width={0.4 * Dimensions.get("screen").width}
+                                height={14}
+                                primaryColor={colors.linear_gradient_primary}
+                                secondaryColor={colors.linear_gradient_secondary}
+                            ></SvgAnimatedLinearGradient>
+
+                            <SvgAnimatedLinearGradient
+                                style={{ marginHorizontal: 15 }}
+                                width={Dimensions.get("screen").width - 30}
+                                height={50}
+                                primaryColor={colors.linear_gradient_primary}
+                                secondaryColor={colors.linear_gradient_secondary}
+                            ></SvgAnimatedLinearGradient>
+                        </>
                     )}
                     {api31Result.length === 0 && !loadingDataFromApi && !error31 && (
                         <View style={styles.messageContainer}>
