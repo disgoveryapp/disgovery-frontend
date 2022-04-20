@@ -796,7 +796,7 @@ function Navigation(props) {
             justifyContent: "space-between",
         },
         bottomNaviationPanelTitleArrowIcon: {
-            marginLeft: 5,
+            // marginLeft: 5,
         },
         onGoingNavigationText: {
             color: colors.subtitle,
@@ -890,6 +890,7 @@ function Navigation(props) {
             display: "flex",
             flexDirection: "row",
             alignItems: "center",
+            flex: 1,
         },
         bottomNavigationExpandUpIconContainer: {
             alignSelf: "flex-end",
@@ -1137,15 +1138,15 @@ function Navigation(props) {
                         <>
                             <View style={styles.bottomNavigationPanelTitle}>
                                 <View style={styles.bottomNavigationPanelFromToContainer}>
-                                    <ThemedText style={styles.onGoingNavigationText}>
+                                    {/* <ThemedText style={styles.onGoingNavigationText}>
                                         On-going navigation
-                                    </ThemedText>
+                                    </ThemedText> */}
                                     <ArrowIcon style={styles.bottomNaviationPanelTitleArrowIcon} />
                                     <View style={styles.bottomNavigationPanelToTextContainer}>
-                                        {/* <ThemedTextMarquee>
+                                        <ThemedTextMarquee style={styles.onGoingNavigationText}>
                                             {ROUTE_DETAILS.destination.coordinates.lat},{" "}
                                             {ROUTE_DETAILS.destination.coordinates.lng}
-                                        </ThemedTextMarquee> */}
+                                        </ThemedTextMarquee>
                                     </View>
                                 </View>
                                 <TouchableWithoutFeedback
