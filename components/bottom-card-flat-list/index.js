@@ -138,7 +138,7 @@ export default function BottomCardFlatList(props) {
                                         <ThemedText style={styles.otherOriginData}>
                                             {Math.round(otherOrigins[key].arriving_in / 60) === 0
                                                 ? "now"
-                                                : `in ${Math.round(
+                                                : `next in ${Math.round(
                                                       otherOrigins[key].arriving_in / 60,
                                                   )} ${
                                                       Math.round(
@@ -147,10 +147,10 @@ export default function BottomCardFlatList(props) {
                                                           ? "mins"
                                                           : "min"
                                                   }`}{" "}
-                                            ·{" "}
-                                            {Math.round((otherOrigins[key].distance / 1000) * 10) /
+                                            {/* ·{" "} */}
+                                            {/* {Math.round((otherOrigins[key].distance / 1000) * 10) /
                                                 10}{" "}
-                                            km
+                                            km */}
                                         </ThemedText>
                                     </TouchableOpacity>
                                 </>
@@ -225,10 +225,10 @@ export default function BottomCardFlatList(props) {
                                 ·{" "}
                                 {Math.round(arriving_in / 60) === 0
                                     ? "now"
-                                    : `in ${Math.round(arriving_in / 60)} ${
+                                    : `next in ${Math.round(arriving_in / 60)} ${
                                           Math.round(arriving_in / 60) !== 1 ? "mins" : "min"
                                       }`}{" "}
-                                · {Math.round((distance / 1000) * 10) / 10} km
+                                {/* · {Math.round((distance / 1000) * 10) / 10} km */}
                             </ThemedText>
                         </View>
 
