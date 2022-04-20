@@ -614,27 +614,53 @@ function TripDetails(props) {
 
     const TitleOnScroll = () => (
         <Animated.View style={[styles.titleOnScrollContainer, { opacity: titleOnScrollOpacity }]}>
-            <LinearGradient
-                style={styles.titleOnScrollContainer}
-                colors={[colors.background, `${colors.background}00`]}
-                start={{ x: 0.5, y: 0.7 }}
-            >
-                <View style={styles.titleOnScrollOriginStationNameContainer}>
-                    <ThemedText style={styles.titleOnScrollStationNameText}>
-                        {tripDetails.origin.name.en}
-                    </ThemedText>
-                </View>
+            {dark && (
+                <LinearGradient
+                    style={styles.titleOnScrollContainer}
+                    colors={[colors.background, `${colors.background}00`]}
+                    start={{ x: 0.5, y: 0.7 }}
+                >
+                    <View style={styles.titleOnScrollOriginStationNameContainer}>
+                        <ThemedText style={styles.titleOnScrollStationNameText}>
+                            {tripDetails.origin.name.en}
+                        </ThemedText>
+                    </View>
 
-                <View style={styles.titleOnScrollArrowIcon}>
-                    <ArrowIcon />
-                </View>
+                    <View style={styles.titleOnScrollArrowIcon}>
+                        <ArrowIcon />
+                    </View>
 
-                <View style={styles.titleOnScrollDestinationStationNameContainer}>
-                    <ThemedTextMarquee style={styles.titleOnScrollStationNameText}>
-                        {tripDetails.destination.name.en}
-                    </ThemedTextMarquee>
-                </View>
-            </LinearGradient>
+                    <View style={styles.titleOnScrollDestinationStationNameContainer}>
+                        <ThemedTextMarquee style={styles.titleOnScrollStationNameText}>
+                            {tripDetails.destination.name.en}
+                        </ThemedTextMarquee>
+                    </View>
+                </LinearGradient>
+            )}
+
+            {!dark && (
+                <LinearGradient
+                    style={styles.titleOnScrollContainer}
+                    colors={["#ffffffff", `#ffffff00`]}
+                    start={{ x: 0.5, y: 0.7 }}
+                >
+                    <View style={styles.titleOnScrollOriginStationNameContainer}>
+                        <ThemedText style={styles.titleOnScrollStationNameText}>
+                            {tripDetails.origin.name.en}
+                        </ThemedText>
+                    </View>
+
+                    <View style={styles.titleOnScrollArrowIcon}>
+                        <ArrowIcon />
+                    </View>
+
+                    <View style={styles.titleOnScrollDestinationStationNameContainer}>
+                        <ThemedTextMarquee style={styles.titleOnScrollStationNameText}>
+                            {tripDetails.destination.name.en}
+                        </ThemedTextMarquee>
+                    </View>
+                </LinearGradient>
+            )}
         </Animated.View>
     );
 
