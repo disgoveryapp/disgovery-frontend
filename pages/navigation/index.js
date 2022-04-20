@@ -58,6 +58,7 @@ const TOP_NAVIGATION_PANEL_HEIGHT = 0.4 * SCREEN_HEIGHT;
 const TOP_NAVIGATION_PANEL_WIDTH = SCREEN_WIDTH;
 
 let foregroundSubscription = null;
+let foregroundHeadingSubscription = null;
 
 function Navigation(props) {
     const { colors, dark } = useTheme();
@@ -84,6 +85,7 @@ function Navigation(props) {
     const [nearestPointOnPolylineAnimated, setNearestPointOnPolylineAnimated] = useState(undefined);
     const [offRoad, setOffRoad] = useState(false);
     const [navigationDone, setNavigationDone] = useState(false);
+    const [heading, setHeading] = useState(undefined);
 
     const [ETAs, setETAs] = useState([]);
     const [currentETA, setCurrentETA] = useState(0);
@@ -278,12 +280,30 @@ function Navigation(props) {
                 }
             },
         );
+
+        foregroundHeadingSubscription?.remove();
+        foregroundHeadingSubscription = await Location.watchHeadingAsync((h) => {
+            setHeading(h.trueHeading);
+        });
     }
 
     async function recenter(region) {
-        console.log("recentring");
         setIsRecentered(true);
         mapRef.current.animateToRegion(region || INITIAL_MAP_REGION);
+        // mapRef.current.animateToViewingAngle(heading || 0, 300);
+        // mapRef.current.animateCamera(
+        //     {
+        //         center: {
+        //             latitude: location.latitude,
+        //             longitude: location.longitude,
+        //         },
+        //         pitch: 2,
+        //         heading: heading,
+        //         zoom: mapsCurrentLocationRegion.latitudeDelta,
+        //         altitude: 1 / mapsCurrentLocationRegion.latitudeDelta,
+        //     },
+        //     300,
+        // );
     }
 
     function decodePolyline(polyline) {
