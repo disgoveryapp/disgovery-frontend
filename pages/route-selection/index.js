@@ -25,6 +25,7 @@ import FaceCovering from "../route-details/components/face-covering";
 import ArrowBackwardIcon from "../../assets/svgs/arrow-backward-24px";
 import BackButton from "../../components/back-button";
 import { useDebounce } from "use-lodash-debounce";
+import SvgAnimatedLinearGradient from "react-native-svg-animated-linear-gradient/src";
 
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -515,7 +516,15 @@ export default function RouteSelection(props) {
                         />
                     )}
 
-                    {loadingDataFromApi && <></>}
+                    {loadingDataFromApi && (
+                        <SvgAnimatedLinearGradient
+                            style={{ marginTop: 30 }}
+                            width={0.8 * Dimensions.get("screen").width}
+                            height={30}
+                            primaryColor={colors.linear_gradient_primary}
+                            secondaryColor={colors.linear_gradient_secondary}
+                        ></SvgAnimatedLinearGradient>
+                    )}
                     {api31Result.length === 0 && !loadingDataFromApi && !error31 && (
                         <View style={styles.messageContainer}>
                             <ThemedText style={styles.message}>Route not found</ThemedText>

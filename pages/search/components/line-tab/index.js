@@ -9,6 +9,7 @@ import TramIcon from "../../../../assets/svgs/tram-icon";
 import BoatIcon from "../../../../assets/svgs/boat-icon";
 import RailIcon from "../../../../assets/svgs/rail-icon";
 import TransitLine from "../../../../components/transit-line";
+import SvgAnimatedLinearGradient from "react-native-svg-animated-linear-gradient/src";
 
 function LineTab(props) {
     const { colors } = useTheme();
@@ -159,46 +160,75 @@ function LineTab(props) {
     });
     return (
         <>
-            <TouchableOpacity style={styles.container} onPress={() => props.onPress(nearestId)}>
-                <View style={styles.topContainer}>
-                    <View style={styles.dataContainer}>
-                        <View style={styles.iconContainer}>
-                            {(() => {
-                                if (props.type === "0" || props.type === "5") {
-                                    return <TramIcon />;
-                                } else if (props.type === "1") {
-                                    return <SubwayIcon />;
-                                } else if (props.type === "2" || props.type === "12") {
-                                    return <RailIcon />;
-                                } else if (props.type === "3" || props.type === "11") {
-                                    return <BusIcon />;
-                                } else if (props.type === "4") {
-                                    return <BoatIcon />;
-                                } else {
-                                    return <PlaceIcon fill={colors.background} />;
-                                }
-                            })()}
+            {props.loading ? (
+                <View style={styles.container}>
+                    <View style={styles.topContainer}>
+                        <View style={styles.dataContainer}>
+                            <SvgAnimatedLinearGradient
+                                width={200}
+                                height={24}
+                                primaryColor={colors.linear_gradient_primary}
+                                secondaryColor={colors.linear_gradient_secondary}
+                            ></SvgAnimatedLinearGradient>
                         </View>
-                        <TransitLine
-                            line={{
-                                name: {
-                                    short_name: props.route_name.short_name,
-                                    long_name: props.route_name.long_name,
-                                },
-                                color: props.color,
-                            }}
-                            fontSize={16}
-                        />
+                        <SvgAnimatedLinearGradient
+                            width={50}
+                            height={24}
+                            primaryColor={colors.linear_gradient_primary}
+                            secondaryColor={colors.linear_gradient_secondary}
+                        ></SvgAnimatedLinearGradient>
                     </View>
-                    <ThemedText style={styles.distance}>
-                        {getDistanceText(nearestDistance)}
-                    </ThemedText>
+                    <View style={styles.bottomContainer}>
+                        <SvgAnimatedLinearGradient
+                            width={180}
+                            height={16}
+                            primaryColor={colors.linear_gradient_primary}
+                            secondaryColor={colors.linear_gradient_secondary}
+                        ></SvgAnimatedLinearGradient>
+                    </View>
                 </View>
-                <View style={styles.bottomContainer}>
-                    <ThemedText style={styles.nearestSubtitle}>Nearest to you: </ThemedText>
-                    <ThemedText style={styles.locationSubtitle}>{nearestStation.en}</ThemedText>
-                </View>
-            </TouchableOpacity>
+            ) : (
+                <TouchableOpacity style={styles.container} onPress={() => props.onPress(nearestId)}>
+                    <View style={styles.topContainer}>
+                        <View style={styles.dataContainer}>
+                            <View style={styles.iconContainer}>
+                                {(() => {
+                                    if (props.type === "0" || props.type === "5") {
+                                        return <TramIcon />;
+                                    } else if (props.type === "1") {
+                                        return <SubwayIcon />;
+                                    } else if (props.type === "2" || props.type === "12") {
+                                        return <RailIcon />;
+                                    } else if (props.type === "3" || props.type === "11") {
+                                        return <BusIcon />;
+                                    } else if (props.type === "4") {
+                                        return <BoatIcon />;
+                                    } else {
+                                        return <PlaceIcon fill={colors.background} />;
+                                    }
+                                })()}
+                            </View>
+                            <TransitLine
+                                line={{
+                                    name: {
+                                        short_name: props.route_name.short_name,
+                                        long_name: props.route_name.long_name,
+                                    },
+                                    color: props.color,
+                                }}
+                                fontSize={16}
+                            />
+                        </View>
+                        <ThemedText style={styles.distance}>
+                            {getDistanceText(nearestDistance)}
+                        </ThemedText>
+                    </View>
+                    <View style={styles.bottomContainer}>
+                        <ThemedText style={styles.nearestSubtitle}>Nearest to you: </ThemedText>
+                        <ThemedText style={styles.locationSubtitle}>{nearestStation.en}</ThemedText>
+                    </View>
+                </TouchableOpacity>
+            )}
         </>
     );
 }

@@ -8,6 +8,7 @@ import {
     StatusBar,
     TouchableOpacity,
     Animated,
+    Dimensions,
 } from "react-native";
 import ThemedText from "../../components/themed-text";
 import { useNavigation, useTheme } from "@react-navigation/native";
@@ -24,6 +25,7 @@ import PlaceIcon from "../../assets/svgs/place-icon";
 import RouteIcon from "../../assets/svgs/route-icon";
 import LineTab from "./components/line-tab";
 import * as Location from "expo-location";
+import SvgAnimatedLinearGradient from "react-native-svg-animated-linear-gradient/src";
 
 const CLOSE_ON_SCROLL_TO = -100;
 const CLOSE_ON_VELOCITY = -3;
@@ -55,10 +57,7 @@ export default function Search() {
     const [pullDownToCloseString, setPullDownToCloseString] = useState(PULL_TO_CLOSE_STRING);
     const [mode, setMode] = useState("");
 
-    const [currentLocation, setCurrentLocation] = useState({
-        latitude: 13.764889,
-        longitude: 100.538266,
-    });
+    const [currentLocation, setCurrentLocation] = useState(null);
     const [locationErrorMessage, setLocationErrorMessage] = useState(null);
 
     const TRY_SEARCHING_COMPONENTS = {
@@ -394,43 +393,62 @@ export default function Search() {
     function StationAndPlaceScrollView() {
         return (
             <>
-                {api22Result !== undefined && api22Result !== null && api22Result.length !== 0 && (
+                {!loading && (
                     <>
-                        <ThemedText style={styles.topictext}>Stations</ThemedText>
-                        <View style={styles.tabbarcontainer}>
-                            <>
-                                {api22Result.map((item, key) => (
-                                    <StationTab
-                                        key={key}
-                                        place={item.name.en}
-                                        trip={item.trips}
-                                        onPress={() => {
-                                            setDestination_data(item);
-                                            navigateToStationDetailsPage(item.station_id);
-                                        }}
-                                    />
-                                ))}
-                            </>
-                        </View>
+                        {api22Result !== undefined &&
+                            api22Result !== null &&
+                            api22Result.length !== 0 && (
+                                <>
+                                    <ThemedText style={styles.topictext}>Stations</ThemedText>
+                                    <View style={styles.tabbarcontainer}>
+                                        <>
+                                            {api22Result.map((item, key) => (
+                                                <StationTab
+                                                    key={key}
+                                                    place={item.name.en}
+                                                    trip={item.trips}
+                                                    onPress={() => {
+                                                        setDestination_data(item);
+                                                        navigateToStationDetailsPage(
+                                                            item.station_id,
+                                                        );
+                                                    }}
+                                                />
+                                            ))}
+                                        </>
+                                    </View>
+                                </>
+                            )}
+                        {api21Result !== undefined &&
+                            api21Result !== null &&
+                            api21Result.length !== 0 && (
+                                <View>
+                                    <ThemedText style={styles.topictext}>Places</ThemedText>
+                                    <View style={styles.tabbarcontainer}>
+                                        {api21Result.map((item, key) => (
+                                            <PlaceTab
+                                                key={key}
+                                                place={item.name.en}
+                                                address={item.address.en}
+                                                onPress={() => {
+                                                    setDestination_data(item);
+                                                    navigateToSearchOriginPage(item.name.en, item);
+                                                }}
+                                            />
+                                        ))}
+                                    </View>
+                                </View>
+                            )}
                     </>
                 )}
-                {api21Result !== undefined && api21Result !== null && api21Result.length !== 0 && (
-                    <View>
-                        <ThemedText style={styles.topictext}>Places</ThemedText>
-                        <View style={styles.tabbarcontainer}>
-                            {api21Result.map((item, key) => (
-                                <PlaceTab
-                                    key={key}
-                                    place={item.name.en}
-                                    address={item.address.en}
-                                    onPress={() => {
-                                        setDestination_data(item);
-                                        navigateToSearchOriginPage(item.name.en, item);
-                                    }}
-                                />
-                            ))}
-                        </View>
-                    </View>
+                {loading && (
+                    <SvgAnimatedLinearGradient
+                        style={{ marginTop: 30 }}
+                        width={0.8 * Dimensions.get("screen").width}
+                        height={30}
+                        primaryColor={colors.linear_gradient_primary}
+                        secondaryColor={colors.linear_gradient_secondary}
+                    ></SvgAnimatedLinearGradient>
                 )}
             </>
         );
@@ -439,29 +457,36 @@ export default function Search() {
     function LinesScrollView() {
         return (
             <>
-                {api23Result !== undefined && api23Result !== null && api23Result.length !== 0 && (
-                    <>
-                        <View style={styles.tabbarcontainer}>
-                            <ThemedText style={styles.topictext}>Lines</ThemedText>
-                            <>
-                                {api23Result.map((item, key) => (
-                                    <>
-                                        <LineTab
-                                            type={item.type}
-                                            route_name={item.name}
-                                            color={item.color}
-                                            currentLocation={currentLocation}
-                                            stationData={item.stations}
-                                            onPress={(nearestId) =>
-                                                navigateToStationDetailsPage(nearestId)
-                                            }
-                                        />
-                                    </>
-                                ))}
-                            </>
-                        </View>
-                    </>
-                )}
+                <View style={styles.tabbarcontainer}>
+                    <ThemedText style={styles.topictext}>Lines</ThemedText>
+
+                    {currentLocation !== undefined &&
+                    currentLocation !== null &&
+                    currentLocation !== {} &&
+                    api23Result !== undefined &&
+                    api23Result !== null &&
+                    api23Result.length !== 0 ? (
+                        <>
+                            {api23Result.map((item, key) => (
+                                <>
+                                    <LineTab
+                                        type={item.type}
+                                        route_name={item.name}
+                                        color={item.color}
+                                        currentLocation={currentLocation}
+                                        stationData={item.stations}
+                                        onPress={(nearestId) =>
+                                            navigateToStationDetailsPage(nearestId)
+                                        }
+                                        loading={false}
+                                    />
+                                </>
+                            ))}
+                        </>
+                    ) : (
+                        <LineTab loading={true} />
+                    )}
+                </View>
             </>
         );
     }
@@ -480,55 +505,43 @@ export default function Search() {
                 </View>
 
                 <View style={styles.scrollView}>
-                    {!loading && (
-                        <>
-                            {!(error21 && error22) ? (
-                                <ScrollView
-                                    style={styles.scrollView}
-                                    showsHorizontalScrollIndicator={false}
-                                    showsVerticalScrollIndicator={false}
-                                    contentContainerStyle={{
-                                        paddingBottom: 35,
-                                        marginTop: CLOSE_ON_SCROLL_TO,
-                                    }}
-                                    keyboardDismissMode="interactive"
-                                    scrollEventThrottle={16}
-                                    onScroll={onScroll}
-                                    onScrollBeginDrag={onScrollBeginDrag}
-                                    onScrollEndDrag={onScrollEndDrag}
-                                >
-                                    <PullDownToClose />
-                                    {(api22Result !== undefined &&
-                                        api22Result !== null &&
-                                        api22Result.length !== 0) ||
-                                    (api21Result !== undefined &&
-                                        api21Result !== null &&
-                                        api21Result.length !== 0) ||
-                                    (api23Result !== undefined &&
-                                        api23Result !== null &&
-                                        api23Result.length !== 0) ? (
-                                        <>
-                                            {mode == SEARCH_MODES[0] && (
-                                                <StationAndPlaceScrollView />
-                                            )}
-                                            {mode == SEARCH_MODES[1] && <LinesScrollView />}
-                                        </>
-                                    ) : (
-                                        <View style={styles.trySearchingContainer}>
-                                            <View style={styles.trySearchingIconsContainer}>
-                                                {mode ? TRY_SEARCHING_COMPONENTS[mode].icon : <></>}
-                                            </View>
-                                            <ThemedText style={styles.trySearchingText}>
-                                                {mode ? TRY_SEARCHING_COMPONENTS[mode].string : ""}
-                                            </ThemedText>
+                    <>
+                        {!(error21 && error22) ? (
+                            <ScrollView
+                                style={styles.scrollView}
+                                showsHorizontalScrollIndicator={false}
+                                showsVerticalScrollIndicator={false}
+                                contentContainerStyle={{
+                                    paddingBottom: 35,
+                                    marginTop: CLOSE_ON_SCROLL_TO,
+                                }}
+                                keyboardDismissMode="interactive"
+                                scrollEventThrottle={16}
+                                onScroll={onScroll}
+                                onScrollBeginDrag={onScrollBeginDrag}
+                                onScrollEndDrag={onScrollEndDrag}
+                            >
+                                <PullDownToClose />
+                                {text !== "" ? (
+                                    <>
+                                        {mode == SEARCH_MODES[0] && <StationAndPlaceScrollView />}
+                                        {mode == SEARCH_MODES[1] && <LinesScrollView />}
+                                    </>
+                                ) : (
+                                    <View style={styles.trySearchingContainer}>
+                                        <View style={styles.trySearchingIconsContainer}>
+                                            {mode ? TRY_SEARCHING_COMPONENTS[mode].icon : <></>}
                                         </View>
-                                    )}
-                                </ScrollView>
-                            ) : (
-                                <BadConnectionComponent />
-                            )}
-                        </>
-                    )}
+                                        <ThemedText style={styles.trySearchingText}>
+                                            {mode ? TRY_SEARCHING_COMPONENTS[mode].string : ""}
+                                        </ThemedText>
+                                    </View>
+                                )}
+                            </ScrollView>
+                        ) : (
+                            <BadConnectionComponent />
+                        )}
+                    </>
                 </View>
             </View>
         </>
