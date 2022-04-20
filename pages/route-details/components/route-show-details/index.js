@@ -306,7 +306,9 @@ export default function RouteShowDetails(props) {
                             }}
                         >
                             <ThemedText style={styles.subtitleText}>
-                                {subprops.lineData.length} stops · {getTimeText(subprops.time / 60)}
+                                {subprops.lineData.length - 1}
+                                {" stops · "}
+                                {getTimeText(subprops.time / 60)}
                             </ThemedText>
                             <Animated.View
                                 style={[{ transform: [{ rotate: clickToExpandIconRotation }] }]}
