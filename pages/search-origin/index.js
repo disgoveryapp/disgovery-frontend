@@ -360,15 +360,16 @@ export default function SearchOrigin(props) {
                                                         } else {
                                                             setOriginInput(item.name.en);
                                                             setOriginData(item);
+                                                            setIsClick(true);
                                                         }
                                                     } else if (isSearchDestination) {
                                                         if (item.name.en === originInput) {
                                                         } else {
                                                             setDestinationInput(item.name.en);
                                                             setDestinationData(item);
+                                                            setIsClick(true);
                                                         }
                                                     }
-                                                    setIsClick(true);
                                                 }}
                                             />
                                         ))}
@@ -395,15 +396,16 @@ export default function SearchOrigin(props) {
                                                     } else {
                                                         setOriginInput(item.name.en);
                                                         setOriginData(item);
+                                                        setIsClick(true);
                                                     }
                                                 } else if (isSearchDestination) {
                                                     if (item.name.en === originInput) {
                                                     } else {
                                                         setDestinationInput(item.name.en);
                                                         setDestinationData(item);
+                                                        setIsClick(true);
                                                     }
                                                 }
-                                                setIsClick(true);
                                             }}
                                         />
                                     ))}
@@ -423,16 +425,17 @@ export default function SearchOrigin(props) {
                                     if (MyLocation === destinationInput) {
                                     } else {
                                         setOriginInput(MyLocation);
-                                        setOriginData(currentLocation || INITIAL_MAP_REGION);
+                                        setOriginData(currentLocation);
+                                        setIsClick(true);
                                     }
                                 } else if (isSearchDestination) {
                                     if (MyLocation === originInput) {
                                     } else {
                                         setDestinationInput(MyLocation);
-                                        setDestinationData(currentLocation || INITIAL_MAP_REGION);
+                                        setDestinationData(currentLocation);
+                                        setIsClick(true);
                                     }
                                 }
-                                setIsClick(true);
                             }}
                             icon={"your-location"}
                         />
