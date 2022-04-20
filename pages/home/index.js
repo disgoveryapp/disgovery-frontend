@@ -65,30 +65,32 @@ export default function Home() {
     }, []);
 
     async function fetchNewLocation() {
-        let { status } = await Location.requestForegroundPermissionsAsync().catch(() => {});
+        let { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== "granted") {
-            setLocationErrorMessage("Location permission is denied");
+            setLocationErrorMessage("Permission to access location was denied");
             return;
         }
 
-        let location = await Location.getCurrentPositionAsync({
-            accuracy: Location.Accuracy.BestForNavigation,
-        }).catch(() => {});
+        foregroundSubscription?.remove();
+        foregroundSubscription = await Location.watchPositionAsync(
+            {
+                accuracy: Location.Accuracy.BestForNavigation,
+                timeInterval: 100,
+            },
+            (location) => {
+                setLocation({
+                    latitude: location.coords.latitude,
+                    longitude: location.coords.longitude,
+                });
 
-        setLocation(location);
-        setMapCurrentLocationRegion({
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
-            latitudeDelta: 0.005,
-            longitudeDelta: 0.005,
-        });
-
-        return {
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
-            latitudeDelta: 0.005,
-            longitudeDelta: 0.005,
-        };
+                setMapCurrentLocationRegion({
+                    latitude: location.coords.latitude,
+                    longitude: location.coords.longitude,
+                    latitudeDelta: 0.005,
+                    longitudeDelta: 0.005,
+                });
+            },
+        );
     }
 
     async function recenter() {

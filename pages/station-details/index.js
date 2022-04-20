@@ -33,6 +33,7 @@ export default function StationDetails(props) {
     const [stationData, setStationData] = useState({});
     const [routesAvailable, setRoutesAvailable] = useState([]);
     const [routesScrollViewScrollable, setRoutesScrollViewScrollable] = useState(false);
+    const [stationInTextViewWidth, setStationInTextViewWidth] = useState(0);
 
     const [marker, setMarker] = useState({ latitude: 0, longitude: 0 });
 
@@ -63,6 +64,7 @@ export default function StationDetails(props) {
             left: 0,
             width: "100%",
             height: 0.35 * Dimensions.get("screen").height,
+            zIndex: -1,
         },
         bottomCard: {
             height: 0.7 * Dimensions.get("screen").height,
@@ -98,6 +100,7 @@ export default function StationDetails(props) {
             fontWeight: "600",
             fontSize: 18,
             color: colors.subtitle,
+            marginRight: 5,
         },
         stationInContainer: {
             display: "flex",
@@ -269,8 +272,14 @@ export default function StationDetails(props) {
         setRoutesAvailable([...tempRoutesAvailable]);
     }
 
-    function onRoutesScrollViewLayout(event) {
-        setRoutesScrollViewScrollable(event.nativeEvent.layout.width >= SCREEN_WIDTH - 80);
+    function onStationInTextViewLayout(event) {
+        setStationInTextViewWidth(event.nativeEvent.layout.width);
+    }
+
+    function onRoutesScrollViewLayout(width) {
+        setTimeout(() => {
+            setRoutesScrollViewScrollable(width >= SCREEN_WIDTH - 30 - stationInTextViewWidth);
+        }, 200);
     }
 
     function onMarkerPressed(lat, lng) {
@@ -364,12 +373,17 @@ export default function StationDetails(props) {
                                     {routesAvailable.length !== 0 && (
                                         <>
                                             <View style={styles.stationInContainer}>
-                                                <ThemedText style={styles.subtitle}>
-                                                    Station in
-                                                </ThemedText>
+                                                <View onLayout={onStationInTextViewLayout}>
+                                                    <ThemedText style={styles.subtitle}>
+                                                        Station in
+                                                    </ThemedText>
+                                                </View>
                                                 <ScrollView
                                                     horizontal
-                                                    onLayout={onRoutesScrollViewLayout}
+                                                    onContentSizeChange={(contentWidth) =>
+                                                        onRoutesScrollViewLayout(contentWidth)
+                                                    }
+                                                    showsHorizontalScrollIndicator={false}
                                                     scrollEnabled={routesScrollViewScrollable}
                                                 >
                                                     {Object.keys(routesAvailable).map((key) => (
