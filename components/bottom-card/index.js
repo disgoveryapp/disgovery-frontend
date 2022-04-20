@@ -48,10 +48,18 @@ const BottomCard = (props) => {
         onActive: (event, context) => {
             translateY.value = Math.max(endingPosition, event.translationY + context.translateY);
         },
-        onEnd: () => {
-            if (translateY.value > endingPosition / 2) {
-                translateY.value = withSpring(startingPosition);
-            } else translateY.value = withSpring(endingPosition);
+        onEnd: (event) => {
+            if (event.translationY < 0) {
+                translateY.value = withTiming(endingPosition, {
+                    duration: 200,
+                    easing: Easing.inOut(Easing.ease),
+                });
+            } else {
+                translateY.value = withTiming(startingPosition, {
+                    duration: 200,
+                    easing: Easing.inOut(Easing.ease),
+                });
+            }
         },
     });
 
