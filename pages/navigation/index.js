@@ -436,8 +436,6 @@ function Navigation(props) {
 
             setETAs(tempETAs);
             setCurrentETA(totalETA);
-
-            console.log(totalETA);
         }
     }
 
