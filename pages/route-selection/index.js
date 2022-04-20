@@ -184,14 +184,7 @@ export default function RouteSelection(props) {
         if (isSwap === true) {
             props.route.params.swapValue();
         }
-        if (on === "origin") {
-            props.route.params.setTabOneFocus(true);
-            console.log("focus on origin");
-        } else if (on === "destination") {
-            props.route.params.setTabOneFocus(false);
-            console.log("focus on destination");
-        }
-        //props.route.params.focus(on);
+        props.route.params.focus(on);
         navigation.pop();
     }
 

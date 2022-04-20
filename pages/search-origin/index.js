@@ -87,7 +87,8 @@ export default function SearchOrigin(props) {
         setApi21Result([]);
         setApi22Result([]);
 
-        inputRef.current.blur();
+        t1.current.blur();
+        t2.current.blur();
     }
 
     useEffect(() => {
@@ -193,18 +194,21 @@ export default function SearchOrigin(props) {
         setIsClick(false);
     }, [originData, destinationData, isClick]);
 
+    const t1 = useRef();
+    const t2 = useRef();
+
     function focus(on) {
         if (on === "origin") {
             // focus on origin search box
-            if (tabOneFocus == false) {
-                setTabOneFocus(true);
-            }
+            setTimeout(() => {
+                t1.current.focus();
+            }, 100);
             console.log("focus on origin");
         } else if (on === "destination") {
             // focus on destination search box
-            if (tabOneFocus == true) {
-                setTabOneFocus(false);
-            }
+            setTimeout(() => {
+                t2.current.focus();
+            }, 100);
             console.log("focus on destination");
         }
     }
@@ -242,7 +246,7 @@ export default function SearchOrigin(props) {
             destination_data: destination_data,
             origin_name: origin_name,
             origin_data: origin_data,
-            setTabOneFocus: setTabOneFocus,
+            focus: focus,
             swapValue: swapValue,
         });
     }
@@ -456,7 +460,6 @@ export default function SearchOrigin(props) {
                 <SafeAreaView />
                 <View style={styles.searchbox}>
                     <SearchOriginBar
-                        inputRef={inputRef}
                         placeholder="Search origin"
                         placeholderLocation="Search destination"
                         onChangeText={setOriginInput}
@@ -476,6 +479,8 @@ export default function SearchOrigin(props) {
                         setFlip={setFlip}
                         swapValue={swapValue}
                         tabOneFocus={tabOneFocus}
+                        t1={t1}
+                        t2={t2}
                     />
                 </View>
 
