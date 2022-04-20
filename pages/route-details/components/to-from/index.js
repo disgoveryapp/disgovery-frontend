@@ -79,6 +79,9 @@ function ToFrom(props) {
             fontWeight: size === "small" ? "500" : "600",
             marginLeft: size === "small" ? 22 : 0,
         },
+        originmarquee: {
+            width: 200,
+        },
         originText: {
             // flex: 1,
             fontSize: 18,
@@ -114,10 +117,10 @@ function ToFrom(props) {
 
                     <View style={styles.origin}>
                         <ThemedText style={styles.originFromText}>From </ThemedText>
-                        <View>
-                            <ThemedText style={styles.originText}>
+                        <View style={styles.originmarquee}>
+                            <ThemedTextMarquee style={styles.originText}>
                                 {DATA.origin.station.name.en}
-                            </ThemedText>
+                            </ThemedTextMarquee>
                         </View>
                     </View>
                 </View>
