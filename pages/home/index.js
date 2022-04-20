@@ -34,6 +34,8 @@ export default function Home() {
     const [locationErrorMessage, setLocationErrorMessage] = useState(null);
 
     const [nearbyStations, setNearbyStations] = useState([]);
+    let foregroundSubscription = null;
+    let firstRecentered = false;
 
     const styles = StyleSheet.create({
         container: {
@@ -58,13 +60,30 @@ export default function Home() {
     useEffect(() => {
         if (firstRun) {
             (async () => {
+                fetchNewLocation();
                 recenter();
             })().catch(() => {});
             firstRun = false;
         }
     }, []);
 
-    async function fetchNewLocation() {
+    useEffect(() => {
+        let subscribed = true;
+
+        if (subscribed) {
+            if (!firstRecentered && mapCurrentLocationRegion) {
+                recenter();
+                firstRecentered = true;
+                subscribed = false;
+            }
+        }
+
+        return () => {
+            subscribed = false;
+        };
+    }, [mapCurrentLocationRegion]);
+
+    async function fetchNewLocation(doRecenter) {
         let { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== "granted") {
             setLocationErrorMessage("Permission to access location was denied");
@@ -94,9 +113,7 @@ export default function Home() {
     }
 
     async function recenter() {
-        mapRef.current.animateToRegion(
-            (await fetchNewLocation().catch(() => {})) || INITIAL_MAP_REGION,
-        );
+        mapRef.current.animateToRegion(mapCurrentLocationRegion);
         setMapsIsRecentered(true);
     }
 

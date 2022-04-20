@@ -27,6 +27,8 @@ export default function BottomCardFlatList(props) {
     }, [props.nearbyStations]);
 
     function formatNearbyTrips() {
+        if (!props.nearbyStations) return;
+
         let tempNearbyTrips = {};
         let tempExpanded = {};
 
