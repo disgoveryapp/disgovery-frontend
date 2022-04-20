@@ -926,6 +926,16 @@ function Navigation(props) {
             alignSelf: "flex-start",
             height: "100%",
             backgroundColor: colors.linear_gradient_primary,
+
+            shadowColor: colors.shadow,
+            shadowOffset: {
+                width: 0,
+                height: 5,
+            },
+            shadowOpacity: 0.34,
+            shadowRadius: 6.27,
+
+            elevation: 10,
         },
         divider: {
             height: 1,
