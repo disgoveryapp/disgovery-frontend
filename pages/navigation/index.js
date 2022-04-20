@@ -1236,7 +1236,7 @@ function Navigation(props) {
                 initialRegion={INITIAL_MAP_REGION}
                 // provider="google"
                 customMapStyle={dark ? googleMapsStyling.dark : googleMapsStyling.light}
-                onTouchEnd={onMapRegionChange}
+                onPanDrag={onMapRegionChange}
                 showsMyLocationButton={false}
                 showsUserLocation={offRoad}
                 followsUserLocation={isRecentered}
