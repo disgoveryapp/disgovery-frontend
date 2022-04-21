@@ -48,7 +48,7 @@ export default function RoutesDetailedBlock(props) {
 
     const styles = StyleSheet.create({
         container: {
-            width: 350,
+            width: "100%",
             height: "auto",
             borderRadius: 12,
             backgroundColor: colors.upper_background,
@@ -101,7 +101,7 @@ export default function RoutesDetailedBlock(props) {
             fontWeight: "600",
         },
         CompactTransitLineContainer: {
-            width: 36,
+            width: "auto",
             height: 16,
             borderRadius: 6,
             flexDirection: "row",
