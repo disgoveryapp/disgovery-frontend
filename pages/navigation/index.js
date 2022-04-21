@@ -138,6 +138,20 @@ function Navigation(props) {
         determineNavigationDone();
     }, [currentDirection]);
 
+    useEffect(() => {
+        let subscribed = true;
+
+        if (subscribed) {
+            if (isRecentered) {
+                mapRef.current.animateToRegion(mapsCurrentLocationRegion, 50);
+            }
+        }
+
+        return () => {
+            subscribed = false;
+        };
+    }, [mapsCurrentLocationRegion]);
+
     useEffect(async () => {
         let subscribed = true;
 
@@ -254,8 +268,10 @@ function Navigation(props) {
             {
                 accuracy: Location.Accuracy.BestForNavigation,
                 timeInterval: 100,
+                distanceInterval: 0,
             },
             (location) => {
+                console.log(location);
                 setLocation({
                     latitude: location.coords.latitude,
                     longitude: location.coords.longitude,
@@ -369,7 +385,6 @@ function Navigation(props) {
         let hapticPlayed = false;
 
         if (directions[nearestKey].text && !spoken.includes(directions[nearestKey].text)) {
-            console.log("speaking", directions[nearestKey].text);
             Speech.speak(directions[nearestKey].text.replace(":", ","), selectedSpeechVoice);
             tempSpoken.push(directions[nearestKey].text);
 
@@ -378,7 +393,6 @@ function Navigation(props) {
         }
 
         if (directions[nearestKey].subtext && !spoken.includes(directions[nearestKey].subtext)) {
-            console.log("speaking", directions[nearestKey].subtext);
             Speech.speak(
                 `${
                     parseInt(nearestKey) !== 0
