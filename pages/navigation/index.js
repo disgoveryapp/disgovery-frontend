@@ -1276,7 +1276,7 @@ function Navigation(props) {
                 showsUserLocation={offRoad}
                 followsUserLocation={isRecentered}
             >
-                {nearestPointOnPolylineAnimated && (
+                {nearestPointOnPolylineAnimated && !offRoad && (
                     <Marker.Animated
                         ref={currentLocationMarkerRef}
                         coordinate={nearestPointOnPolylineAnimated}
