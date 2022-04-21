@@ -127,7 +127,9 @@ function Navigation(props) {
     }, []);
 
     useEffect(() => {
-        if (polylines.length !== 0) parseDirections();
+        if (polylines.length !== 0) {
+            parseDirections();
+        }
     }, [polylines]);
 
     useEffect(() => {
@@ -353,12 +355,14 @@ function Navigation(props) {
 
             if (!currentDirection) {
                 setCurrentDirection(directions[nearestKey]);
-                speakDirectionWithHaptics(directions, nearestKey);
-                sendNotification(
-                    directions[nearestKey].subtext || undefined,
-                    directions[nearestKey].text,
-                    1,
-                );
+                if (directions[nearestKey].text) {
+                    speakDirectionWithHaptics(directions, nearestKey);
+                    sendNotification(
+                        directions[nearestKey].subtext || undefined,
+                        directions[nearestKey].text,
+                        1,
+                    );
+                }
                 return;
             }
 
@@ -368,12 +372,14 @@ function Navigation(props) {
                     currentDirection.near.lng !== directions[nearestKey].near.lng
                 ) {
                     setCurrentDirection(directions[nearestKey]);
-                    speakDirectionWithHaptics(directions, nearestKey);
-                    sendNotification(
-                        directions[nearestKey].subtext || undefined,
-                        directions[nearestKey].text,
-                        1,
-                    );
+                    if (directions[nearestKey].text) {
+                        speakDirectionWithHaptics(directions, nearestKey);
+                        sendNotification(
+                            directions[nearestKey].subtext || undefined,
+                            directions[nearestKey].text,
+                            1,
+                        );
+                    }
                 }
             }
         }
@@ -521,10 +527,6 @@ function Navigation(props) {
         let tempDirections = [];
         let tempETAs = [];
 
-        if (ROUTE_DETAILS.directions[0]) {
-            if (!ROUTE_DETAILS.directions[0].via_line) return;
-        }
-
         for (let i in ROUTE_DETAILS.directions) {
             if (ROUTE_DETAILS.directions[i].type === "board") {
                 let boardDirection = {
@@ -594,13 +596,15 @@ function Navigation(props) {
                         distance: { text: `In ${step.distance.text}`, value: step.distance.value },
                         route_id: `walk_from_${ROUTE_DETAILS.directions[i].from.coordinates.lat}_${ROUTE_DETAILS.directions[i].from.coordinates.lng}_to_${ROUTE_DETAILS.directions[i].to.coordinates.lat}_${ROUTE_DETAILS.directions[i].to.coordinates.lng}`,
                         text: htmlToText(step.html_instructions),
-                        near: ROUTE_DETAILS.directions[i].start_location,
+                        near: step.start_location,
                         arrive: false,
                     });
                 }
 
                 let currentPolyline = polylines.find(
-                    (p) => p.route_id === ROUTE_DETAILS.directions[i].via_line.id,
+                    (p) =>
+                        p.route_id ===
+                        `walk_from_${ROUTE_DETAILS.directions[i].from.coordinates.lat}_${ROUTE_DETAILS.directions[i].from.coordinates.lng}_to_${ROUTE_DETAILS.directions[i].to.coordinates.lat}_${ROUTE_DETAILS.directions[i].to.coordinates.lng}`,
                 );
 
                 tempETAs.push({
@@ -625,8 +629,10 @@ function Navigation(props) {
                 });
 
                 tempETAs.push({
+                    route_id: `transfer_from_${ROUTE_DETAILS.directions[i].from.coordinates.lat}_${ROUTE_DETAILS.directions[i].from.coordinates.lng}_to_${ROUTE_DETAILS.directions[i].to.coordinates.lat}_${ROUTE_DETAILS.directions[i].to.coordinates.lng}`,
                     eta: ROUTE_DETAILS.directions[i].schedule.duration,
                     current_eta: ROUTE_DETAILS.directions[i].schedule.duration,
+                    distance: getTotalDistanceOfRoute(ROUTE_DETAILS.directions[i].encoded_polyline),
                 });
             }
 
@@ -667,8 +673,6 @@ function Navigation(props) {
 
     function onNavigationDone() {
         if (!navigationDone) {
-            console.log("DONEDONEDONE");
-            console.log(currentDirection);
             setNavigationDone(true);
             runOnUI(() => {
                 "worklet";
