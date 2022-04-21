@@ -271,7 +271,6 @@ function Navigation(props) {
                 distanceInterval: 0,
             },
             (location) => {
-                console.log(location);
                 setLocation({
                     latitude: location.coords.latitude,
                     longitude: location.coords.longitude,
