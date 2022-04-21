@@ -151,6 +151,48 @@ export default function RouteShowDetails(props) {
         );
     }
 
+    function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
+        var R = 6371;
+        var dLat = deg2rad(lat2 - lat1);
+        var dLon = deg2rad(lon2 - lon1);
+        var a =
+            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(deg2rad(lat1)) *
+                Math.cos(deg2rad(lat2)) *
+                Math.sin(dLon / 2) *
+                Math.sin(dLon / 2);
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        var d = R * c;
+        return d;
+    }
+
+    function deg2rad(deg) {
+        return deg * (Math.PI / 180);
+    }
+
+    function getTotalDistanceOfRoute(polyline) {
+        let totalDistance = 0;
+
+        for (let i = 0; i < polyline.length - 1; i++) {
+            totalDistance += getDistanceFromLatLonInKm(
+                polyline[i].latitude,
+                polyline[i].longitude,
+                polyline[i + 1].latitude,
+                polyline[i + 1].longitude,
+            );
+        }
+
+        return totalDistance;
+    }
+
+    function getDistanceText(distance) {
+        if (distance >= 1) {
+            return Math.round(distance * 10) / 10 + " km";
+        } else {
+            return Math.round(distance * 100) * 10 + " m";
+        }
+    }
+
     function WalkTab(subprops) {
         return (
             <View style={styles.tabContainer}>
@@ -174,7 +216,24 @@ export default function RouteShowDetails(props) {
 
                     <ThemedText style={styles.subtitleText}>
                         {subprops.walkData.type === "walk" && subprops.walkData.route.distance.text}
-                        {subprops.walkData.type === "transfer" && "??"} ·{" "}
+                        {subprops.walkData.type === "transfer" && (
+                            <>
+                                {props.polyline !== undefined &&
+                                props.polyline !== null &&
+                                props.polyline.length !== 0 &&
+                                subprops.datakey !== undefined &&
+                                subprops.datakey !== null ? (
+                                    getDistanceText(
+                                        getTotalDistanceOfRoute(
+                                            props.polyline[subprops.datakey].polyline,
+                                        ),
+                                    )
+                                ) : (
+                                    <ThemedText>Hello</ThemedText>
+                                )}
+                            </>
+                        )}
+                        {" · "}
                         {getTimeText(subprops.walkData.schedule.duration / 60)}
                     </ThemedText>
                 </View>
@@ -371,7 +430,9 @@ export default function RouteShowDetails(props) {
                             {item.type === "board" ? (
                                 <PublicTransitTab transitData={item} />
                             ) : (
-                                <WalkTab walkData={item} />
+                                <>
+                                    <WalkTab walkData={item} datakey={key} />
+                                </>
                             )}
                         </>
                     ))}
