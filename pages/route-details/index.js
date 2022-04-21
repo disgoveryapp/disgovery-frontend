@@ -153,7 +153,6 @@ export default function RouteDetails(props) {
         parsePolylines();
         setRouteData(props.route.params.routeData);
         console.log({} === {});
-        console.log(polylines);
     }, []);
 
     async function fetchNewLocation() {
