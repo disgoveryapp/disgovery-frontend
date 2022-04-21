@@ -169,7 +169,11 @@ export default function RoutesDetailedBlock(props) {
     return (
         <TouchableOpacity style={styles.container} onPress={props.onPress}>
             <ThemedText style={styles.arrivedTime}>
-                Arrive by {arrivingTime.getHours()}:
+                {"Arrive by "}
+                {arrivingTime.getHours() < 10
+                    ? "0" + arrivingTime.getHours()
+                    : arrivingTime.getHours()}
+                {":"}
                 {arrivingTime.getMinutes() < 10
                     ? "0" + arrivingTime.getMinutes()
                     : arrivingTime.getMinutes()}
