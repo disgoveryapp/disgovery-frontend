@@ -283,6 +283,9 @@ function TripDetails(props) {
         approximateTimeIcon: {
             height: "100%",
         },
+        approximateTimeTextContainer: {
+            flex: 1,
+        },
         approximateTimeText: {
             fontSize: 16,
             fontWeight: "500",
@@ -445,9 +448,11 @@ function TripDetails(props) {
             <View style={styles.approximateTimeIcon}>
                 <WarningIcon fill={colors.yellow} />
             </View>
-            <ThemedText style={styles.approximateTimeText}>
-                Showing approximate schedule. Real timetable might differ from what are shown.
-            </ThemedText>
+            <View style={styles.approximateTimeTextContainer}>
+                <ThemedText style={styles.approximateTimeText}>
+                    Showing approximate schedule. Real timetable might differ from what are shown.
+                </ThemedText>
+            </View>
         </View>
     );
 
