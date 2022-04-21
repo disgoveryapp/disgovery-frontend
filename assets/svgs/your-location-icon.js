@@ -7,7 +7,7 @@ const YourLocationIcon = (props) => {
 
     return (
         <Svg
-            style={{ marginLeft: 5 }}
+            style={{ marginLeft: props.noMargin ? 0 : 5, ...props.style }}
             width={20}
             height={20}
             fill="none"

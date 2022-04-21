@@ -8,6 +8,8 @@ import SwapIcon from "../../../../assets/svgs/swap-icon";
 import ArrowBackwardIcon from "../../../../assets/svgs/arrow-backward-24px";
 import PinDropIcon from "../../../../assets/svgs/pin-drop-icon";
 import ScheduleIcon from "../../../../assets/svgs/schedule-icon";
+import { MyLocation } from "../../../search-origin";
+import YourLocationIcon from "../../../../assets/svgs/your-location-icon";
 
 export default function RouteSelectionBar(props) {
     const { dark, colors } = useTheme();
@@ -70,7 +72,14 @@ export default function RouteSelectionBar(props) {
                     <View style={styles.container}>
                         <View style={styles.body}>
                             <View style={{ marginRight: 6 }}>
-                                <PinDropIcon />
+                                {props.originName !== MyLocation && <PinDropIcon />}
+                                {props.originName === MyLocation && (
+                                    <YourLocationIcon
+                                        style={{ marginRight: 4 }}
+                                        noMarginLeft
+                                        fill={colors.my_location}
+                                    />
+                                )}
                             </View>
                             <TouchableOpacity
                                 style={styles.textContainer}

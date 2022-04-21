@@ -17,6 +17,7 @@ export const darkTheme = {
         shadow: "#000",
         divider: "#444444",
         go_button: "#186FFF",
+        my_location: "#5f9cff",
     },
 };
 
@@ -39,5 +40,6 @@ export const lightTheme = {
         shadow: "#000",
         divider: "#e0e0e0",
         go_button: "#186FFF",
+        my_location: "#186FFF",
     },
 };

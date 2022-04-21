@@ -23,6 +23,8 @@ import PlaceTab from "../search/components/place-tab";
 import StationTab from "../search/components/station-tab";
 import * as Location from "expo-location";
 
+export const MyLocation = "Current location";
+
 export default function SearchOrigin(props) {
     const { colors } = useTheme();
 
@@ -50,7 +52,6 @@ export default function SearchOrigin(props) {
     const [loading, setLoading] = useState(false);
     const [inputData, setInputData] = useState(true);
     const ErrorMessage = "ERR_UNESCAPED_CHARACTERS";
-    const MyLocation = "Current location";
 
     const [isClick, setIsClick] = useState(false);
     const [tabOneFocus, setTabOneFocus] = useState(true);
