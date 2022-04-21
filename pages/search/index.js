@@ -32,11 +32,9 @@ const CLOSE_ON_VELOCITY = -3;
 const PULL_TO_CLOSE_STRING = "Pull down to close";
 const RELEASE_TO_CLOSE_STRING = "Release to close";
 
-let firstRun = true;
-
 export default function Search() {
     const { colors } = useTheme();
-
+    let firstRun = true;
     const scrollY = new Animated.Value(0);
     const SEARCH_MODES = ["stationsAndPlaces", "lines"];
 
@@ -187,13 +185,13 @@ export default function Search() {
         }
     }
 
-    useEffect(() => {
+    useEffect(async () => {
         if (mode === SEARCH_MODES[0]) {
             if (text === "") {
                 setApi22Result([]);
             } else {
                 setLoading(true);
-                simpleApi22Call();
+                await simpleApi22Call();
                 setLoading(false);
             }
         } else if (mode === SEARCH_MODES[1]) {
@@ -201,7 +199,7 @@ export default function Search() {
                 setApi23Result([]);
             } else {
                 setLoading(true);
-                simpleApi23Call();
+                await simpleApi23Call();
                 setLoading(false);
             }
         }
@@ -321,6 +319,26 @@ export default function Search() {
             fontWeight: "500",
             marginTop: 10,
             color: colors.subtitle,
+        },
+        messageContainer: {
+            width: "100%",
+            height: 200,
+            justifyContent: "center",
+            alignItems: "center",
+        },
+        message: {
+            fontWeight: "600",
+            fontSize: 16,
+            padding: 12,
+            color: colors.subtitle,
+        },
+        loadingBlock: {
+            marginTop: 30,
+            marginLeft: 18,
+        },
+
+        subloadingBlock: {
+            flexDirection: "row",
         },
     });
 
@@ -442,13 +460,31 @@ export default function Search() {
                     </>
                 )}
                 {loading && (
-                    <SvgAnimatedLinearGradient
-                        style={{ marginTop: 30 }}
-                        width={0.8 * Dimensions.get("screen").width}
-                        height={30}
-                        primaryColor={colors.linear_gradient_primary}
-                        secondaryColor={colors.linear_gradient_secondary}
-                    ></SvgAnimatedLinearGradient>
+                    <View style={styles.loadingBlock}>
+                        <View style={styles.subloadingBlock}>
+                            <SvgAnimatedLinearGradient
+                                style={{ marginRight: 10 }}
+                                width={30}
+                                height={30}
+                                primaryColor={colors.linear_gradient_primary}
+                                secondaryColor={colors.linear_gradient_secondary}
+                            ></SvgAnimatedLinearGradient>
+
+                            <SvgAnimatedLinearGradient
+                                width={0.7 * Dimensions.get("screen").width}
+                                height={30}
+                                primaryColor={colors.linear_gradient_primary}
+                                secondaryColor={colors.linear_gradient_secondary}
+                            ></SvgAnimatedLinearGradient>
+                        </View>
+                        <SvgAnimatedLinearGradient
+                            style={{ marginTop: 10, marginLeft: 40 }}
+                            width={0.5 * Dimensions.get("screen").width}
+                            height={20}
+                            primaryColor={colors.linear_gradient_primary}
+                            secondaryColor={colors.linear_gradient_secondary}
+                        ></SvgAnimatedLinearGradient>
+                    </View>
                 )}
             </>
         );
@@ -458,8 +494,6 @@ export default function Search() {
         return (
             <>
                 <View style={styles.tabbarcontainer}>
-                    <ThemedText style={styles.topictext}>Lines</ThemedText>
-
                     {currentLocation !== undefined &&
                     currentLocation !== null &&
                     currentLocation !== {} &&
@@ -469,6 +503,7 @@ export default function Search() {
                         <>
                             {api23Result.map((item, key) => (
                                 <>
+                                    <ThemedText style={styles.topictext}>Lines</ThemedText>
                                     <LineTab
                                         type={item.type}
                                         route_name={item.name}
@@ -484,7 +519,21 @@ export default function Search() {
                             ))}
                         </>
                     ) : (
-                        <LineTab loading={true} />
+                        <>
+                            {!loading &&
+                            currentLocation !== undefined &&
+                            currentLocation !== null &&
+                            currentLocation !== {} ? (
+                                <View style={styles.messageContainer}>
+                                    <ThemedText style={styles.message}>Route not found</ThemedText>
+                                </View>
+                            ) : (
+                                <>
+                                    <ThemedText style={styles.topictext}>Lines</ThemedText>
+                                    <LineTab loading={true} />
+                                </>
+                            )}
+                        </>
                     )}
                 </View>
             </>
@@ -506,7 +555,7 @@ export default function Search() {
 
                 <View style={styles.scrollView}>
                     <>
-                        {!(error21 && error22) ? (
+                        {!((error21 && error22) || error23) ? (
                             <ScrollView
                                 style={styles.scrollView}
                                 showsHorizontalScrollIndicator={false}
