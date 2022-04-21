@@ -23,13 +23,11 @@ import PlaceTab from "../search/components/place-tab";
 import StationTab from "../search/components/station-tab";
 import * as Location from "expo-location";
 
-let firstRun = true;
-
 export default function SearchOrigin(props) {
     const { colors } = useTheme();
 
     const scrollY = new Animated.Value(0);
-
+    let firstRun = true;
     const [text, onChangeText] = useState("");
     const [destinationInput, setDestinationInput] = useState(
         props.route.params.destination_name || "",
