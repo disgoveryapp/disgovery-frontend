@@ -50,6 +50,7 @@ function ToFrom(props) {
             display: "flex",
             flexDirection: "row",
             justifyContent: "space-between",
+            alignContent: "flex-start",
         },
         subcontainer: {
             paddingBottom: 50,
@@ -92,12 +93,13 @@ function ToFrom(props) {
         },
         timeText: {
             textAlign: "right",
-            fontSize: size === "small" ? 18 : 22,
+            fontSize: size === "small" ? 18 : 24,
             fontWeight: "600",
+            color: colors.primary,
         },
         subTimeText: {
             textAlign: "right",
-            fontSize: 14,
+            fontSize: 16,
             color: colors.subtitle,
         },
     });
@@ -116,7 +118,7 @@ function ToFrom(props) {
                     </View>
 
                     <View style={styles.origin}>
-                        <ThemedText style={styles.originFromText}>From </ThemedText>
+                        <ThemedText style={styles.originFromText}>from </ThemedText>
                         <View style={styles.originmarquee}>
                             <ThemedTextMarquee style={styles.originText}>
                                 {DATA.origin.station.name.en}

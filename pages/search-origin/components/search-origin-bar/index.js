@@ -67,7 +67,7 @@ export default function SearchOriginBar(props) {
             alignItems: "center",
             backgroundColor: colors.background,
             borderRadius: 12,
-            paddingRight: 4,
+            paddingHorizontal: 5,
 
             borderWidth: dark ? 0 : 0.5,
             borderColor: dark ? undefined : colors.middle_grey,

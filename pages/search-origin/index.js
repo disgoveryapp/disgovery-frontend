@@ -50,7 +50,7 @@ export default function SearchOrigin(props) {
     const [loading, setLoading] = useState(false);
     const [inputData, setInputData] = useState(true);
     const ErrorMessage = "ERR_UNESCAPED_CHARACTERS";
-    const MyLocation = "My Location";
+    const MyLocation = "Current location";
 
     const [isClick, setIsClick] = useState(false);
     const [tabOneFocus, setTabOneFocus] = useState(true);
@@ -416,8 +416,9 @@ export default function SearchOrigin(props) {
                 ) : (
                     <>
                         <PlaceTab
+                            style={{ marginTop: -15 }}
                             place={MyLocation}
-                            address={currentLocation.latitude + " , " + currentLocation.longitude}
+                            // address={currentLocation.latitude + " , " + currentLocation.longitude}
                             onPress={() => {
                                 if (isSearchOrigin) {
                                     if (MyLocation === destinationInput) {

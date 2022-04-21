@@ -56,7 +56,7 @@ function PlaceTab(props) {
     });
 
     return (
-        <View style={styles.container}>
+        <View style={{ ...styles.container, ...props.style }}>
             <TouchableOpacity style={styles.subcontainer} onPress={props.onPress}>
                 <View style={styles.placeholderContainer}>
                     <View>
