@@ -497,17 +497,20 @@ export default function RouteSelection(props) {
                             <ThemedText style={styles.message}>Something went wrong.</ThemedText>
                         </View>
                     )}
-                    {api31Result !== undefined && api31Result !== null && api31Result.length !== 0 && (
-                        <SuggestedRoutes
-                            topictextStyle={styles.topictext}
-                            containerPadding={containerPadding}
-                            data={api31Result}
-                            setSelectData={setSelectData}
-                            onPress={() => {
-                                setIsClick(true);
-                            }}
-                        />
-                    )}
+                    {api31Result !== undefined &&
+                        api31Result !== null &&
+                        api31Result.length !== 0 &&
+                        !loadingDataFromApi && (
+                            <SuggestedRoutes
+                                topictextStyle={styles.topictext}
+                                containerPadding={containerPadding}
+                                data={api31Result}
+                                setSelectData={setSelectData}
+                                onPress={() => {
+                                    setIsClick(true);
+                                }}
+                            />
+                        )}
 
                     {loadingDataFromApi && (
                         <>
