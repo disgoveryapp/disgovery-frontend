@@ -263,6 +263,7 @@ export default function RouteDetails(props) {
         console.log(routeData);
         navigation.navigate("Navigation", {
             route_data: routeData,
+            destination_name: props.route.params.destination_name,
         });
     }
 

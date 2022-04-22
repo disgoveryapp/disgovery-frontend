@@ -360,6 +360,7 @@ export default function RouteSelection(props) {
                 destinationLatLng.latitude,
                 destinationLatLng.longitude,
             ),
+            destination_name: destinationName,
         });
     }
 

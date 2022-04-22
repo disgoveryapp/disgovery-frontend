@@ -241,7 +241,6 @@ export default function SearchOrigin(props) {
         origin_name,
         origin_data,
     ) {
-        console.log("go");
         navigation.navigate("RouteSelection", {
             destination_name: destination_name,
             destination_data: destination_data,

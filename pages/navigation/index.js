@@ -932,11 +932,16 @@ function Navigation(props) {
             justifyContent: "space-between",
         },
         bottomNaviationPanelTitleArrowIcon: {
-            // marginLeft: 5,
+            marginHorizontal: 5,
         },
         onGoingNavigationText: {
             color: colors.subtitle,
             fontSize: 16,
+        },
+        destinationText: {
+            fontSize: 16,
+            color: colors.subtitle,
+            fontWeight: "600",
         },
         bottomNavigationPanelArrivingInContainer: {
             display: "flex",
@@ -1091,7 +1096,7 @@ function Navigation(props) {
         },
         bottomNavigationPanelToTextContainer: {
             flex: 1,
-            marginLeft: 3,
+            // marginLeft: 3,
         },
     });
 
@@ -1293,14 +1298,15 @@ function Navigation(props) {
                         <>
                             <View style={styles.bottomNavigationPanelTitle}>
                                 <View style={styles.bottomNavigationPanelFromToContainer}>
-                                    {/* <ThemedText style={styles.onGoingNavigationText}>
+                                    <ThemedText style={styles.onGoingNavigationText}>
                                         On-going navigation
-                                    </ThemedText> */}
+                                    </ThemedText>
                                     <ArrowIcon style={styles.bottomNaviationPanelTitleArrowIcon} />
                                     <View style={styles.bottomNavigationPanelToTextContainer}>
-                                        <ThemedTextMarquee style={styles.onGoingNavigationText}>
-                                            {ROUTE_DETAILS.destination.coordinates.lat},{" "}
-                                            {ROUTE_DETAILS.destination.coordinates.lng}
+                                        <ThemedTextMarquee style={styles.destinationText}>
+                                            {props.route.params.destination_name
+                                                ? props.route.params.destination_name
+                                                : `${ROUTE_DETAILS.destination.coordinates.lat}, ${ROUTE_DETAILS.destination.coordinates.lng}`}
                                         </ThemedTextMarquee>
                                     </View>
                                 </View>
