@@ -656,7 +656,7 @@ function Navigation(props) {
                 if (ROUTE_DETAILS.directions[i].type === "walk") {
                     tempDirections.push({
                         text: `You have arrived at ${ROUTE_DETAILS.directions[i].to.place.address}`,
-                        route_id: `walk_from_${direction.from.coordinates.lat}_${direction.from.coordinates.lng}_to_${direction.to.coordinates.lat}_${direction.to.coordinates.lng}`,
+                        route_id: `walk_from_${ROUTE_DETAILS.directions[i].from.coordinates.lat}_${ROUTE_DETAILS.directions[i].from.coordinates.lng}_to_${ROUTE_DETAILS.directions[i].to.coordinates.lat}_${ROUTE_DETAILS.directions[i].to.coordinates.lng}`,
                         near: ROUTE_DETAILS.directions[i].to.coordinates,
                         arrive: true,
                     });
