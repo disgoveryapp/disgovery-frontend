@@ -80,7 +80,7 @@ function RouteNotFoundModal(props) {
                     </View>
                     <View style={styles.bodyContainer}>
                         <ThemedText style={styles.bodyText}>
-                            When the routes are not available, this can either be because:
+                            When the routes are not available, it can either be because:
                             {"\n"}
                             {"\n"}- all stations near you is now closed,
                             {"\n"}- you are trying to head from one station to the same station,
