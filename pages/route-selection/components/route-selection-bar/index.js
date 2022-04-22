@@ -92,7 +92,14 @@ export default function RouteSelectionBar(props) {
                     <View style={styles.container}>
                         <View style={styles.body}>
                             <View style={{ marginRight: 6 }}>
-                                <ArrowIcon24 />
+                                {props.destinationName !== MyLocation && <ArrowIcon24 />}
+                                {props.destinationName === MyLocation && (
+                                    <YourLocationIcon
+                                        style={{ marginRight: 4 }}
+                                        noMarginLeft
+                                        fill={colors.my_location}
+                                    />
+                                )}
                             </View>
                             <TouchableOpacity
                                 style={styles.textContainer}
