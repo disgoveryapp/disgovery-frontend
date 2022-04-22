@@ -971,6 +971,7 @@ export const ROUTE_DETAILS = {
 };
 
 export function getTotalDistanceOfRoute(polyline) {
+    if (!polyline) return;
     let totalDistance = 0;
 
     for (let i = 0; i < polyline.length - 1; i++) {
