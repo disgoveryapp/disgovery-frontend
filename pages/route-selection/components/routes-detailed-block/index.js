@@ -52,8 +52,8 @@ export default function RoutesDetailedBlock(props) {
             height: "auto",
             borderRadius: 12,
             backgroundColor: colors.upper_background,
-            paddingHorizontal: 12,
-            paddingVertical: 11,
+            paddingHorizontal: 15,
+            paddingVertical: 14,
             justifyContent: "space-between",
 
             shadowColor: colors.shadow,
@@ -67,23 +67,23 @@ export default function RoutesDetailedBlock(props) {
             elevation: 10,
         },
         arrivedTime: {
-            fontWeight: "500",
-            fontSize: 12,
+            fontWeight: "600",
+            fontSize: 14,
         },
         subContainer: {
             flexDirection: "row",
             justifyContent: "space-between",
-            paddingTop: 5,
         },
         detailBlock: {
             alignItems: "flex-end",
-            justifyContent: "flex-start",
+            justifyContent: "flex-end",
         },
         subTimeText: {
-            fontSize: 11,
+            fontSize: 12,
         },
         timeText: {
-            fontSize: 16,
+            fontSize: 18,
+            color: colors.primary,
             fontWeight: "600",
         },
         iconAndTime: {
@@ -97,21 +97,24 @@ export default function RoutesDetailedBlock(props) {
             flexWrap: "wrap",
         },
         detailText: {
-            fontSize: 12,
+            fontSize: 14,
             fontWeight: "600",
         },
         CompactTransitLineContainer: {
-            width: "auto",
-            height: 16,
             borderRadius: 6,
             flexDirection: "row",
-            paddingHorizontal: 3,
+            paddingHorizontal: 4,
+            paddingVertical: 2,
             justifyContent: "space-between",
             alignItems: "center",
+            marginTop: 10,
+            marginBottom: 2,
         },
         transitIcon: {},
         transitName: {
-            fontSize: 10,
+            fontSize: 12,
+            marginLeft: 2,
+            fontWeight: "600",
         },
     });
 
@@ -191,7 +194,7 @@ export default function RoutesDetailedBlock(props) {
                 </View>
                 <View style={styles.detailBlock}>
                     <ThemedText style={styles.timeText}>{timeText}</ThemedText>
-                    <ThemedText styles={styles.detailText}>
+                    <ThemedText style={styles.detailText}>
                         {totalFare} {currency}
                     </ThemedText>
                 </View>
