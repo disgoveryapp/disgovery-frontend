@@ -90,6 +90,7 @@ function Navigation(props) {
     const [arrowPolylineBottom, setArrowPolylineBottom] = useState({});
     const [arrowPolylineTop, setArrowPolylineTop] = useState({});
     const [arrowHeadRotation, setArrowHeadRotation] = useState(0.0);
+    const [cameraHeading, setCameraHeading] = useState(0.0);
     const [directions, setDirections] = useState([]);
     const [currentDirection, setCurrentDirection] = useState(undefined);
     const [nextDirection, setNextDirection] = useState(undefined);
@@ -1485,9 +1486,10 @@ function Navigation(props) {
                             </>
                         )}
 
-                        {arrowPolylineBottom && (
+                        {/* {arrowPolylineBottom && (
                             <>
                                 <Marker
+                                    style={{ transform: [{ rotate: `${arrowHeadRotation}deg` }] }}
                                     coordinate={
                                         arrowPolylineBottom.polyline
                                             ? arrowPolylineBottom.polyline[
@@ -1495,20 +1497,20 @@ function Navigation(props) {
                                               ]
                                             : null
                                     }
-                                    anchor={{ x: 0.5, y: 0.5 }}
-                                    // rotation={arrowHeadRotation}
+                                    zIndex={8}
+                                    anchor={{ x: 1, y: 0.5 }}
                                 >
-                                    <Svg height={30} width={30}>
+                                    <Svg height={18} width={18}>
                                         <Polygon
-                                            points="15,0 0,24 24,0"
+                                            points="0,18 9,0 18,18"
                                             fill={colors.white}
                                             stroke={pSBC(-0.5, colors.white)}
-                                            // strokeWidth={POLYLINE_SIZE_OUTER - POLYLINE_SIZE_INNER}
+                                            strokeWidth={POLYLINE_SIZE_OUTER - POLYLINE_SIZE_INNER}
                                         />
                                     </Svg>
                                 </Marker>
                             </>
-                        )}
+                        )} */}
 
                         <Marker
                             key={`marker_end_${
