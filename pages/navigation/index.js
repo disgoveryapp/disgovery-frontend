@@ -39,6 +39,7 @@ import SvgAnimatedLinearGradient from "react-native-svg-animated-linear-gradient
 import { sendNotification } from "../../functions/notification";
 import ThemedTextMarquee from "../../components/themed-text-marquee";
 import Svg, { Polygon } from "react-native-svg";
+import NavigationCautionModal from "./components/caution-modal";
 
 const CHECKPOINT_SNAP_DISTANCE = 0.1;
 
@@ -64,6 +65,9 @@ const POLYLINE_SIZE_INNER = 8;
 const POLYLINE_WALK_SIZE_OUTER = 14;
 const POLYLINE_WALK_SIZE_INNER = 8;
 const POLYLINE_WALK_LINE_DASH_PHASE = undefined;
+
+const SHOULD_SHOW_CAUTION_MODAL_ON_START = true;
+const CAUTION_MODAL_ANIMATION_TIMING = 200;
 
 let foregroundSubscription = null;
 let foregroundHeadingSubscription = null;
@@ -107,6 +111,7 @@ function Navigation(props) {
     const [bottomNavigationPanelMenuIsExpanded, setBottomNavigationPanelMenuIsExpanded] =
         useState(false);
     const [topNavigationPanelIsExpanded, setTopNavigationPanelIsExpanded] = useState(false);
+    const [showCautionModal, setShowCautionModal] = useState(SHOULD_SHOW_CAUTION_MODAL_ON_START);
 
     const [spoken, setSpoken] = useState([]);
     const [speechVoices, setSpeechVoices] = useState([]);
@@ -123,10 +128,15 @@ function Navigation(props) {
     let topNavigationPanelWidth = 0;
     const topNavigationPanelHeightReanimated = useSharedValue(0);
     const topNavigationPanelWidthReanimated = useSharedValue(0);
+    const cautionModalOpacityReanimated = useSharedValue(0);
 
     useEffect(() => {
         if (firstRun) {
             (async () => {
+                if (showCautionModal) {
+                    cautionModalOpacityReanimated.value = 1;
+                }
+
                 await parsePolylines();
                 await fallbackFetchNewLocation();
                 await fetchNewLocation();
@@ -759,6 +769,11 @@ function Navigation(props) {
         }
     }
 
+    function onCautionModalDismiss() {
+        cautionModalOpacityReanimated.value = 0;
+        setTimeout(() => setShowCautionModal(false), CAUTION_MODAL_ANIMATION_TIMING);
+    }
+
     function angleBetweenCoordinatesInDegrees(cx, cy, ex, ey) {
         var dy = ey - cy;
         var dx = ex - cx;
@@ -1151,6 +1166,15 @@ function Navigation(props) {
         };
     });
 
+    const animatedCautionModalOpacity = useAnimatedStyle(() => {
+        return {
+            opacity: withTiming(cautionModalOpacityReanimated.value, {
+                duration: CAUTION_MODAL_ANIMATION_TIMING,
+                easing: Easing.ease,
+            }),
+        };
+    });
+
     const BottomDoneNavigationPanel = () => (
         <View
             style={{
@@ -1356,137 +1380,138 @@ function Navigation(props) {
     );
 
     return (
-        <View style={styles.container}>
-            <MapView
-                ref={mapRef}
-                style={styles.maps}
-                initialRegion={INITIAL_MAP_REGION}
-                // provider="google"
-                customMapStyle={dark ? googleMapsStyling.dark : googleMapsStyling.light}
-                onPanDrag={onMapRegionChange}
-                showsMyLocationButton={false}
-                showsUserLocation={offRoad}
-                followsUserLocation={isRecentered}
-            >
-                {nearestPointOnPolylineAnimated && !offRoad && (
-                    <Marker.Animated
-                        ref={currentLocationMarkerRef}
-                        coordinate={nearestPointOnPolylineAnimated}
-                        anchor={{ x: 0.5, y: 0.5 }}
-                    >
-                        <View style={styles.currentLocationMarker} />
-                    </Marker.Animated>
-                )}
-
-                {Object.keys(polylines).map((key) => (
-                    <>
-                        <Marker
-                            key={`marker_start_${polylines[key].polyline[0]}`}
-                            coordinate={polylines[key].polyline[0]}
+        <>
+            <View style={styles.container}>
+                <MapView
+                    ref={mapRef}
+                    style={styles.maps}
+                    initialRegion={INITIAL_MAP_REGION}
+                    // provider="google"
+                    customMapStyle={dark ? googleMapsStyling.dark : googleMapsStyling.light}
+                    onPanDrag={onMapRegionChange}
+                    showsMyLocationButton={false}
+                    showsUserLocation={offRoad}
+                    followsUserLocation={isRecentered}
+                >
+                    {nearestPointOnPolylineAnimated && !offRoad && (
+                        <Marker.Animated
+                            ref={currentLocationMarkerRef}
+                            coordinate={nearestPointOnPolylineAnimated}
                             anchor={{ x: 0.5, y: 0.5 }}
                         >
-                            <View
-                                key={`marker_start_view_${polylines[key].polyline[0]}`}
-                                style={{
-                                    ...styles.marker,
-                                    backgroundColor: colors.white,
-                                    borderColor: colors.middle_grey,
-                                }}
+                            <View style={styles.currentLocationMarker} />
+                        </Marker.Animated>
+                    )}
+
+                    {Object.keys(polylines).map((key) => (
+                        <>
+                            <Marker
+                                key={`marker_start_${polylines[key].polyline[0]}`}
+                                coordinate={polylines[key].polyline[0]}
+                                anchor={{ x: 0.5, y: 0.5 }}
+                            >
+                                <View
+                                    key={`marker_start_view_${polylines[key].polyline[0]}`}
+                                    style={{
+                                        ...styles.marker,
+                                        backgroundColor: colors.white,
+                                        borderColor: colors.middle_grey,
+                                    }}
+                                />
+                            </Marker>
+                            <Polyline
+                                key={`polyline_outer_${polylines[key].polyline[0]}`}
+                                coordinates={polylines[key].polyline}
+                                strokeWidth={
+                                    polylines[key].route_id.startsWith("walk")
+                                        ? POLYLINE_WALK_SIZE_OUTER
+                                        : POLYLINE_SIZE_OUTER
+                                }
+                                zIndex={-1}
+                                lineDashPattern={
+                                    polylines[key].route_id.startsWith("walk")
+                                        ? POLYLINE_WALK_LINE_DASH_PHASE
+                                        : undefined
+                                }
+                                strokeColor={pSBC(
+                                    -0.5,
+                                    polylines[key].color
+                                        ? polylines[key].color
+                                        : colors.upper_background,
+                                )}
                             />
-                        </Marker>
-                        <Polyline
-                            key={`polyline_outer_${polylines[key].polyline[0]}`}
-                            coordinates={polylines[key].polyline}
-                            strokeWidth={
-                                polylines[key].route_id.startsWith("walk")
-                                    ? POLYLINE_WALK_SIZE_OUTER
-                                    : POLYLINE_SIZE_OUTER
-                            }
-                            zIndex={-1}
-                            lineDashPattern={
-                                polylines[key].route_id.startsWith("walk")
-                                    ? POLYLINE_WALK_LINE_DASH_PHASE
-                                    : undefined
-                            }
-                            strokeColor={pSBC(
-                                -0.5,
-                                polylines[key].color
-                                    ? polylines[key].color
-                                    : colors.upper_background,
+                            <Polyline
+                                key={`polyline_inner_${polylines[key].polyline[0]}`}
+                                coordinates={polylines[key].polyline}
+                                strokeWidth={
+                                    polylines[key].route_id.startsWith("walk")
+                                        ? POLYLINE_WALK_SIZE_INNER
+                                        : POLYLINE_SIZE_INNER
+                                }
+                                zIndex={0}
+                                lineDashPattern={
+                                    polylines[key].route_id.startsWith("walk")
+                                        ? POLYLINE_WALK_LINE_DASH_PHASE
+                                        : undefined
+                                }
+                                strokeColor={polylines[key].color}
+                            />
+
+                            {arrowPolylineBottom && (
+                                <>
+                                    <Polyline
+                                        key={`polyline_outer_${arrowPolylineBottom.route_id}`}
+                                        coordinates={arrowPolylineBottom.polyline}
+                                        strokeWidth={POLYLINE_SIZE_OUTER}
+                                        zIndex={10}
+                                        strokeColor={pSBC(
+                                            -0.5,
+                                            arrowPolylineBottom.color
+                                                ? arrowPolylineBottom.color
+                                                : colors.upper_background,
+                                        )}
+                                        lineCap="butt"
+                                    />
+
+                                    <Polyline
+                                        key={`polyline_inner_${arrowPolylineBottom.route_id}`}
+                                        coordinates={arrowPolylineBottom.polyline}
+                                        strokeWidth={POLYLINE_SIZE_INNER}
+                                        zIndex={11}
+                                        strokeColor={arrowPolylineBottom.color}
+                                        lineCap="butt"
+                                    />
+                                </>
                             )}
-                        />
-                        <Polyline
-                            key={`polyline_inner_${polylines[key].polyline[0]}`}
-                            coordinates={polylines[key].polyline}
-                            strokeWidth={
-                                polylines[key].route_id.startsWith("walk")
-                                    ? POLYLINE_WALK_SIZE_INNER
-                                    : POLYLINE_SIZE_INNER
-                            }
-                            zIndex={0}
-                            lineDashPattern={
-                                polylines[key].route_id.startsWith("walk")
-                                    ? POLYLINE_WALK_LINE_DASH_PHASE
-                                    : undefined
-                            }
-                            strokeColor={polylines[key].color}
-                        />
 
-                        {arrowPolylineBottom && (
-                            <>
-                                <Polyline
-                                    key={`polyline_outer_${arrowPolylineBottom.route_id}`}
-                                    coordinates={arrowPolylineBottom.polyline}
-                                    strokeWidth={POLYLINE_SIZE_OUTER}
-                                    zIndex={10}
-                                    strokeColor={pSBC(
-                                        -0.5,
-                                        arrowPolylineBottom.color
-                                            ? arrowPolylineBottom.color
-                                            : colors.upper_background,
-                                    )}
-                                    lineCap="butt"
-                                />
+                            {arrowPolylineTop && (
+                                <>
+                                    <Polyline
+                                        key={`polyline_outer_${arrowPolylineTop.route_id}`}
+                                        coordinates={arrowPolylineTop.polyline}
+                                        strokeWidth={14}
+                                        zIndex={3}
+                                        strokeColor={pSBC(
+                                            -0.5,
+                                            arrowPolylineTop.color
+                                                ? arrowPolylineTop.color
+                                                : colors.upper_background,
+                                        )}
+                                        lineCap="butt"
+                                    />
 
-                                <Polyline
-                                    key={`polyline_inner_${arrowPolylineBottom.route_id}`}
-                                    coordinates={arrowPolylineBottom.polyline}
-                                    strokeWidth={POLYLINE_SIZE_INNER}
-                                    zIndex={11}
-                                    strokeColor={arrowPolylineBottom.color}
-                                    lineCap="butt"
-                                />
-                            </>
-                        )}
+                                    <Polyline
+                                        key={`polyline_inner_${arrowPolylineTop.route_id}`}
+                                        coordinates={arrowPolylineTop.polyline}
+                                        strokeWidth={8}
+                                        zIndex={2}
+                                        strokeColor={arrowPolylineTop.color}
+                                        lineCap="butt"
+                                    />
+                                </>
+                            )}
 
-                        {arrowPolylineTop && (
-                            <>
-                                <Polyline
-                                    key={`polyline_outer_${arrowPolylineTop.route_id}`}
-                                    coordinates={arrowPolylineTop.polyline}
-                                    strokeWidth={14}
-                                    zIndex={3}
-                                    strokeColor={pSBC(
-                                        -0.5,
-                                        arrowPolylineTop.color
-                                            ? arrowPolylineTop.color
-                                            : colors.upper_background,
-                                    )}
-                                    lineCap="butt"
-                                />
-
-                                <Polyline
-                                    key={`polyline_inner_${arrowPolylineTop.route_id}`}
-                                    coordinates={arrowPolylineTop.polyline}
-                                    strokeWidth={8}
-                                    zIndex={2}
-                                    strokeColor={arrowPolylineTop.color}
-                                    lineCap="butt"
-                                />
-                            </>
-                        )}
-
-                        {/* {arrowPolylineBottom && (
+                            {/* {arrowPolylineBottom && (
                             <>
                                 <Marker
                                     style={{ transform: [{ rotate: `${arrowHeadRotation}deg` }] }}
@@ -1512,45 +1537,64 @@ function Navigation(props) {
                             </>
                         )} */}
 
-                        <Marker
-                            key={`marker_end_${
-                                polylines[key].polyline[polylines[key].polyline.length - 1]
-                            }`}
-                            coordinate={polylines[key].polyline[polylines[key].polyline.length - 1]}
-                            anchor={{ x: 0.5, y: 0.5 }}
-                        >
-                            <View
-                                key={`marker_end_view_${
+                            <Marker
+                                key={`marker_end_${
                                     polylines[key].polyline[polylines[key].polyline.length - 1]
                                 }`}
-                                style={{
-                                    ...styles.marker,
-                                    backgroundColor: colors.white,
-                                    borderColor: colors.middle_grey,
-                                }}
-                            />
-                        </Marker>
-                    </>
-                ))}
+                                coordinate={
+                                    polylines[key].polyline[polylines[key].polyline.length - 1]
+                                }
+                                anchor={{ x: 0.5, y: 0.5 }}
+                            >
+                                <View
+                                    key={`marker_end_view_${
+                                        polylines[key].polyline[polylines[key].polyline.length - 1]
+                                    }`}
+                                    style={{
+                                        ...styles.marker,
+                                        backgroundColor: colors.white,
+                                        borderColor: colors.middle_grey,
+                                    }}
+                                />
+                            </Marker>
+                        </>
+                    ))}
 
-                <Polyline
-                    zIndex={10}
-                    coordinates={passedPolylines}
-                    strokeWidth={14}
-                    strokeColor={pSBC(-0.5, colors.middle_grey)}
-                />
-                <Polyline
-                    zIndex={11}
-                    coordinates={passedPolylines}
-                    strokeWidth={8}
-                    strokeColor={colors.middle_grey}
-                />
-            </MapView>
+                    <Polyline
+                        zIndex={10}
+                        coordinates={passedPolylines}
+                        strokeWidth={14}
+                        strokeColor={pSBC(-0.5, colors.middle_grey)}
+                    />
+                    <Polyline
+                        zIndex={11}
+                        coordinates={passedPolylines}
+                        strokeWidth={8}
+                        strokeColor={colors.middle_grey}
+                    />
+                </MapView>
 
-            <TopNavigationPanel />
-            {navigationDone && <BottomDoneNavigationPanel />}
-            {!navigationDone && <BottomNavigationPanel />}
-        </View>
+                <TopNavigationPanel />
+                {!navigationDone && <BottomNavigationPanel />}
+                {navigationDone && <BottomDoneNavigationPanel />}
+                {showCautionModal && (
+                    <Animated.View
+                        style={[
+                            {
+                                position: "absolute",
+                                top: 0,
+                                left: 0,
+                                width: "100%",
+                                height: "100%",
+                            },
+                            animatedCautionModalOpacity,
+                        ]}
+                    >
+                        <NavigationCautionModal onDismiss={onCautionModalDismiss} />
+                    </Animated.View>
+                )}
+            </View>
+        </>
     );
 }
 
