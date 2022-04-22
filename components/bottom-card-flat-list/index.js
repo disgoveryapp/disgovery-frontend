@@ -13,6 +13,7 @@ import TramIcon from "../../assets/svgs/tram-icon";
 import RailIcon from "../../assets/svgs/rail-icon";
 import BoatIcon from "../../assets/svgs/boat-icon";
 import SvgAnimatedLinearGradient from "react-native-svg-animated-linear-gradient/src";
+import ThemedTextMarquee from "../themed-text-marquee";
 
 const SCREEN_WIDTH = Dimensions.get("screen").width;
 
@@ -220,16 +221,18 @@ export default function BottomCardFlatList(props) {
                                 line={{ name: line_name, color: color.replace("#", "") }}
                             />
 
-                            <ThemedText style={styles.firstLineText}>
-                                {" "}
-                                ·{" "}
-                                {Math.round(arriving_in / 60) === 0
-                                    ? "now"
-                                    : `next in ${Math.round(arriving_in / 60)} ${
-                                          Math.round(arriving_in / 60) !== 1 ? "mins" : "min"
-                                      }`}{" "}
-                                {/* · {Math.round((distance / 1000) * 10) / 10} km */}
-                            </ThemedText>
+                            <View style={styles.nextInContainer}>
+                                <ThemedTextMarquee style={styles.firstLineText}>
+                                    {" "}
+                                    ·{" "}
+                                    {Math.round(arriving_in / 60) === 0
+                                        ? "now"
+                                        : `next in ${Math.round(arriving_in / 60)} ${
+                                              Math.round(arriving_in / 60) !== 1 ? "mins" : "min"
+                                          }`}{" "}
+                                    {/* · {Math.round((distance / 1000) * 10) / 10} km */}
+                                </ThemedTextMarquee>
+                            </View>
                         </View>
 
                         {otherOrigins.length !== 0 && (
@@ -248,6 +251,7 @@ export default function BottomCardFlatList(props) {
                                         transform: [
                                             { rotate: expanded[trip_id] ? "180deg" : "0deg" },
                                         ],
+                                        marginRight: 10,
                                     }}
                                 />
                             </TouchableOpacity>
@@ -419,11 +423,11 @@ export default function BottomCardFlatList(props) {
             alignItems: "center",
         },
         expandDownIconContainer: {
-            width: 30,
-            height: 30,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            alignSelf: "flex-end",
+            flex: 1,
         },
         originToDestinationTitle: {
             width: "100%",
@@ -480,6 +484,9 @@ export default function BottomCardFlatList(props) {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+        },
+        nextInContainer: {
+            flex: 1,
         },
     });
 
