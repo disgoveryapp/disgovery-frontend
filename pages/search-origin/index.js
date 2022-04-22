@@ -8,6 +8,7 @@ import {
     StatusBar,
     TouchableOpacity,
     Animated,
+    Dimensions,
 } from "react-native";
 import ThemedText from "../../components/themed-text";
 import { useNavigation, useTheme } from "@react-navigation/native";
@@ -22,6 +23,9 @@ import SearchOriginBar from "./components/search-origin-bar";
 import PlaceTab from "../search/components/place-tab";
 import StationTab from "../search/components/station-tab";
 import * as Location from "expo-location";
+import SvgAnimatedLinearGradient from "react-native-svg-animated-linear-gradient/src";
+
+let foregroundSubscription = null;
 
 export const MyLocation = "Current location";
 
@@ -56,24 +60,12 @@ export default function SearchOrigin(props) {
     const [isClick, setIsClick] = useState(false);
     const [tabOneFocus, setTabOneFocus] = useState(true);
 
-    const [currentLocation, setCurrentLocation] = useState({
-        latitude: 13.764889,
-        longitude: 100.538266,
-    });
+    const [currentLocation, setCurrentLocation] = useState(undefined);
     const [locationErrorMessage, setLocationErrorMessage] = useState(null);
 
     const navigation = useNavigation();
     const numberOfApi22Data = 4;
     const debouncedValue = useDebounce(text, 200);
-
-    const INITIAL_MAP_REGION = {
-        latitude: 13.764889,
-        longitude: 100.538266,
-        latitudeDelta: 0.035,
-        longitudeDelta: 0.035,
-    };
-
-    const inputRef = useRef(null);
 
     function swapValue() {
         const temp = originInput;
@@ -93,7 +85,7 @@ export default function SearchOrigin(props) {
     useEffect(() => {
         if (firstRun) {
             (async () => {
-                await fetchNewLocation();
+                await expoFetchNewLocation();
             })().catch(() => {});
             firstRun = false;
         }
@@ -214,10 +206,6 @@ export default function SearchOrigin(props) {
         }
     }
 
-    async function fetchNewLocation() {
-        setCurrentLocation(await expoFetchNewLocation());
-    }
-
     async function expoFetchNewLocation() {
         let { status } = await Location.requestForegroundPermissionsAsync().catch(() => {});
         if (status !== "granted") {
@@ -225,14 +213,20 @@ export default function SearchOrigin(props) {
             return;
         }
 
-        let location = await Location.getCurrentPositionAsync({
-            accuracy: Location.Accuracy.BestForNavigation,
-        }).catch(() => {});
-
-        return {
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
-        };
+        foregroundSubscription?.remove();
+        foregroundSubscription = await Location.watchPositionAsync(
+            {
+                accuracy: Location.Accuracy.BestForNavigation,
+                timeInterval: 1000,
+                distanceInterval: 10,
+            },
+            (location) => {
+                setCurrentLocation({
+                    latitude: location.coords.latitude,
+                    longitude: location.coords.longitude,
+                });
+            },
+        );
     }
 
     function navigateToRouteSelectionPage(
@@ -417,29 +411,57 @@ export default function SearchOrigin(props) {
                     </>
                 ) : (
                     <>
-                        <PlaceTab
-                            style={{ marginTop: -15 }}
-                            place={MyLocation}
-                            // address={currentLocation.latitude + " , " + currentLocation.longitude}
-                            onPress={() => {
-                                if (isSearchOrigin) {
-                                    if (MyLocation === destinationInput) {
-                                    } else {
-                                        setOriginInput(MyLocation);
-                                        setOriginData(currentLocation);
-                                        setIsClick(true);
+                        {!currentLocation && (
+                            <>
+                                <View
+                                    style={{
+                                        paddingHorizontal: 15,
+                                        marginTop: 10,
+                                        display: "flex",
+                                        flexDirection: "row",
+                                    }}
+                                >
+                                    <SvgAnimatedLinearGradient
+                                        style={{ marginRight: 10 }}
+                                        width={30}
+                                        height={30}
+                                        primaryColor={colors.linear_gradient_primary}
+                                        secondaryColor={colors.linear_gradient_secondary}
+                                    />
+                                    <SvgAnimatedLinearGradient
+                                        width={0.7 * Dimensions.get("screen").width}
+                                        height={30}
+                                        primaryColor={colors.linear_gradient_primary}
+                                        secondaryColor={colors.linear_gradient_secondary}
+                                    />
+                                </View>
+                            </>
+                        )}
+                        {currentLocation && (
+                            <PlaceTab
+                                style={{ marginTop: -15 }}
+                                place={MyLocation}
+                                // address={currentLocation.latitude + " , " + currentLocation.longitude}
+                                onPress={() => {
+                                    if (isSearchOrigin) {
+                                        if (MyLocation === destinationInput) {
+                                        } else {
+                                            setOriginInput(MyLocation);
+                                            setOriginData(currentLocation);
+                                            setIsClick(true);
+                                        }
+                                    } else if (isSearchDestination) {
+                                        if (MyLocation === originInput) {
+                                        } else {
+                                            setDestinationInput(MyLocation);
+                                            setDestinationData(currentLocation);
+                                            setIsClick(true);
+                                        }
                                     }
-                                } else if (isSearchDestination) {
-                                    if (MyLocation === originInput) {
-                                    } else {
-                                        setDestinationInput(MyLocation);
-                                        setDestinationData(currentLocation);
-                                        setIsClick(true);
-                                    }
-                                }
-                            }}
-                            icon={"your-location"}
-                        />
+                                }}
+                                icon={"your-location"}
+                            />
+                        )}
                     </>
                 )}
             </>
