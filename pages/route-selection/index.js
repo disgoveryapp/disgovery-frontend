@@ -234,6 +234,7 @@ export default function RouteSelection(props) {
         topictext: {
             color: colors.subtitle,
             //paddingHorizontal: 15,
+            marginTop: 5,
             paddingVertical: 8,
             fontWeight: "600",
         },
