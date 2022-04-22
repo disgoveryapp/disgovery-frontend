@@ -26,6 +26,13 @@ import ArrowBackwardIcon from "../../assets/svgs/arrow-backward-24px";
 import BackButton from "../../components/back-button";
 import { useDebounce } from "use-lodash-debounce";
 import SvgAnimatedLinearGradient from "react-native-svg-animated-linear-gradient/src";
+import Animated, {
+    Easing,
+    useAnimatedStyle,
+    useSharedValue,
+    withTiming,
+} from "react-native-reanimated";
+import RouteNotFoundModal from "./components/route-not-found-modal";
 
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -35,6 +42,8 @@ const INITIAL_MAP_REGION = {
     latitudeDelta: 0.01,
     longitudeDelta: 0.01,
 };
+
+const ROUTE_NOT_FOUND_MODAL_TIMING = 200;
 
 export default function RouteSelection(props) {
     const { dark, colors } = useTheme();
@@ -52,8 +61,12 @@ export default function RouteSelection(props) {
     const [mapCurrentLocationRegion, setMapCurrentLocationRegion] = useState({});
     const [locationErrorMessage, setLocationErrorMessage] = useState(null);
 
+    const [showRouteNotFoundModal, setShowRouteNotFoundModal] = useState(false);
+
     const [nearbyStations, setNearbyStations] = useState([]);
     const debouncedValue = useDebounce(isSwap, 100);
+
+    const routeNotFoundModalOpacityReanimated = useSharedValue(0);
 
     /*const [destinationName, setDestinationName] = useState("Siam");
     const [destinationData, setDestinationData] = useState({});
@@ -261,11 +274,24 @@ export default function RouteSelection(props) {
             height: 200,
             justifyContent: "center",
             alignItems: "center",
+            display: "flex",
+            flexDirection: "column",
         },
         message: {
             fontWeight: "600",
             fontSize: 18,
             padding: 12,
+        },
+        routeNotFoundInfoText: {
+            fontWeight: "600",
+            fontSize: 18,
+            color: colors.primary,
+        },
+        modalView: {
+            position: "absolute",
+            width: "100%",
+            height: "100%",
+            zIndex: 100,
         },
     });
 
@@ -393,153 +419,190 @@ export default function RouteSelection(props) {
         }
     }
 
+    function showRouteNotFoundInfoModal() {
+        setShowRouteNotFoundModal(true);
+        routeNotFoundModalOpacityReanimated.value = 1;
+    }
+
+    function dismissRouteNotFoundInfoModal() {
+        routeNotFoundModalOpacityReanimated.value = 0;
+        setTimeout(() => setShowRouteNotFoundModal(false), ROUTE_NOT_FOUND_MODAL_TIMING);
+    }
+
+    const animatedRouteNotFoundInfoModalOpacity = useAnimatedStyle(() => {
+        return {
+            opacity: withTiming(routeNotFoundModalOpacityReanimated.value, {
+                duration: ROUTE_NOT_FOUND_MODAL_TIMING,
+                easing: Easing.ease,
+            }),
+        };
+    });
+
     return (
-        <View style={styles.container}>
-            <View style={styles.backButtonContainer}>
-                <SafeAreaView edges={["top"]} />
-                <BackButton
-                    onPress={() => {
-                        goBack();
+        <>
+            <View style={styles.container}>
+                <View style={styles.backButtonContainer}>
+                    <SafeAreaView edges={["top"]} />
+                    <BackButton
+                        onPress={() => {
+                            goBack();
+                        }}
+                    />
+                </View>
+                <MapView
+                    ref={mapRef}
+                    style={styles.maps}
+                    initialRegion={INITIAL_MAP_REGION}
+                    // provider="google"
+                    showsMyLocationButton={false}
+                    customMapStyle={dark ? googleMapsStyling.dark : googleMapsStyling.light}
+                    onTouchStart={() => setMapsIsRecentered(false)}
+                    showsUserLocation
+                    mapPadding={{
+                        top: Platform.OS === "android" ? StatusBar.currentHeight : 20,
+                        right: 0,
+                        bottom: 22,
+                        left: 0,
                     }}
-                />
-            </View>
-            <MapView
-                ref={mapRef}
-                style={styles.maps}
-                initialRegion={INITIAL_MAP_REGION}
-                // provider="google"
-                showsMyLocationButton={false}
-                customMapStyle={dark ? googleMapsStyling.dark : googleMapsStyling.light}
-                onTouchStart={() => setMapsIsRecentered(false)}
-                showsUserLocation
-                mapPadding={{
-                    top: Platform.OS === "android" ? StatusBar.currentHeight : 20,
-                    right: 0,
-                    bottom: 22,
-                    left: 0,
-                }}
-            >
-                {originLatLng !== undefined &&
-                    originLatLng !== null &&
-                    originLatLng !== {} &&
-                    destinationLatLng !== undefined &&
-                    destinationLatLng !== null &&
-                    destinationLatLng !== {} && (
-                        <>
-                            <Polyline
-                                zIndex={10}
-                                coordinates={[originLatLng, destinationLatLng]}
-                                strokeWidth={14}
-                                strokeColor={pSBC(-0.5, colors.primary)}
-                            />
-                            <Polyline
-                                zIndex={11}
-                                coordinates={[originLatLng, destinationLatLng]}
-                                strokeWidth={8}
-                                strokeColor={colors.primary}
-                            />
-                            <Marker coordinate={originLatLng} anchor={{ x: 0.5, y: 0.5 }}>
-                                <View
-                                    style={{
-                                        ...styles.marker,
-                                        backgroundColor: colors.white,
-                                        borderColor: colors.middle_grey,
-                                    }}
-                                />
-                            </Marker>
-                            <Marker coordinate={destinationLatLng} anchor={{ x: 0.5, y: 0.5 }}>
-                                <View
-                                    style={{
-                                        ...styles.marker,
-                                        backgroundColor: colors.white,
-                                        borderColor: colors.middle_grey,
-                                    }}
-                                />
-                            </Marker>
-                        </>
-                    )}
-            </MapView>
-
-            <View style={styles.scrollView}>
-                <RouteSelectionBar
-                    containerPadding={containerPadding}
-                    destinationName={destinationName}
-                    destinetionData={destinationData}
-                    originName={originName}
-                    originData={originData}
-                    swapValue={swapValue}
-                    goBackAndFocusOn={goBackAndFocusOn}
-                />
-                <DividerLine />
-
-                <ScrollView
-                    style={styles.subScrollView}
-                    showsHorizontalScrollIndicator={false}
-                    showsVerticalScrollIndicator={false}
-                    contentContainerStyle={{
-                        paddingBottom: 35,
-                    }}
-                    keyboardDismissMode="interactive"
                 >
-                    {wearFaceMask && (
-                        <>
-                            <FaceCovering containerPadding={containerPadding} />
-                            <DividerLine />
-                        </>
-                    )}
-                    {hasOverviewRoute && (
-                        <OverViewRoute
-                            topictextStyle={styles.topictext}
-                            containerPadding={containerPadding}
-                        />
-                    )}
-                    {error31 && (
-                        <View style={styles.messageContainer}>
-                            <ThemedText style={styles.message}>Something went wrong.</ThemedText>
-                        </View>
-                    )}
-                    {api31Result !== undefined &&
-                        api31Result !== null &&
-                        api31Result.length !== 0 &&
-                        !loadingDataFromApi && (
-                            <SuggestedRoutes
+                    {originLatLng !== undefined &&
+                        originLatLng !== null &&
+                        originLatLng !== {} &&
+                        destinationLatLng !== undefined &&
+                        destinationLatLng !== null &&
+                        destinationLatLng !== {} && (
+                            <>
+                                <Polyline
+                                    zIndex={10}
+                                    coordinates={[originLatLng, destinationLatLng]}
+                                    strokeWidth={14}
+                                    strokeColor={pSBC(-0.5, colors.primary)}
+                                />
+                                <Polyline
+                                    zIndex={11}
+                                    coordinates={[originLatLng, destinationLatLng]}
+                                    strokeWidth={8}
+                                    strokeColor={colors.primary}
+                                />
+                                <Marker coordinate={originLatLng} anchor={{ x: 0.5, y: 0.5 }}>
+                                    <View
+                                        style={{
+                                            ...styles.marker,
+                                            backgroundColor: colors.white,
+                                            borderColor: colors.middle_grey,
+                                        }}
+                                    />
+                                </Marker>
+                                <Marker coordinate={destinationLatLng} anchor={{ x: 0.5, y: 0.5 }}>
+                                    <View
+                                        style={{
+                                            ...styles.marker,
+                                            backgroundColor: colors.white,
+                                            borderColor: colors.middle_grey,
+                                        }}
+                                    />
+                                </Marker>
+                            </>
+                        )}
+                </MapView>
+
+                <View style={styles.scrollView}>
+                    <RouteSelectionBar
+                        containerPadding={containerPadding}
+                        destinationName={destinationName}
+                        destinetionData={destinationData}
+                        originName={originName}
+                        originData={originData}
+                        swapValue={swapValue}
+                        goBackAndFocusOn={goBackAndFocusOn}
+                    />
+                    <DividerLine />
+
+                    <ScrollView
+                        style={styles.subScrollView}
+                        showsHorizontalScrollIndicator={false}
+                        showsVerticalScrollIndicator={false}
+                        contentContainerStyle={{
+                            paddingBottom: 35,
+                        }}
+                        keyboardDismissMode="interactive"
+                    >
+                        {wearFaceMask && (
+                            <>
+                                <FaceCovering containerPadding={containerPadding} />
+                                <DividerLine />
+                            </>
+                        )}
+                        {hasOverviewRoute && (
+                            <OverViewRoute
                                 topictextStyle={styles.topictext}
                                 containerPadding={containerPadding}
-                                data={api31Result}
-                                setSelectData={setSelectData}
-                                onPress={() => {
-                                    setIsClick(true);
-                                }}
                             />
                         )}
+                        {error31 && (
+                            <View style={styles.messageContainer}>
+                                <ThemedText style={styles.message}>
+                                    Something went wrong.
+                                </ThemedText>
+                            </View>
+                        )}
+                        {api31Result !== undefined &&
+                            api31Result !== null &&
+                            api31Result.length !== 0 &&
+                            !loadingDataFromApi && (
+                                <SuggestedRoutes
+                                    topictextStyle={styles.topictext}
+                                    containerPadding={containerPadding}
+                                    data={api31Result}
+                                    setSelectData={setSelectData}
+                                    onPress={() => {
+                                        setIsClick(true);
+                                    }}
+                                />
+                            )}
 
-                    {loadingDataFromApi && (
-                        <>
-                            <SvgAnimatedLinearGradient
-                                style={{ marginHorizontal: 15, marginTop: 20, marginBottom: 10 }}
-                                width={0.4 * Dimensions.get("screen").width}
-                                height={14}
-                                primaryColor={colors.linear_gradient_primary}
-                                secondaryColor={colors.linear_gradient_secondary}
-                            ></SvgAnimatedLinearGradient>
+                        {loadingDataFromApi && (
+                            <>
+                                <SvgAnimatedLinearGradient
+                                    style={{
+                                        marginHorizontal: 15,
+                                        marginTop: 20,
+                                        marginBottom: 10,
+                                    }}
+                                    width={0.4 * Dimensions.get("screen").width}
+                                    height={14}
+                                    primaryColor={colors.linear_gradient_primary}
+                                    secondaryColor={colors.linear_gradient_secondary}
+                                ></SvgAnimatedLinearGradient>
 
-                            <SvgAnimatedLinearGradient
-                                style={{ marginHorizontal: 15 }}
-                                width={Dimensions.get("screen").width - 30}
-                                height={50}
-                                primaryColor={colors.linear_gradient_primary}
-                                secondaryColor={colors.linear_gradient_secondary}
-                            ></SvgAnimatedLinearGradient>
-                        </>
-                    )}
-                    {api31Result.length === 0 && !loadingDataFromApi && !error31 && (
-                        <View style={styles.messageContainer}>
-                            <ThemedText style={styles.message}>Route not found</ThemedText>
-                        </View>
-                    )}
-                </ScrollView>
+                                <SvgAnimatedLinearGradient
+                                    style={{ marginHorizontal: 15 }}
+                                    width={Dimensions.get("screen").width - 30}
+                                    height={50}
+                                    primaryColor={colors.linear_gradient_primary}
+                                    secondaryColor={colors.linear_gradient_secondary}
+                                ></SvgAnimatedLinearGradient>
+                            </>
+                        )}
+                        {api31Result.length === 0 && !loadingDataFromApi && !error31 && (
+                            <View style={styles.messageContainer}>
+                                <ThemedText style={styles.message}>Route not found</ThemedText>
+                                <TouchableOpacity onPress={showRouteNotFoundInfoModal}>
+                                    <ThemedText style={styles.routeNotFoundInfoText}>
+                                        What's this?
+                                    </ThemedText>
+                                </TouchableOpacity>
+                            </View>
+                        )}
+                    </ScrollView>
+                </View>
             </View>
-        </View>
+            {showRouteNotFoundModal && (
+                <Animated.View style={[styles.modalView, animatedRouteNotFoundInfoModalOpacity]}>
+                    <RouteNotFoundModal onDismiss={dismissRouteNotFoundInfoModal} />
+                </Animated.View>
+            )}
+        </>
     );
 }
 //station:BTS_CEN_1
