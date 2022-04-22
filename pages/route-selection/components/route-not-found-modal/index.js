@@ -3,7 +3,7 @@ import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import ThemedText from "../../../../components/themed-text";
 import PropTypes from "prop-types";
-import RouteNotFoundIcon from "../../../../assets/svgs/subway-icon copy";
+import RouteNotFoundIcon from "../../../../assets/svgs/route-not-found-icon";
 function RouteNotFoundModal(props) {
     const { colors } = useTheme();
 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { StyleSheet, View, TextInput, TouchableOpacity } from "react-native";
 import ThemedText from "../../../../components/themed-text";
 import ThemedTextInput from "../../../../components/themed-text-input";
@@ -25,12 +25,22 @@ export default function SearchOriginBar(props) {
         props.onChangeText(props.valueLocation);
         props.onChangeTextLocation(temp);
     }*/
+
+    useEffect(() => {
+        if (props.tabOneFocus) {
+            tabOne();
+        } else {
+            tabTwo;
+        }
+    }, [props.tabOneFocus]);
+
     function tabOne() {
         if (isTabTwoOpen == true) {
             setTabTwo(false);
         }
         setTabOne(true);
     }
+
     function tabTwo() {
         if (isTabOneOpen == true) {
             setTabOne(false);
