@@ -1,16 +1,26 @@
-import React, { useState, useEffect }from "react";
-import { StyleSheet, View, Dimensions, Text, ScrollView, TouchableOpacity, ActivityIndicator } from "react-native";
+import React, { useState, useEffect } from "react";
+import {
+    StyleSheet,
+    View,
+    Dimensions,
+    Text,
+    ScrollView,
+    TouchableOpacity,
+    ActivityIndicator,
+} from "react-native";
 import { useTheme } from "@react-navigation/native";
 import ThemedText from "../../../../../components/themed-text";
 import ThemedTextMarquee from "../../../../../components/themed-text-marquee";
 import TransitLine from "../../../../../components/transit-line";
 import axios from "axios";
 import { configs } from "../../../../../configs/configs";
+import SvgAnimatedLinearGradient from "react-native-svg-animated-linear-gradient/src";
 
 export default function TransitLineForFares(props) {
+    const { colors } = useTheme();
 
-    const DATA = props.data
-    const linename = props.linename
+    const DATA = props.data;
+    const linename = props.linename;
 
     const [loading, setLoading] = useState(formatRoutesAvailable);
     const [loadError, setLoadError] = useState(false);
@@ -36,7 +46,7 @@ export default function TransitLineForFares(props) {
                     else {
                         setStationData(response.data.data);
                         formatRoutesAvailable(response.data.data);
-                        
+
                         if (response.data.data.coordinates) {
                             await recenter(
                                 parseFloat(response.data.data.coordinates.lat),
@@ -57,7 +67,7 @@ export default function TransitLineForFares(props) {
                 if (error) setLoadError(true);
                 setLoading(false);
             });
-    };
+    }
 
     function fetchToStationDetails() {
         setLoading(true);
@@ -74,7 +84,7 @@ export default function TransitLineForFares(props) {
                     else {
                         setToStationData(response.data.data);
                         formatRoutesAvailable(response.data.data);
-                        
+
                         if (response.data.data.coordinates) {
                             await recenter(
                                 parseFloat(response.data.data.coordinates.lat),
@@ -95,7 +105,7 @@ export default function TransitLineForFares(props) {
                 if (error) setLoadError(true);
                 setLoading(false);
             });
-    };
+    }
 
     function formatRoutesAvailable(data) {
         if (!data) return;
@@ -114,45 +124,43 @@ export default function TransitLineForFares(props) {
     }
 
     useEffect(() => {
-            fetchStationDetails();
-            fetchToStationDetails();
+        fetchStationDetails();
+        fetchToStationDetails();
     }, []);
 
-    useEffect(() => {
-    },[stationData,tostationData]);
+    useEffect(() => {}, [stationData, tostationData]);
 
     const styles = StyleSheet.create({
         lineleft: {
             marginRight: 4,
         },
-        container : {
-                    display: "flex",
-                    flexDirection: "row",
-                },
+        container: {
+            display: "flex",
+            flexDirection: "row",
+        },
     });
 
-    
-
-    return(
+    return (
         <>
-            {stationData.lines !== undefined &&  tostationData.lines !== undefined ? 
-            <>
-                {stationData.lines[0].route_name.long_name == tostationData.lines[0].route_name.long_name ? 
-                    <TransitLine
-                        line={{
-                            name: {
-                                short_name: linename,
-                                long_name: stationData.lines[0].route_name.long_name,
-                                // long_name: "BTS SkhunvitLine",
-                            },
-                            color: stationData.lines[0].route_color,
-                            // color: "7FBF3A",
-                        }}
-                        fontSize={14}
-                    />
-                    :
-                    <View style={styles.container}>
+            {stationData.lines !== undefined && tostationData.lines !== undefined ? (
+                <>
+                    {stationData.lines[0].route_name.long_name ==
+                    tostationData.lines[0].route_name.long_name ? (
                         <TransitLine
+                            line={{
+                                name: {
+                                    short_name: linename,
+                                    long_name: stationData.lines[0].route_name.long_name,
+                                    // long_name: "BTS SkhunvitLine",
+                                },
+                                color: stationData.lines[0].route_color,
+                                // color: "7FBF3A",
+                            }}
+                            fontSize={14}
+                        />
+                    ) : (
+                        <View style={styles.container}>
+                            <TransitLine
                                 line={{
                                     name: {
                                         short_name: linename,
@@ -165,7 +173,7 @@ export default function TransitLineForFares(props) {
                                 fontSize={14}
                                 style={styles.lineleft}
                             />
-                        <TransitLine
+                            <TransitLine
                                 line={{
                                     name: {
                                         short_name: linename,
@@ -177,15 +185,19 @@ export default function TransitLineForFares(props) {
                                 }}
                                 fontSize={14}
                             />
-                    </View>
-                }
-            </>
-             : 
-            <>
-                <ActivityIndicator />
-            </>
-            }
+                        </View>
+                    )}
+                </>
+            ) : (
+                <>
+                    <SvgAnimatedLinearGradient
+                        width={150}
+                        height={23}
+                        primaryColor={colors.linear_gradient_primary}
+                        secondaryColor={colors.linear_gradient_secondary}
+                    ></SvgAnimatedLinearGradient>
+                </>
+            )}
         </>
     );
-
 }
