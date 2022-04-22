@@ -171,6 +171,8 @@ export default function RouteShowDetails(props) {
     }
 
     function getTotalDistanceOfRoute(polyline) {
+        if (!polyline) return;
+
         let totalDistance = 0;
 
         for (let i = 0; i < polyline.length - 1; i++) {
@@ -225,7 +227,9 @@ export default function RouteShowDetails(props) {
                                 subprops.datakey !== null ? (
                                     getDistanceText(
                                         getTotalDistanceOfRoute(
-                                            props.polyline[subprops.datakey].polyline,
+                                            props.polyline[subprops.datakey]
+                                                ? props.polyline[subprops.datakey].polyline
+                                                : undefined,
                                         ),
                                     )
                                 ) : (
