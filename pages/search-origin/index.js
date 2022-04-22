@@ -337,136 +337,127 @@ export default function SearchOrigin(props) {
     function SearchData() {
         return (
             <>
-                {(api22Result !== undefined && api22Result !== null && api22Result.length !== 0) ||
-                (api21Result !== undefined && api21Result !== null && api21Result.length !== 0) ? (
+                {!currentLocation && (
                     <>
-                        {api22Result !== undefined &&
-                        api22Result !== null &&
-                        api22Result.length !== 0 ? (
+                        <View
+                            style={{
+                                paddingHorizontal: 15,
+                                marginTop: 10,
+                                display: "flex",
+                                flexDirection: "row",
+                                marginBottom: 15,
+                            }}
+                        >
+                            <SvgAnimatedLinearGradient
+                                style={{ marginRight: 10 }}
+                                width={30}
+                                height={30}
+                                primaryColor={colors.linear_gradient_primary}
+                                secondaryColor={colors.linear_gradient_secondary}
+                            />
+                            <SvgAnimatedLinearGradient
+                                width={0.7 * Dimensions.get("screen").width}
+                                height={30}
+                                primaryColor={colors.linear_gradient_primary}
+                                secondaryColor={colors.linear_gradient_secondary}
+                            />
+                        </View>
+                    </>
+                )}
+
+                {currentLocation && (
+                    <PlaceTab
+                        style={{ marginTop: -15, marginBottom: 15 }}
+                        place={MyLocation}
+                        // address={currentLocation.latitude + " , " + currentLocation.longitude}
+                        onPress={() => {
+                            if (isSearchOrigin) {
+                                if (MyLocation === destinationInput) {
+                                } else {
+                                    setOriginInput(MyLocation);
+                                    setOriginData(currentLocation);
+                                    setIsClick(true);
+                                }
+                            } else if (isSearchDestination) {
+                                if (MyLocation === originInput) {
+                                } else {
+                                    setDestinationInput(MyLocation);
+                                    setDestinationData(currentLocation);
+                                    setIsClick(true);
+                                }
+                            }
+                        }}
+                        icon={"your-location"}
+                    />
+                )}
+
+                {api22Result !== undefined && api22Result !== null && api22Result.length !== 0 ? (
+                    <>
+                        <ThemedText style={styles.topictext}>Stations</ThemedText>
+                        <View style={styles.tabbarcontainer}>
                             <>
-                                <ThemedText style={styles.topictext}>Stations</ThemedText>
-                                <View style={styles.tabbarcontainer}>
-                                    <>
-                                        {api22Result.map((item, key) => (
-                                            <StationTab
-                                                key={key}
-                                                place={item.name.en}
-                                                trip={item.trips}
-                                                onPress={() => {
-                                                    if (isSearchOrigin) {
-                                                        if (item.name.en === destinationInput) {
-                                                        } else {
-                                                            setOriginInput(item.name.en);
-                                                            setOriginData(item);
-                                                            setIsClick(true);
-                                                        }
-                                                    } else if (isSearchDestination) {
-                                                        if (item.name.en === originInput) {
-                                                        } else {
-                                                            setDestinationInput(item.name.en);
-                                                            setDestinationData(item);
-                                                            setIsClick(true);
-                                                        }
-                                                    }
-                                                }}
-                                            />
-                                        ))}
-                                    </>
-                                </View>
-                            </>
-                        ) : (
-                            <></>
-                        )}
-                        {api21Result !== undefined &&
-                        api21Result !== null &&
-                        api21Result.length !== 0 ? (
-                            <View>
-                                <ThemedText style={styles.topictext}>Places</ThemedText>
-                                <View style={styles.tabbarcontainer}>
-                                    {api21Result.map((item, key) => (
-                                        <PlaceTab
-                                            key={key}
-                                            place={item.name.en}
-                                            address={item.address.en}
-                                            onPress={() => {
-                                                if (isSearchOrigin) {
-                                                    if (item.name.en === destinationInput) {
-                                                    } else {
-                                                        setOriginInput(item.name.en);
-                                                        setOriginData(item);
-                                                        setIsClick(true);
-                                                    }
-                                                } else if (isSearchDestination) {
-                                                    if (item.name.en === originInput) {
-                                                    } else {
-                                                        setDestinationInput(item.name.en);
-                                                        setDestinationData(item);
-                                                        setIsClick(true);
-                                                    }
+                                {api22Result.map((item, key) => (
+                                    <StationTab
+                                        key={key}
+                                        place={item.name.en}
+                                        trip={item.trips}
+                                        onPress={() => {
+                                            if (isSearchOrigin) {
+                                                if (item.name.en === destinationInput) {
+                                                } else {
+                                                    setOriginInput(item.name.en);
+                                                    setOriginData(item);
+                                                    setIsClick(true);
                                                 }
-                                            }}
-                                        />
-                                    ))}
-                                </View>
-                            </View>
-                        ) : (
-                            <></>
-                        )}
+                                            } else if (isSearchDestination) {
+                                                if (item.name.en === originInput) {
+                                                } else {
+                                                    setDestinationInput(item.name.en);
+                                                    setDestinationData(item);
+                                                    setIsClick(true);
+                                                }
+                                            }
+                                        }}
+                                    />
+                                ))}
+                            </>
+                        </View>
                     </>
                 ) : (
-                    <>
-                        {!currentLocation && (
-                            <>
-                                <View
-                                    style={{
-                                        paddingHorizontal: 15,
-                                        marginTop: 10,
-                                        display: "flex",
-                                        flexDirection: "row",
+                    <></>
+                )}
+                {api21Result !== undefined && api21Result !== null && api21Result.length !== 0 ? (
+                    <View>
+                        <ThemedText style={styles.topictext}>Places</ThemedText>
+                        <View style={styles.tabbarcontainer}>
+                            {api21Result.map((item, key) => (
+                                <PlaceTab
+                                    key={key}
+                                    place={item.name.en}
+                                    address={item.address.en}
+                                    onPress={() => {
+                                        if (isSearchOrigin) {
+                                            if (item.name.en === destinationInput) {
+                                            } else {
+                                                setOriginInput(item.name.en);
+                                                setOriginData(item);
+                                                setIsClick(true);
+                                            }
+                                        } else if (isSearchDestination) {
+                                            if (item.name.en === originInput) {
+                                            } else {
+                                                setDestinationInput(item.name.en);
+                                                setDestinationData(item);
+                                                setIsClick(true);
+                                            }
+                                        }
                                     }}
-                                >
-                                    <SvgAnimatedLinearGradient
-                                        style={{ marginRight: 10 }}
-                                        width={30}
-                                        height={30}
-                                        primaryColor={colors.linear_gradient_primary}
-                                        secondaryColor={colors.linear_gradient_secondary}
-                                    />
-                                    <SvgAnimatedLinearGradient
-                                        width={0.7 * Dimensions.get("screen").width}
-                                        height={30}
-                                        primaryColor={colors.linear_gradient_primary}
-                                        secondaryColor={colors.linear_gradient_secondary}
-                                    />
-                                </View>
-                            </>
-                        )}
-                        {currentLocation && (
-                            <PlaceTab
-                                style={{ marginTop: -15 }}
-                                place={MyLocation}
-                                // address={currentLocation.latitude + " , " + currentLocation.longitude}
-                                onPress={() => {
-                                    if (isSearchOrigin) {
-                                        if (MyLocation === destinationInput) {
-                                        } else {
-                                            setOriginInput(MyLocation);
-                                            setOriginData(currentLocation);
-                                            setIsClick(true);
-                                        }
-                                    } else if (isSearchDestination) {
-                                        if (MyLocation === originInput) {
-                                        } else {
-                                            setDestinationInput(MyLocation);
-                                            setDestinationData(currentLocation);
-                                            setIsClick(true);
-                                        }
-                                    }
-                                }}
-                                icon={"your-location"}
-                            />
-                        )}
-                    </>
+                                />
+                            ))}
+                        </View>
+                    </View>
+                ) : (
+                    <></>
                 )}
             </>
         );
