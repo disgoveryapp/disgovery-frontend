@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { SafeAreaView, StyleSheet, Text, View, Dimensions } from "react-native";
 import ThemedText from "../../components/themed-text";
 import { useTheme } from "@react-navigation/native";
-import MapView, { Polyline } from "react-native-maps";
+import MapView, { Marker, Polyline } from "react-native-maps";
 import { decode } from "@googlemaps/polyline-codec";
 import { googleMapsStyling } from "../../maps/google-maps-styling";
 import * as Location from "expo-location";
@@ -32,6 +32,7 @@ export default function Home() {
     const [location, setLocation] = useState(null);
     const [mapCurrentLocationRegion, setMapCurrentLocationRegion] = useState({});
     const [locationErrorMessage, setLocationErrorMessage] = useState(null);
+    const [markers, setMarkers] = useState([]);
 
     const [nearbyStations, setNearbyStations] = useState([]);
     let foregroundSubscription = null;
@@ -54,6 +55,11 @@ export default function Home() {
         bottomcard: {
             top: SCREEN_HEIGHT * (8.75 / 3),
             zIndex: 5,
+        },
+        stationNameMarker: {
+            borderRadius: 6,
+            paddingVertical: 3,
+            paddingHorizontal: 5,
         },
     });
 
@@ -82,6 +88,53 @@ export default function Home() {
             subscribed = false;
         };
     }, [mapCurrentLocationRegion]);
+
+    useEffect(() => {
+        let subscribed = true;
+
+        if (subscribed) {
+            let tempMarkers = [];
+            for (let station of nearbyStations) {
+                let station_name = station.name.en.replace(/ *\([^)]*\) */g, "").trim();
+                let available = false;
+
+                for (let marker of tempMarkers) {
+                    if (marker.name === station_name) {
+                        available = true;
+                        break;
+                    }
+                }
+
+                if (!available) {
+                    tempMarkers.push({
+                        type: station.lines
+                            ? station.lines[0]
+                                ? station.lines[0].route_type
+                                : undefined
+                            : undefined,
+                        name: station_name,
+                        coordinates: {
+                            latitude: station.coordinates.lat,
+                            longitude: station.coordinates.lng,
+                        },
+                        color: station.lines
+                            ? station.lines[0]
+                                ? station.lines[0].route_color
+                                : undefined
+                            : undefined,
+                    });
+                }
+            }
+
+            if (tempMarkers.length > 0) {
+                setMarkers(tempMarkers);
+            }
+        }
+
+        return () => {
+            subscribed = false;
+        };
+    }, [nearbyStations]);
 
     async function fetchNewLocation(doRecenter) {
         let { status } = await Location.requestForegroundPermissionsAsync();
@@ -170,7 +223,27 @@ export default function Home() {
                 onRegionChangeComplete={(region) => onMapRegionChangeComplete(region)}
                 showsMyLocationButton={false}
                 showsUserLocation
-            ></MapView>
+            >
+                {/* {Object.keys(markers).map((key) => {
+                    console.log(markers[key].color);
+                    return (
+                        <>
+                            {markers[key].color && (
+                                <Marker coordinate={markers[key].coordinates}>
+                                    <View
+                                        style={{
+                                            ...styles.stationNameMarker,
+                                            backgroundColor: markers[key].color,
+                                        }}
+                                    >
+                                        <ThemedText>{markers[key].name}</ThemedText>
+                                    </View>
+                                </Marker>
+                            )}
+                        </>
+                    );
+                })} */}
+            </MapView>
             <RecenterButton recentered={mapsIsRecentered} onPress={recenter} />
             <View style={styles.bottomcard}>
                 <BottomCard nearbyStations={nearbyStations} loading={loading} />
