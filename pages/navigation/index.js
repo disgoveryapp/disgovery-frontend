@@ -38,6 +38,7 @@ import ExpandDownIcon18px from "../../assets/svgs/expand-down-icon-18px";
 import SvgAnimatedLinearGradient from "react-native-svg-animated-linear-gradient/src";
 import { sendNotification } from "../../functions/notification";
 import ThemedTextMarquee from "../../components/themed-text-marquee";
+import Svg, { Polygon } from "react-native-svg";
 
 const CHECKPOINT_SNAP_DISTANCE = 0.1;
 
@@ -56,6 +57,13 @@ const BOTTOM_NAVIGATION_PADDING_BOTTOM_EXPANDED = 8;
 const BOTTOM_NAVIGATION_PADDING_BOTTOM_COLLAPSED = 18;
 const TOP_NAVIGATION_PANEL_HEIGHT = 0.4 * SCREEN_HEIGHT;
 const TOP_NAVIGATION_PANEL_WIDTH = SCREEN_WIDTH;
+
+const ARROW_INDEX_BETWEEN = 1;
+const POLYLINE_SIZE_OUTER = 14;
+const POLYLINE_SIZE_INNER = 8;
+const POLYLINE_WALK_SIZE_OUTER = 14;
+const POLYLINE_WALK_SIZE_INNER = 8;
+const POLYLINE_WALK_LINE_DASH_PHASE = undefined;
 
 let foregroundSubscription = null;
 let foregroundHeadingSubscription = null;
@@ -79,8 +87,12 @@ function Navigation(props) {
     const [locationErrorMessage, setLocationErrorMessage] = useState(null);
     const [polylines, setPolylines] = useState([]);
     const [passedPolylines, setPassedPolylines] = useState([]);
+    const [arrowPolylineBottom, setArrowPolylineBottom] = useState({});
+    const [arrowPolylineTop, setArrowPolylineTop] = useState({});
+    const [arrowHeadRotation, setArrowHeadRotation] = useState(0.0);
     const [directions, setDirections] = useState([]);
     const [currentDirection, setCurrentDirection] = useState(undefined);
+    const [nextDirection, setNextDirection] = useState(undefined);
     const [nearestPointOnPolyline, setNearestPointOnPolyline] = useState(undefined);
     const [nearestPointOnPolylineAnimated, setNearestPointOnPolylineAnimated] = useState(undefined);
     const [offRoad, setOffRoad] = useState(false);
@@ -138,6 +150,7 @@ function Navigation(props) {
 
     useEffect(() => {
         determineNavigationDone();
+        determineArrowPolylines();
     }, [currentDirection]);
 
     useEffect(() => {
@@ -355,6 +368,7 @@ function Navigation(props) {
 
             if (!currentDirection) {
                 setCurrentDirection(directions[nearestKey]);
+                setNextDirection(directions[parseInt(nearestKey) + 1]);
                 if (directions[nearestKey].text) {
                     speakDirectionWithHaptics(directions, nearestKey);
                     sendNotification(
@@ -372,6 +386,7 @@ function Navigation(props) {
                     currentDirection.near.lng !== directions[nearestKey].near.lng
                 ) {
                     setCurrentDirection(directions[nearestKey]);
+                    setNextDirection(directions[parseInt(nearestKey) + 1]);
                     if (directions[nearestKey].text) {
                         speakDirectionWithHaptics(directions, nearestKey);
                         sendNotification(
@@ -679,6 +694,82 @@ function Navigation(props) {
                 doneSubviewWidthReanimated.value = bottomNavigationPanelViewWidth - 20;
             })();
         }
+    }
+
+    function determineArrowPolylines() {
+        if (!currentDirection) {
+            setArrowPolylineBottom({});
+            setArrowPolylineTop({});
+            return;
+        }
+
+        if (currentDirection.route_id && currentDirection.route_id.startsWith("walk")) {
+            console.log("current", currentDirection);
+
+            let currentPolyline = polylines.find((p) => {
+                return p.route_id === currentDirection.route_id;
+            });
+
+            let index = 0;
+            let nearestDistance = Number.MAX_SAFE_INTEGER;
+
+            for (let i in currentPolyline.polyline) {
+                let distance = getDistanceFromLatLonInKm(
+                    currentPolyline.polyline[i].latitude,
+                    currentPolyline.polyline[i].longitude,
+                    currentDirection.near.lat,
+                    currentDirection.near.lng,
+                );
+                if (distance < nearestDistance) {
+                    nearestDistance = distance;
+                    index = parseInt(i);
+                }
+            }
+
+            let startingIndex = index - ARROW_INDEX_BETWEEN < 0 ? 0 : index - ARROW_INDEX_BETWEEN;
+            let endingIndex =
+                index + ARROW_INDEX_BETWEEN > currentPolyline.polyline.length - 1
+                    ? currentPolyline.polyline.length - 1
+                    : index + ARROW_INDEX_BETWEEN;
+
+            let tempArrowPolylineBottom = [];
+            for (let i = startingIndex; i <= endingIndex; i++) {
+                tempArrowPolylineBottom.push(currentPolyline.polyline[i]);
+            }
+
+            let tempArrowHeadRotation = 0.0;
+
+            if (tempArrowPolylineBottom.length >= 2) {
+                tempArrowHeadRotation = angleBetweenCoordinatesInDegrees(
+                    tempArrowPolylineBottom[tempArrowPolylineBottom.length - 1].latitude,
+                    tempArrowPolylineBottom[tempArrowPolylineBottom.length - 1].longitude,
+                    tempArrowPolylineBottom[tempArrowPolylineBottom.length - 2].latitude,
+                    tempArrowPolylineBottom[tempArrowPolylineBottom.length - 2].longitude,
+                );
+            }
+
+            console.log(tempArrowHeadRotation);
+            console.log(tempArrowPolylineBottom.length);
+
+            setArrowHeadRotation(tempArrowHeadRotation);
+
+            setArrowPolylineBottom({
+                route_id: `${currentDirection.route_id}_arrow`,
+                polyline: tempArrowPolylineBottom,
+                color: colors.white,
+            });
+        } else {
+            setArrowPolylineBottom({});
+            setArrowPolylineTop({});
+        }
+    }
+
+    function angleBetweenCoordinatesInDegrees(cx, cy, ex, ey) {
+        var dy = ey - cy;
+        var dx = ex - cx;
+        var theta = Math.atan2(dy, dx);
+        theta *= 180 / Math.PI;
+        return theta;
     }
 
     function htmlToText(html) {
@@ -1305,8 +1396,17 @@ function Navigation(props) {
                         <Polyline
                             key={`polyline_outer_${polylines[key].polyline[0]}`}
                             coordinates={polylines[key].polyline}
-                            strokeWidth={14}
+                            strokeWidth={
+                                polylines[key].route_id.startsWith("walk")
+                                    ? POLYLINE_WALK_SIZE_OUTER
+                                    : POLYLINE_SIZE_OUTER
+                            }
                             zIndex={-1}
+                            lineDashPattern={
+                                polylines[key].route_id.startsWith("walk")
+                                    ? POLYLINE_WALK_LINE_DASH_PHASE
+                                    : undefined
+                            }
                             strokeColor={pSBC(
                                 -0.5,
                                 polylines[key].color
@@ -1317,10 +1417,99 @@ function Navigation(props) {
                         <Polyline
                             key={`polyline_inner_${polylines[key].polyline[0]}`}
                             coordinates={polylines[key].polyline}
-                            strokeWidth={8}
+                            strokeWidth={
+                                polylines[key].route_id.startsWith("walk")
+                                    ? POLYLINE_WALK_SIZE_INNER
+                                    : POLYLINE_SIZE_INNER
+                            }
                             zIndex={0}
+                            lineDashPattern={
+                                polylines[key].route_id.startsWith("walk")
+                                    ? POLYLINE_WALK_LINE_DASH_PHASE
+                                    : undefined
+                            }
                             strokeColor={polylines[key].color}
                         />
+
+                        {arrowPolylineBottom && (
+                            <>
+                                <Polyline
+                                    key={`polyline_outer_${arrowPolylineBottom.route_id}`}
+                                    coordinates={arrowPolylineBottom.polyline}
+                                    strokeWidth={POLYLINE_SIZE_OUTER}
+                                    zIndex={10}
+                                    strokeColor={pSBC(
+                                        -0.5,
+                                        arrowPolylineBottom.color
+                                            ? arrowPolylineBottom.color
+                                            : colors.upper_background,
+                                    )}
+                                    lineCap="butt"
+                                />
+
+                                <Polyline
+                                    key={`polyline_inner_${arrowPolylineBottom.route_id}`}
+                                    coordinates={arrowPolylineBottom.polyline}
+                                    strokeWidth={POLYLINE_SIZE_INNER}
+                                    zIndex={11}
+                                    strokeColor={arrowPolylineBottom.color}
+                                    lineCap="butt"
+                                />
+                            </>
+                        )}
+
+                        {arrowPolylineTop && (
+                            <>
+                                <Polyline
+                                    key={`polyline_outer_${arrowPolylineTop.route_id}`}
+                                    coordinates={arrowPolylineTop.polyline}
+                                    strokeWidth={14}
+                                    zIndex={3}
+                                    strokeColor={pSBC(
+                                        -0.5,
+                                        arrowPolylineTop.color
+                                            ? arrowPolylineTop.color
+                                            : colors.upper_background,
+                                    )}
+                                    lineCap="butt"
+                                />
+
+                                <Polyline
+                                    key={`polyline_inner_${arrowPolylineTop.route_id}`}
+                                    coordinates={arrowPolylineTop.polyline}
+                                    strokeWidth={8}
+                                    zIndex={2}
+                                    strokeColor={arrowPolylineTop.color}
+                                    lineCap="butt"
+                                />
+                            </>
+                        )}
+
+                        {arrowPolylineBottom && (
+                            <>
+                                <Marker
+                                    coordinate={
+                                        arrowPolylineBottom.polyline
+                                            ? arrowPolylineBottom.polyline[
+                                                  arrowPolylineBottom.polyline.length - 1
+                                              ]
+                                            : null
+                                    }
+                                    anchor={{ x: 0.5, y: 0.5 }}
+                                    // rotation={arrowHeadRotation}
+                                >
+                                    <Svg height={30} width={30}>
+                                        <Polygon
+                                            points="15,0 0,24 24,0"
+                                            fill={colors.white}
+                                            stroke={pSBC(-0.5, colors.white)}
+                                            // strokeWidth={POLYLINE_SIZE_OUTER - POLYLINE_SIZE_INNER}
+                                        />
+                                    </Svg>
+                                </Marker>
+                            </>
+                        )}
+
                         <Marker
                             key={`marker_end_${
                                 polylines[key].polyline[polylines[key].polyline.length - 1]
