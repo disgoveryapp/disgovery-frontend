@@ -133,7 +133,14 @@ function ToFrom(props) {
                         </ThemedText>
                         <View>
                             <ThemedText style={styles.subTimeText}>
-                                Arrive by {arrivingTime.getHours()}:{arrivingTime.getMinutes()}
+                                {"Arrive by "}
+                                {arrivingTime.getHours() < 10
+                                    ? "0" + arrivingTime.getHours()
+                                    : arrivingTime.getHours()}
+                                {":"}
+                                {arrivingTime.getMinutes() < 10
+                                    ? "0" + arrivingTime.getMinutes()
+                                    : arrivingTime.getMinutes()}
                             </ThemedText>
                         </View>
                     </View>
