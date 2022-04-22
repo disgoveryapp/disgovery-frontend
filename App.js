@@ -82,7 +82,11 @@ export default function App() {
                             component={StationDetails}
                             options={{ animation: "fade" }}
                         />
-                        <Stack.Screen name="Navigation" component={Navigation} />
+                        <Stack.Screen
+                            name="Navigation"
+                            component={Navigation}
+                            options={{ animation: "fade", gestureEnabled: false }}
+                        />
                     </Stack.Navigator>
                 </NavigationContainer>
             </>

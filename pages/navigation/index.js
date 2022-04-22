@@ -705,8 +705,6 @@ function Navigation(props) {
         }
 
         if (currentDirection.route_id && currentDirection.route_id.startsWith("walk")) {
-            console.log("current", currentDirection);
-
             let currentPolyline = polylines.find((p) => {
                 return p.route_id === currentDirection.route_id;
             });
@@ -749,11 +747,7 @@ function Navigation(props) {
                 );
             }
 
-            console.log(tempArrowHeadRotation);
-            console.log(tempArrowPolylineBottom.length);
-
             setArrowHeadRotation(tempArrowHeadRotation);
-
             setArrowPolylineBottom({
                 route_id: `${currentDirection.route_id}_arrow`,
                 polyline: tempArrowPolylineBottom,
@@ -801,7 +795,7 @@ function Navigation(props) {
     function onExpandBottomNavigationPanelMenuPress() {
         "worklet";
 
-        if (!currentDirection) return;
+        // if (!currentDirection) return;
 
         if (!bottomNavigationPanelMenuIsExpanded) {
             bottomNavigationPanelMenuHeightReanimated.value = BOTTOM_NAVIGATION_PANEL_MENU_HEIGHT;
@@ -1319,19 +1313,25 @@ function Navigation(props) {
 
                     {!currentDirection && (
                         <>
-                            <SvgAnimatedLinearGradient
-                                width="80%"
-                                height={16}
-                                primaryColor={colors.linear_gradient_primary}
-                                secondaryColor={colors.linear_gradient_secondary}
-                            />
-                            <SvgAnimatedLinearGradient
-                                style={{ marginTop: 5 }}
-                                width="90%"
-                                height={27}
-                                primaryColor={colors.linear_gradient_primary}
-                                secondaryColor={colors.linear_gradient_secondary}
-                            />
+                            <View style={{ flex: 1 }}>
+                                <SvgAnimatedLinearGradient
+                                    width="80%"
+                                    height={16}
+                                    primaryColor={colors.linear_gradient_primary}
+                                    secondaryColor={colors.linear_gradient_secondary}
+                                />
+                                <SvgAnimatedLinearGradient
+                                    style={{ marginTop: 5 }}
+                                    width="90%"
+                                    height={27}
+                                    primaryColor={colors.linear_gradient_primary}
+                                    secondaryColor={colors.linear_gradient_secondary}
+                                />
+                            </View>
+
+                            <Animated.View style={[animatedBottomNavigationPanelMenuHeight]}>
+                                <BottomNavigationPanelMenu />
+                            </Animated.View>
                         </>
                     )}
                 </Animated.View>
