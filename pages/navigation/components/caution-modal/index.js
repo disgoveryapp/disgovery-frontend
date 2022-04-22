@@ -40,7 +40,7 @@ function NavigationCautionModal(props) {
 
     const styles = StyleSheet.create({
         container: {
-            backgroundColor: `${colors.background}88`,
+            backgroundColor: `${colors.shadow}88`,
             position: "absolute",
             top: 0,
             left: 0,
