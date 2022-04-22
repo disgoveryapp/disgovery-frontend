@@ -582,8 +582,13 @@ function TripDetails(props) {
                                                 : nextStationLineHeights[iteration] +
                                                   MARGIN_BETWEEN_STATION,
                                             top: STATION_CIRCLE_DIAMETER / 2,
-                                            backgroundColor: colors.upper_background,
-                                            borderColor: pSBC(-0.5, colors.upper_background),
+                                            backgroundColor: dark
+                                                ? colors.upper_background
+                                                : colors.middle_grey,
+                                            borderColor: pSBC(
+                                                -0.5,
+                                                dark ? colors.upper_background : colors.middle_grey,
+                                            ),
                                             zIndex: -1,
                                         }}
                                     />
@@ -838,16 +843,16 @@ function TripDetails(props) {
                                     style={{ marginTop: 30 }}
                                     width={0.8 * Dimensions.get("screen").width}
                                     height={40}
-                                    primaryColor={colors.background}
-                                    secondaryColor={colors.upper_background}
+                                    primaryColor={colors.linear_gradient_primary}
+                                    secondaryColor={colors.linear_gradient_secondary}
                                 ></SvgAnimatedLinearGradient>
 
                                 <SvgAnimatedLinearGradient
                                     style={{ marginTop: 10 }}
                                     width={0.5 * Dimensions.get("screen").width}
                                     height={30}
-                                    primaryColor={colors.background}
-                                    secondaryColor={colors.upper_background}
+                                    primaryColor={colors.linear_gradient_primary}
+                                    secondaryColor={colors.linear_gradient_secondary}
                                 ></SvgAnimatedLinearGradient>
                             </View>
                         </View>
