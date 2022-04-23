@@ -501,9 +501,9 @@ export default function Search() {
                     api23Result !== null &&
                     api23Result.length !== 0 ? (
                         <>
+                            <ThemedText style={styles.topictext}>Lines</ThemedText>
                             {api23Result.map((item, key) => (
                                 <>
-                                    <ThemedText style={styles.topictext}>Lines</ThemedText>
                                     <LineTab
                                         type={item.type}
                                         route_name={item.name}
