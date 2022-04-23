@@ -21,6 +21,9 @@
             "userInterfaceStyle": "automatic",
             "config": {
                 "googleMapsApiKey": ""
+            },
+            "infoPlist": {
+                "NSLocationWhenInUseUsageDescription": "Disgovery uses your location to find nearby stops and to navigate you to places. We never share your location with anyone."
             }
         },
         "android": {
