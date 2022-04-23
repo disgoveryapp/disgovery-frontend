@@ -166,7 +166,7 @@ export default function RouteDetails(props) {
     useEffect(() => {
         parsePolylines();
         setRouteData(props.route.params.routeData);
-        console.log({} === {});
+        // console.log({} === {});
     }, []);
 
     async function getLocationAccess() {

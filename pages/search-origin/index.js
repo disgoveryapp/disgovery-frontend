@@ -198,7 +198,6 @@ export default function SearchOrigin(props) {
             setTimeout(() => {
                 t1.current.focus();
             }, 100);
-            console.log("focus on origin");
         } else if (on === "destination") {
             // focus on destination search box
             setIsSearchDestination(true);
@@ -207,7 +206,6 @@ export default function SearchOrigin(props) {
             setTimeout(() => {
                 t2.current.focus();
             }, 100);
-            console.log("focus on destination");
         }
     }
 

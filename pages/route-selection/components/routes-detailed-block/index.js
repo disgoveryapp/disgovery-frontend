@@ -29,7 +29,6 @@ export default function RoutesDetailedBlock(props) {
         let hour = 0;
         let minute = 0;
         let textData = "";
-        console.log(time);
         if (time >= 1440) {
             day = Math.floor(time / 1440);
             time = time % 1440;

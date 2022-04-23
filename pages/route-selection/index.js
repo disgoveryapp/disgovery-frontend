@@ -115,7 +115,7 @@ export default function RouteSelection(props) {
             setClickSwap(false);
             return;
         } else if (isSwap) {
-            console.log("we");
+            // console.log("we");
             setSwapResult(api31Result);
         }
         console.log(originID);
@@ -183,7 +183,6 @@ export default function RouteSelection(props) {
                 `coordinates:${destinationData.latitude},${destinationData.longitude}`,
             );
         }
-        console.log("hi");
     }
 
     function goBack() {
@@ -325,7 +324,6 @@ export default function RouteSelection(props) {
     }, [originID, destinationID]);
 
     useEffect(() => {
-        console.log("ktns");
         if (api31Result[0] !== undefined && api31Result[0] !== null) {
             setOriginLatLng({
                 latitude: api31Result[0].origin.coordinates.lat,
