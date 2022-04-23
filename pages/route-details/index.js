@@ -29,6 +29,13 @@ import BackButton from "../../components/back-button";
 import NavigateButton from "../../components/navigate-button";
 import { decode } from "@googlemaps/polyline-codec";
 import FaceCovering from "./components/face-covering";
+import Animated, {
+    Easing,
+    useAnimatedStyle,
+    useSharedValue,
+    withTiming,
+} from "react-native-reanimated";
+import LocationAccessDeniedModal from "./components/location-access-denied-modal";
 
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -42,20 +49,19 @@ const INITIAL_MAP_REGION = {
 export default function RouteDetails(props) {
     const { dark, colors } = useTheme();
     const mapRef = useRef();
-    let firstRun = true;
     const navigation = useNavigation();
     const wearFaceMask = true;
 
-    const [loading, setLoading] = useState(false);
     const [mapsIsRecentered, setMapsIsRecentered] = useState(false);
     const [location, setLocation] = useState(null);
-    const [mapCurrentLocationRegion, setMapCurrentLocationRegion] = useState({});
     const [locationErrorMessage, setLocationErrorMessage] = useState(null);
+    const [locationAccessGranted, setLocationAccessGranted] = useState(false);
 
     const [routeData, setRouteData] = useState(props.route.params.routeData || {});
 
     const [polylines, setPolylines] = useState([]);
-    const [currentDirection, setCurrentDirection] = useState([]);
+    const [showLocationAccessDeniedModal, setShowLocationAccessDeniedModal] = useState(false);
+    const modalOpacityReanimated = useSharedValue(0);
     const containerPadding = 15;
 
     const originLatLng = {
@@ -139,10 +145,18 @@ export default function RouteDetails(props) {
             height: 58,
             justifyContent: "center",
         },
+        locationAccessDeniedModal: {
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+        },
     });
 
     useEffect(() => {
         recenter();
+        getLocationAccess();
     }, [polylines]);
 
     useEffect(() => {
@@ -155,31 +169,15 @@ export default function RouteDetails(props) {
         console.log({} === {});
     }, []);
 
-    async function fetchNewLocation() {
+    async function getLocationAccess() {
         let { status } = await Location.requestForegroundPermissionsAsync().catch(() => {});
         if (status !== "granted") {
             setLocationErrorMessage("Location permission is denied");
+            setLocationAccessGranted(false);
             return;
+        } else {
+            setLocationAccessGranted(true);
         }
-
-        let location = await Location.getCurrentPositionAsync({
-            accuracy: Location.Accuracy.BestForNavigation,
-        }).catch(() => {});
-
-        setLocation(location);
-        setMapCurrentLocationRegion({
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
-            latitudeDelta: 0.005,
-            longitudeDelta: 0.005,
-        });
-
-        return {
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
-            latitudeDelta: 0.005,
-            longitudeDelta: 0.005,
-        };
     }
 
     function DividerLine() {
@@ -260,114 +258,157 @@ export default function RouteDetails(props) {
     }
 
     function onNavigateButtonPress() {
-        console.log(routeData);
         navigation.navigate("Navigation", {
             route_data: routeData,
             destination_name: props.route.params.destination_name,
         });
     }
 
+    function doHideLocationAccessDeniedModal() {
+        setTimeout(() => setShowLocationAccessDeniedModal(false), 200);
+        modalOpacityReanimated.value = 0;
+    }
+
+    function doShowLocationAccessDeniedModal() {
+        setShowLocationAccessDeniedModal(true);
+        modalOpacityReanimated.value = 1;
+    }
+
+    const animatedLocationAccessDeniedModalOpacity = useAnimatedStyle(() => {
+        return {
+            opacity: withTiming(modalOpacityReanimated.value, {
+                duration: 200,
+                easing: Easing.ease,
+            }),
+        };
+    });
+
     return (
-        <View style={styles.container}>
-            <View style={styles.backButtonContainer}>
-                <SafeAreaView edges={["top"]} />
-                <BackButton
-                    onPress={() => {
-                        goBack();
-                    }}
-                />
-            </View>
-            <MapView
-                ref={mapRef}
-                style={styles.maps}
-                initialRegion={INITIAL_MAP_REGION}
-                // provider="google"
-                showsMyLocationButton={false}
-                customMapStyle={dark ? googleMapsStyling.dark : googleMapsStyling.light}
-                onTouchStart={() => setMapsIsRecentered(false)}
-                mapPadding={{
-                    top: Platform.OS === "android" ? StatusBar.currentHeight : 20,
-                    right: 0,
-                    bottom: 22,
-                    left: 0,
-                }}
-            >
-                {polylines !== undefined && polylines !== null && polylines.length !== 0 && (
-                    <>
-                        {polylines.map((item, key) => (
-                            <>
-                                <Polyline
-                                    key={`${key}_outer`}
-                                    zIndex={10}
-                                    coordinates={item.polyline}
-                                    strokeWidth={14}
-                                    strokeColor={pSBC(-0.5, item.color)}
-                                />
-                                <Polyline
-                                    key={`${key}_inner`}
-                                    zIndex={11}
-                                    coordinates={item.polyline}
-                                    strokeWidth={8}
-                                    strokeColor={item.color}
-                                />
-                                <Marker coordinate={item.polyline[0]} anchor={{ x: 0.5, y: 0.5 }}>
-                                    <View
-                                        style={{
-                                            ...styles.marker,
-                                            backgroundColor: colors.white,
-                                            borderColor: colors.middle_grey,
-                                        }}
-                                    />
-                                </Marker>
-                                <Marker
-                                    coordinate={item.polyline[item.polyline.length - 1]}
-                                    anchor={{ x: 0.5, y: 0.5 }}
-                                >
-                                    <View
-                                        style={{
-                                            ...styles.marker,
-                                            backgroundColor: colors.white,
-                                            borderColor: colors.middle_grey,
-                                        }}
-                                    />
-                                </Marker>
-                            </>
-                        ))}
-                    </>
-                )}
-            </MapView>
-            <View style={styles.bottomDetail}>
-                <View style={styles.navigateButtonContainer}>
-                    <NavigateButton onPress={onNavigateButtonPress} />
-                </View>
-                <View style={styles.scrollView}>
-                    <ToFrom containerPadding={containerPadding} data={routeData} />
-                    <DividerLine />
-                    <Fares containerPadding={containerPadding} data={routeData} />
-                    <DividerLine />
-                    <ScrollView
-                        style={styles.subScrollView}
-                        showsHorizontalScrollIndicator={false}
-                        showsVerticalScrollIndicator={false}
-                        contentContainerStyle={{
-                            paddingBottom: 35,
+        <>
+            <View style={styles.container}>
+                <View style={styles.backButtonContainer}>
+                    <SafeAreaView edges={["top"]} />
+                    <BackButton
+                        onPress={() => {
+                            goBack();
                         }}
-                        keyboardDismissMode="interactive"
-                    >
-                        {wearFaceMask && (
-                            <>
-                                <FaceCovering containerPadding={containerPadding} />
-                                <DividerLine />
-                            </>
-                        )}
-                        <RouteShowDetails
-                            containerPadding={containerPadding}
-                            data={routeData}
-                            polyline={polylines}
+                    />
+                </View>
+                <MapView
+                    ref={mapRef}
+                    style={styles.maps}
+                    initialRegion={INITIAL_MAP_REGION}
+                    // provider="google"
+                    showsMyLocationButton={false}
+                    customMapStyle={dark ? googleMapsStyling.dark : googleMapsStyling.light}
+                    onTouchStart={() => setMapsIsRecentered(false)}
+                    mapPadding={{
+                        top: Platform.OS === "android" ? StatusBar.currentHeight : 20,
+                        right: 0,
+                        bottom: 22,
+                        left: 0,
+                    }}
+                >
+                    {polylines !== undefined && polylines !== null && polylines.length !== 0 && (
+                        <>
+                            {polylines.map((item, key) => (
+                                <>
+                                    <Polyline
+                                        key={`${key}_outer`}
+                                        zIndex={10}
+                                        coordinates={item.polyline}
+                                        strokeWidth={14}
+                                        strokeColor={pSBC(-0.5, item.color)}
+                                    />
+                                    <Polyline
+                                        key={`${key}_inner`}
+                                        zIndex={11}
+                                        coordinates={item.polyline}
+                                        strokeWidth={8}
+                                        strokeColor={item.color}
+                                    />
+                                    <Marker
+                                        coordinate={item.polyline[0]}
+                                        anchor={{ x: 0.5, y: 0.5 }}
+                                    >
+                                        <View
+                                            style={{
+                                                ...styles.marker,
+                                                backgroundColor: colors.white,
+                                                borderColor: colors.middle_grey,
+                                            }}
+                                        />
+                                    </Marker>
+                                    <Marker
+                                        coordinate={item.polyline[item.polyline.length - 1]}
+                                        anchor={{ x: 0.5, y: 0.5 }}
+                                    >
+                                        <View
+                                            style={{
+                                                ...styles.marker,
+                                                backgroundColor: colors.white,
+                                                borderColor: colors.middle_grey,
+                                            }}
+                                        />
+                                    </Marker>
+                                </>
+                            ))}
+                        </>
+                    )}
+                </MapView>
+                <View style={styles.bottomDetail}>
+                    <View style={styles.navigateButtonContainer}>
+                        <NavigateButton
+                            onPress={() => {
+                                if (locationAccessGranted) {
+                                    onNavigateButtonPress();
+                                } else {
+                                    doShowLocationAccessDeniedModal();
+                                }
+                            }}
+                            disabled={locationAccessGranted}
                         />
-                    </ScrollView>
+                    </View>
+                    <View style={styles.scrollView}>
+                        <ToFrom containerPadding={containerPadding} data={routeData} />
+                        <DividerLine />
+                        <Fares containerPadding={containerPadding} data={routeData} />
+                        <DividerLine />
+                        <ScrollView
+                            style={styles.subScrollView}
+                            showsHorizontalScrollIndicator={false}
+                            showsVerticalScrollIndicator={false}
+                            contentContainerStyle={{
+                                paddingBottom: 35,
+                            }}
+                            keyboardDismissMode="interactive"
+                        >
+                            {wearFaceMask && (
+                                <>
+                                    <FaceCovering containerPadding={containerPadding} />
+                                    <DividerLine />
+                                </>
+                            )}
+                            <RouteShowDetails
+                                containerPadding={containerPadding}
+                                data={routeData}
+                                polyline={polylines}
+                            />
+                        </ScrollView>
+                    </View>
                 </View>
             </View>
-        </View>
+
+            {showLocationAccessDeniedModal && (
+                <Animated.View
+                    style={[
+                        styles.locationAccessDeniedModal,
+                        animatedLocationAccessDeniedModalOpacity,
+                    ]}
+                >
+                    <LocationAccessDeniedModal onDismiss={doHideLocationAccessDeniedModal} />
+                </Animated.View>
+            )}
+        </>
     );
 }

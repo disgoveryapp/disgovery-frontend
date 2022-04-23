@@ -10,13 +10,14 @@ const NavigateButton = (props) => {
     const { colors } = useTheme();
 
     const onPress = props.onPress || function () {};
+    const disabled = props.disabled || false;
 
     const styles = StyleSheet.create({
         container: {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            backgroundColor: colors.go_button,
+            backgroundColor: disabled ? colors.middle_grey : colors.go_button,
             paddingHorizontal: 15,
             paddingVertical: 12,
             borderRadius: 12,
@@ -43,7 +44,7 @@ const NavigateButton = (props) => {
         <TouchableOpacity
             style={[styles.container, props.style]}
             onPress={onPress}
-            underlayColor={colors.go_button}
+            underlayColor={disabled ? colors.middle_grey : colors.go_button}
         >
             <>
                 <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>

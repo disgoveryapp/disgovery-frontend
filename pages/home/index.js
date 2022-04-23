@@ -12,6 +12,8 @@ import SearchBox from "../../components/search-box";
 import BottomCardFlatList from "../../components/bottom-card-flat-list";
 import axios from "axios";
 import { configs } from "../../configs/configs";
+import { getNotificationPermission } from "../../functions/notification";
+import LocationOffIcon from "../../assets/svgs/location-off-icon";
 
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -33,6 +35,7 @@ export default function Home() {
     const [mapCurrentLocationRegion, setMapCurrentLocationRegion] = useState({});
     const [locationErrorMessage, setLocationErrorMessage] = useState(null);
     const [markers, setMarkers] = useState([]);
+    const [locationAccessGranted, setLocationAccessGranted] = useState(true);
 
     const [nearbyStations, setNearbyStations] = useState([]);
     let foregroundSubscription = null;
@@ -61,12 +64,40 @@ export default function Home() {
             paddingVertical: 3,
             paddingHorizontal: 5,
         },
+        locationAccessDeniedContainer: {
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+
+            marginTop: 10,
+            paddingHorizontal: 12,
+            paddingVertical: 10,
+            backgroundColor: colors.background,
+            borderRadius: 12,
+
+            shadowColor: colors.shadow,
+            shadowOffset: {
+                width: 0,
+                height: 5,
+            },
+            shadowOpacity: 0.34,
+            shadowRadius: 6.27,
+
+            elevation: 10,
+        },
+        locationAccessDeniedText: {
+            fontSize: 18,
+            fontWeight: "600",
+            color: colors.yellow,
+            marginLeft: 5,
+        },
     });
 
     useEffect(() => {
         if (firstRun) {
             (async () => {
                 fetchNewLocation();
+                getNotificationPermission();
                 recenter();
             })().catch(() => {});
             firstRun = false;
@@ -140,6 +171,15 @@ export default function Home() {
         let { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== "granted") {
             setLocationErrorMessage("Permission to access location was denied");
+            setLocationAccessGranted(false);
+
+            setLocation({
+                latitude: INITIAL_MAP_REGION.latitude,
+                longitude: INITIAL_MAP_REGION.longitude,
+            });
+
+            setMapCurrentLocationRegion(INITIAL_MAP_REGION);
+
             return;
         }
 
@@ -244,6 +284,16 @@ export default function Home() {
                     );
                 })} */}
             </MapView>
+
+            {!locationAccessGranted && (
+                <View style={styles.locationAccessDeniedContainer}>
+                    <LocationOffIcon fill={colors.yellow} />
+                    <ThemedText style={styles.locationAccessDeniedText}>
+                        Location access denied
+                    </ThemedText>
+                </View>
+            )}
+
             <RecenterButton recentered={mapsIsRecentered} onPress={recenter} />
             <View style={styles.bottomcard}>
                 <BottomCard nearbyStations={nearbyStations} loading={loading} />

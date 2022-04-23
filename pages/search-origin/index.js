@@ -61,6 +61,7 @@ export default function SearchOrigin(props) {
     const [tabOneFocus, setTabOneFocus] = useState(true);
 
     const [currentLocation, setCurrentLocation] = useState(undefined);
+    const [locationAccessGranted, setLocationAccessGranted] = useState(true);
     const [locationErrorMessage, setLocationErrorMessage] = useState(null);
 
     const navigation = useNavigation();
@@ -214,6 +215,7 @@ export default function SearchOrigin(props) {
         let { status } = await Location.requestForegroundPermissionsAsync().catch(() => {});
         if (status !== "granted") {
             setLocationErrorMessage("Location permission is denied");
+            setLocationAccessGranted(false);
             return;
         }
 
@@ -337,7 +339,7 @@ export default function SearchOrigin(props) {
     function SearchData() {
         return (
             <>
-                {!currentLocation && (
+                {!currentLocation && locationAccessGranted && (
                     <>
                         <View
                             style={{
@@ -365,7 +367,7 @@ export default function SearchOrigin(props) {
                     </>
                 )}
 
-                {currentLocation && (
+                {currentLocation && locationAccessGranted && (
                     <PlaceTab
                         style={{ marginTop: -15, marginBottom: 15 }}
                         place={MyLocation}
