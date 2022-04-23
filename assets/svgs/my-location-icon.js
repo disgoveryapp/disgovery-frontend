@@ -11,7 +11,7 @@ const MyLocationIcon = (props) => {
                 fillRule="evenodd"
                 clipRule="evenodd"
                 d="M0 8.367 20 0l-8.378 20h-1.089L7.6 12.4 0 9.456v-1.09ZM11.144 15.4l4.711-11.256L4.6 8.844l3.811 1.478.911.356.356.922 1.466 3.8Z"
-                fill={props.fill || colors.text}
+                fill={props.fill || colors.my_location}
             />
         </Svg>
     );
