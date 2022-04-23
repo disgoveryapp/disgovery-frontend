@@ -82,7 +82,8 @@ function RouteNotFoundModal(props) {
                         <ThemedText style={styles.bodyText}>
                             When the routes are not available, it can either be because:
                             {"\n"}
-                            {"\n"}- all stations near you is now closed,
+                            {"\n"}- stations near you or stations where the routes pass are now
+                            closed,
                             {"\n"}- you are trying to head from one station to the same station,
                             {"\n"}- the stations you're trying to reach are not connected to any of
                             your nearby stations, or
