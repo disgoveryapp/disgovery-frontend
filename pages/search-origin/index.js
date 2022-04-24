@@ -151,31 +151,32 @@ export default function SearchOrigin(props) {
     }, [originInput]);
 
     useEffect(() => {
+        console.log(loading);
+    }, []);
+    useEffect(() => {
         if (destinationInput === destinationName && destinationName !== "") {
         } else {
             onChangeText(destinationInput);
         }
     }, [destinationInput]);
 
-    useEffect(() => {
+    useEffect(async () => {
         setInputData(true);
         if (text === "" || text === MyLocation) {
-            setLoading(true);
             setApi22Result([]);
-            setLoading(false);
         } else {
             setLoading(true);
-            simpleApi22Call();
+            await simpleApi22Call();
             setLoading(false);
         }
     }, [text]);
 
-    useEffect(() => {
+    useEffect(async () => {
         if (text === "" || text === MyLocation) {
             setApi21Result([]);
             setApi22Result([]);
         } else {
-            simpleApi21Call();
+            await simpleApi21Call();
         }
     }, [debouncedValue]);
 
@@ -314,6 +315,14 @@ export default function SearchOrigin(props) {
             marginTop: 10,
             color: colors.subtitle,
         },
+        loadingBlock: {
+            marginTop: 30,
+            marginLeft: 18,
+        },
+
+        subloadingBlock: {
+            flexDirection: "row",
+        },
     });
 
     function goNavigate() {
@@ -390,74 +399,109 @@ export default function SearchOrigin(props) {
                         icon={"your-location"}
                     />
                 )}
-
-                {api22Result !== undefined && api22Result !== null && api22Result.length !== 0 ? (
+                {!loading ? (
                     <>
-                        <ThemedText style={styles.topictext}>Stations</ThemedText>
-                        <View style={styles.tabbarcontainer}>
+                        {api22Result !== undefined &&
+                        api22Result !== null &&
+                        api22Result.length !== 0 ? (
                             <>
-                                {api22Result.map((item, key) => (
-                                    <StationTab
-                                        key={key}
-                                        place={item.name.en}
-                                        trip={item.trips}
-                                        onPress={() => {
-                                            if (isSearchOrigin) {
-                                                if (item.name.en === destinationInput) {
-                                                } else {
-                                                    setOriginInput(item.name.en);
-                                                    setOriginData(item);
-                                                    setIsClick(true);
-                                                }
-                                            } else if (isSearchDestination) {
-                                                if (item.name.en === originInput) {
-                                                } else {
-                                                    setDestinationInput(item.name.en);
-                                                    setDestinationData(item);
-                                                    setIsClick(true);
-                                                }
-                                            }
-                                        }}
-                                    />
-                                ))}
+                                <ThemedText style={styles.topictext}>Stations</ThemedText>
+                                <View style={styles.tabbarcontainer}>
+                                    <>
+                                        {api22Result.map((item, key) => (
+                                            <StationTab
+                                                key={key}
+                                                place={item.name.en}
+                                                trip={item.trips}
+                                                onPress={() => {
+                                                    if (isSearchOrigin) {
+                                                        if (item.name.en === destinationInput) {
+                                                        } else {
+                                                            setOriginInput(item.name.en);
+                                                            setOriginData(item);
+                                                            setIsClick(true);
+                                                        }
+                                                    } else if (isSearchDestination) {
+                                                        if (item.name.en === originInput) {
+                                                        } else {
+                                                            setDestinationInput(item.name.en);
+                                                            setDestinationData(item);
+                                                            setIsClick(true);
+                                                        }
+                                                    }
+                                                }}
+                                            />
+                                        ))}
+                                    </>
+                                </View>
                             </>
-                        </View>
+                        ) : (
+                            <></>
+                        )}
+                        {api21Result !== undefined &&
+                        api21Result !== null &&
+                        api21Result.length !== 0 ? (
+                            <View>
+                                <ThemedText style={styles.topictext}>Places</ThemedText>
+                                <View style={styles.tabbarcontainer}>
+                                    {api21Result.map((item, key) => (
+                                        <PlaceTab
+                                            key={key}
+                                            place={item.name.en}
+                                            address={item.address.en}
+                                            onPress={() => {
+                                                if (isSearchOrigin) {
+                                                    if (item.name.en === destinationInput) {
+                                                    } else {
+                                                        setOriginInput(item.name.en);
+                                                        setOriginData(item);
+                                                        setIsClick(true);
+                                                    }
+                                                } else if (isSearchDestination) {
+                                                    if (item.name.en === originInput) {
+                                                    } else {
+                                                        setDestinationInput(item.name.en);
+                                                        setDestinationData(item);
+                                                        setIsClick(true);
+                                                    }
+                                                }
+                                            }}
+                                        />
+                                    ))}
+                                </View>
+                            </View>
+                        ) : (
+                            <></>
+                        )}
                     </>
                 ) : (
-                    <></>
-                )}
-                {api21Result !== undefined && api21Result !== null && api21Result.length !== 0 ? (
-                    <View>
-                        <ThemedText style={styles.topictext}>Places</ThemedText>
-                        <View style={styles.tabbarcontainer}>
-                            {api21Result.map((item, key) => (
-                                <PlaceTab
-                                    key={key}
-                                    place={item.name.en}
-                                    address={item.address.en}
-                                    onPress={() => {
-                                        if (isSearchOrigin) {
-                                            if (item.name.en === destinationInput) {
-                                            } else {
-                                                setOriginInput(item.name.en);
-                                                setOriginData(item);
-                                                setIsClick(true);
-                                            }
-                                        } else if (isSearchDestination) {
-                                            if (item.name.en === originInput) {
-                                            } else {
-                                                setDestinationInput(item.name.en);
-                                                setDestinationData(item);
-                                                setIsClick(true);
-                                            }
-                                        }
-                                    }}
-                                />
-                            ))}
+                    <>
+                        <View style={styles.loadingBlock}>
+                            <View style={styles.subloadingBlock}>
+                                <SvgAnimatedLinearGradient
+                                    style={{ marginRight: 10 }}
+                                    width={30}
+                                    height={30}
+                                    primaryColor={colors.linear_gradient_primary}
+                                    secondaryColor={colors.linear_gradient_secondary}
+                                ></SvgAnimatedLinearGradient>
+
+                                <SvgAnimatedLinearGradient
+                                    width={0.7 * Dimensions.get("screen").width}
+                                    height={30}
+                                    primaryColor={colors.linear_gradient_primary}
+                                    secondaryColor={colors.linear_gradient_secondary}
+                                ></SvgAnimatedLinearGradient>
+                            </View>
+                            <SvgAnimatedLinearGradient
+                                style={{ marginTop: 10, marginLeft: 40 }}
+                                width={0.5 * Dimensions.get("screen").width}
+                                height={20}
+                                primaryColor={colors.linear_gradient_primary}
+                                secondaryColor={colors.linear_gradient_secondary}
+                            ></SvgAnimatedLinearGradient>
                         </View>
-                    </View>
-                ) : (
-                    <></>
+                    </>
                 )}
             </>
         );
@@ -506,26 +550,22 @@ export default function SearchOrigin(props) {
                 </View>
 
                 <View style={styles.scrollView}>
-                    {!loading && (
-                        <>
-                            {!(error21 && error22) ? (
-                                <ScrollView
-                                    style={styles.scrollView}
-                                    showsHorizontalScrollIndicator={false}
-                                    showsVerticalScrollIndicator={false}
-                                    contentContainerStyle={{
-                                        paddingBottom: 35,
-                                        marginTop: 15,
-                                    }}
-                                    keyboardDismissMode="interactive"
-                                    scrollEventThrottle={16}
-                                >
-                                    {inputData ? <SearchData /> : <SearchSomething />}
-                                </ScrollView>
-                            ) : (
-                                <BadConnectionComponent />
-                            )}
-                        </>
+                    {!(error21 && error22) ? (
+                        <ScrollView
+                            style={styles.scrollView}
+                            showsHorizontalScrollIndicator={false}
+                            showsVerticalScrollIndicator={false}
+                            contentContainerStyle={{
+                                paddingBottom: 35,
+                                marginTop: 15,
+                            }}
+                            keyboardDismissMode="interactive"
+                            scrollEventThrottle={16}
+                        >
+                            {inputData ? <SearchData /> : <SearchSomething />}
+                        </ScrollView>
+                    ) : (
+                        <BadConnectionComponent />
                     )}
                 </View>
             </View>
