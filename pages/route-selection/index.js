@@ -543,6 +543,11 @@ export default function RouteSelection(props) {
                                 <ThemedText style={styles.message}>
                                     Something went wrong.
                                 </ThemedText>
+                                <TouchableOpacity onPress={showRouteNotFoundInfoModal}>
+                                    <ThemedText style={styles.routeNotFoundInfoText}>
+                                        What's this?
+                                    </ThemedText>
+                                </TouchableOpacity>
                             </View>
                         )}
                         {api31Result !== undefined &&
