@@ -40,8 +40,10 @@ export default function RoutesDetailedBlock(props) {
             time = time % 60;
             textData += hour + " hr ";
         }
-        minute = time;
-        textData += minute + " min";
+        if (time > 0) {
+            minute = time;
+            textData += minute + " min";
+        }
 
         return textData;
     }

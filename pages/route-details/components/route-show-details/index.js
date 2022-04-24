@@ -135,8 +135,10 @@ export default function RouteShowDetails(props) {
             time = time % 60;
             textData += hour + " hr ";
         }
-        minute = Math.floor(time);
-        textData += minute + " minutes";
+        if (time > 0) {
+            minute = Math.floor(time);
+            textData += minute + " minutes";
+        }
 
         return textData;
     }
