@@ -366,7 +366,7 @@ export default function RouteDetails(props) {
                                     doShowLocationAccessDeniedModal();
                                 }
                             }}
-                            disabled={locationAccessGranted}
+                            disabled={!locationAccessGranted}
                         />
                     </View>
                     <View style={styles.scrollView}>
