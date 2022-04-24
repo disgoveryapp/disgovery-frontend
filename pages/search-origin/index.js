@@ -151,9 +151,6 @@ export default function SearchOrigin(props) {
     }, [originInput]);
 
     useEffect(() => {
-        console.log(loading);
-    }, []);
-    useEffect(() => {
         if (destinationInput === destinationName && destinationName !== "") {
         } else {
             onChangeText(destinationInput);
