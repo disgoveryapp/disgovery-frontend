@@ -538,7 +538,7 @@ export default function RouteSelection(props) {
                                 containerPadding={containerPadding}
                             />
                         )}
-                        {error31 && (
+                        {error31 && !loadingDataFromApi && (
                             <View style={styles.messageContainer}>
                                 <ThemedText style={styles.message}>
                                     Something went wrong.
