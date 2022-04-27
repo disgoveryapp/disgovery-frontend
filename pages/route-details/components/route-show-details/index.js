@@ -364,23 +364,33 @@ export default function RouteShowDetails(props) {
                         {subprops.lineData[0].station.name.en}
                     </ThemedText>
                     <View style={{ display: "flex", flexDirection: "row" }}>
-                        <TouchableOpacity
-                            style={styles.stopDetailButton}
-                            onPress={() => {
-                                expandClick();
-                            }}
-                        >
-                            <ThemedText style={styles.subtitleText}>
-                                {subprops.lineData.length - 1}
-                                {" stops · "}
-                                {getTimeText(subprops.time / 60)}
-                            </ThemedText>
-                            <Animated.View
-                                style={[{ transform: [{ rotate: clickToExpandIconRotation }] }]}
+                        {subprops.lineData.length - 1 === 1 ? (
+                            <View style={styles.stopDetailButton}>
+                                <ThemedText style={styles.subtitleText}>
+                                    {subprops.lineData.length - 1}
+                                    {" stops · "}
+                                    {getTimeText(subprops.time / 60)}
+                                </ThemedText>
+                            </View>
+                        ) : (
+                            <TouchableOpacity
+                                style={styles.stopDetailButton}
+                                onPress={() => {
+                                    expandClick();
+                                }}
                             >
-                                <ExpandDownIcon18px fill={colors.subtitle} />
-                            </Animated.View>
-                        </TouchableOpacity>
+                                <ThemedText style={styles.subtitleText}>
+                                    {subprops.lineData.length - 1}
+                                    {" stops · "}
+                                    {getTimeText(subprops.time / 60)}
+                                </ThemedText>
+                                <Animated.View
+                                    style={[{ transform: [{ rotate: clickToExpandIconRotation }] }]}
+                                >
+                                    <ExpandDownIcon18px fill={colors.subtitle} />
+                                </Animated.View>
+                            </TouchableOpacity>
+                        )}
                     </View>
                     <View>
                         {isExpandClick && (
