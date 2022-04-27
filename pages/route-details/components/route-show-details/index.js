@@ -367,8 +367,7 @@ export default function RouteShowDetails(props) {
                         {subprops.lineData.length - 1 === 1 ? (
                             <View style={styles.stopDetailButton}>
                                 <ThemedText style={styles.subtitleText}>
-                                    {subprops.lineData.length - 1}
-                                    {" stops · "}
+                                    {"1 stop · "}
                                     {getTimeText(subprops.time / 60)}
                                 </ThemedText>
                             </View>
