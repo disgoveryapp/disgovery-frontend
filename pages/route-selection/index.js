@@ -358,6 +358,7 @@ export default function RouteSelection(props) {
                 destinationLatLng.latitude,
                 destinationLatLng.longitude,
             ),
+            origin_name: originName,
             destination_name: destinationName,
         });
     }

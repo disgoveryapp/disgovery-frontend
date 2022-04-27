@@ -112,7 +112,7 @@ function ToFrom(props) {
                         {size === "small" ? <ArrowIcon /> : <ArrowIcon24 />}
                         <View style={styles.destinationMarqueeContainer}>
                             <ThemedTextMarquee style={styles.destinationText}>
-                                {DATA.destination.station.name.en}
+                                {props.destination_name}
                             </ThemedTextMarquee>
                         </View>
                     </View>
@@ -121,7 +121,7 @@ function ToFrom(props) {
                         <ThemedText style={styles.originFromText}>from </ThemedText>
                         <View style={styles.originmarquee}>
                             <ThemedTextMarquee style={styles.originText}>
-                                {DATA.origin.station.name.en}
+                                {props.origin_name}
                             </ThemedTextMarquee>
                         </View>
                     </View>

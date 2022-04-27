@@ -424,14 +424,7 @@ export default function RouteShowDetails(props) {
                 </View>
 
                 <View>
-                    <ThemedText style={styles.titleText}>
-                        {subprops.destination.station !== undefined &&
-                            subprops.destination.station !== null &&
-                            subprops.destination.station.name.en}
-                        {subprops.destination.place !== undefined &&
-                            subprops.destination.place !== null &&
-                            subprops.destination.place.name.en}
-                    </ThemedText>
+                    <ThemedText style={styles.titleText}>{subprops.destination}</ThemedText>
                 </View>
             </View>
         );
@@ -452,7 +445,7 @@ export default function RouteShowDetails(props) {
                         </>
                     ))}
 
-                    <DestinationTab destination={props.data.destination} />
+                    <DestinationTab destination={props.destination_name} />
                 </View>
             </View>
         </>

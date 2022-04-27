@@ -370,7 +370,12 @@ export default function RouteDetails(props) {
                         />
                     </View>
                     <View style={styles.scrollView}>
-                        <ToFrom containerPadding={containerPadding} data={routeData} />
+                        <ToFrom
+                            containerPadding={containerPadding}
+                            data={routeData}
+                            origin_name={props.route.params.origin_name}
+                            destination_name={props.route.params.destination_name}
+                        />
                         <DividerLine />
                         <Fares containerPadding={containerPadding} data={routeData} />
                         <DividerLine />
@@ -393,6 +398,7 @@ export default function RouteDetails(props) {
                                 containerPadding={containerPadding}
                                 data={routeData}
                                 polyline={polylines}
+                                destination_name={props.route.params.destination_name}
                             />
                         </ScrollView>
                     </View>
