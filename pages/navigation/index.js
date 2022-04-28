@@ -164,19 +164,19 @@ function Navigation(props) {
         determineArrowPolylines();
     }, [currentDirection]);
 
-    useEffect(() => {
-        let subscribed = true;
+    // useEffect(() => {
+    //     let subscribed = true;
 
-        if (subscribed) {
-            if (isRecentered) {
-                mapRef.current.animateToRegion(mapsCurrentLocationRegion, 50);
-            }
-        }
+    //     if (subscribed) {
+    //         if (isRecentered) {
+    //             mapRef.current.animateToRegion(mapsCurrentLocationRegion, 50);
+    //         }
+    //     }
 
-        return () => {
-            subscribed = false;
-        };
-    }, [mapsCurrentLocationRegion]);
+    //     return () => {
+    //         subscribed = false;
+    //     };
+    // }, [mapsCurrentLocationRegion]);
 
     useEffect(async () => {
         let subscribed = true;
@@ -1396,10 +1396,10 @@ function Navigation(props) {
                     customMapStyle={dark ? googleMapsStyling.dark : googleMapsStyling.light}
                     onPanDrag={onMapRegionChange}
                     showsMyLocationButton={false}
-                    showsUserLocation={offRoad}
+                    showsUserLocation={true}
                     followsUserLocation={isRecentered}
                 >
-                    {nearestPointOnPolylineAnimated && !offRoad && (
+                    {/* {nearestPointOnPolylineAnimated && !offRoad && (
                         <Marker.Animated
                             ref={currentLocationMarkerRef}
                             coordinate={nearestPointOnPolylineAnimated}
@@ -1407,7 +1407,7 @@ function Navigation(props) {
                         >
                             <View style={styles.currentLocationMarker} />
                         </Marker.Animated>
-                    )}
+                    )} */}
 
                     {Object.keys(polylines).map((key) => (
                         <>
