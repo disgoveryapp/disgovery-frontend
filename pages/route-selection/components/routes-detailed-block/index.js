@@ -116,6 +116,7 @@ export default function RoutesDetailedBlock(props) {
             fontSize: 12,
             marginLeft: 2,
             fontWeight: "600",
+            color: colors.white,
         },
     });
 
@@ -129,16 +130,16 @@ export default function RoutesDetailedBlock(props) {
             >
                 <View style={styles.transitIcon}>
                     {(subprops.type === "0" || subprops.type === "5") && (
-                        <TramIcon10 fill={colors.text} />
+                        <TramIcon10 fill={colors.white} />
                     )}
-                    {subprops.type === "1" && <SubwayIcon10 fill={colors.text} />}
+                    {subprops.type === "1" && <SubwayIcon10 fill={colors.white} />}
                     {(subprops.type === "2" || subprops.type === "12") && (
-                        <RailIcon10 fill={colors.text} />
+                        <RailIcon10 fill={colors.white} />
                     )}
                     {(subprops.type === "3" || subprops.type === "11") && (
-                        <BusIcon10 fill={colors.text} />
+                        <BusIcon10 fill={colors.white} />
                     )}
-                    {subprops.type === "4" && <BoatIcon10 fill={colors.text} />}
+                    {subprops.type === "4" && <BoatIcon10 fill={colors.white} />}
                 </View>
                 <ThemedText style={styles.transitName}>{subprops.name}</ThemedText>
             </View>
@@ -151,7 +152,7 @@ export default function RoutesDetailedBlock(props) {
                 <View styles={styles.icon}>
                     {subprops.type === "board" ? (
                         <CompactTransitLine
-                            fill={colors.text}
+                            fill={colors.white}
                             type={subprops.data.type}
                             name={subprops.data.name.long_name.substring(
                                 0,
