@@ -29,6 +29,7 @@ export default function RoutesDetailedBlock(props) {
         let hour = 0;
         let minute = 0;
         let textData = "";
+
         if (time >= 1440) {
             day = Math.floor(time / 1440);
             time = time % 1440;
@@ -39,7 +40,7 @@ export default function RoutesDetailedBlock(props) {
             time = time % 60;
             textData += hour + " hr ";
         }
-        if (time > 0) {
+        if (time >= 0) {
             minute = time;
             textData += minute + " min";
         }
