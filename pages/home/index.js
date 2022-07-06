@@ -1,21 +1,27 @@
 import React, { useEffect, useRef, useState } from "react";
-import { SafeAreaView, StyleSheet, Text, View, Dimensions } from "react-native";
-import ThemedText from "../../components/themed-text";
+import { SafeAreaView, StyleSheet, View, Dimensions } from "react-native";
 import { useTheme } from "@react-navigation/native";
-import MapView, { Marker, Polyline } from "react-native-maps";
-import { decode } from "@googlemaps/polyline-codec";
+import MapView from "react-native-maps";
 import { googleMapsStyling } from "../../maps/google-maps-styling";
 import * as Location from "expo-location";
 import RecenterButton from "../../components/recenter-button";
 import BottomCard from "../../components/bottom-card";
-import SearchBox from "../../components/search-box";
-import BottomCardFlatList from "../../components/bottom-card-flat-list";
 import axios from "axios";
 import { configs } from "../../configs/configs";
 import { getNotificationPermission } from "../../functions/notification";
 import LocationOffIcon from "../../assets/svgs/location-off-icon";
+import Animated, {
+    Easing,
+    useAnimatedStyle,
+    useSharedValue,
+    withTiming,
+} from "react-native-reanimated";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import ChangeOfServiceModal from "./change-of-service-modal";
+import ThemedText from "../../components/themed-text";
 
-const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get("window");
+const { height: SCREEN_HEIGHT } = Dimensions.get("window");
+const MODAL_ANIMATION_TIMING = 200;
 
 const INITIAL_MAP_REGION = {
     latitude: 13.764889,
@@ -36,6 +42,9 @@ export default function Home() {
     const [locationErrorMessage, setLocationErrorMessage] = useState(null);
     const [markers, setMarkers] = useState([]);
     const [locationAccessGranted, setLocationAccessGranted] = useState(true);
+
+    const [showModal, setShowModal] = useState(false);
+    const modalOpacityReanimated = useSharedValue(0);
 
     const [nearbyStations, setNearbyStations] = useState([]);
     let foregroundSubscription = null;
@@ -96,6 +105,23 @@ export default function Home() {
     useEffect(() => {
         if (firstRun) {
             (async () => {
+                AsyncStorage.getItem("change-of-service-19-jun-2022", (err, result) => {
+                    if (err) {
+                    } else {
+                        console.log(result);
+                        if (result == null) {
+                            modalOpacityReanimated.value = 1;
+                            setShowModal(true);
+                        }
+                    }
+                });
+
+                AsyncStorage.setItem(
+                    "change-of-service-19-jun-2022",
+                    JSON.stringify({ value: "true" }),
+                    () => {},
+                );
+
                 fetchNewLocation();
                 getNotificationPermission();
                 recenter();
@@ -167,7 +193,7 @@ export default function Home() {
         };
     }, [nearbyStations]);
 
-    async function fetchNewLocation(doRecenter) {
+    async function fetchNewLocation() {
         let { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== "granted") {
             setLocationErrorMessage("Permission to access location was denied");
@@ -210,16 +236,9 @@ export default function Home() {
         setMapsIsRecentered(true);
     }
 
-    function decodePolyline() {
-        const decoded = decode(polyline, 5);
-        console.log(decoded);
-        let decodedPolyline = [];
-
-        decoded.forEach((element) => {
-            decodedPolyline.push({ latitude: element[0], longitude: element[1] });
-        });
-
-        return decodedPolyline;
+    function onModalDismiss() {
+        modalOpacityReanimated.value = 0;
+        setTimeout(() => setShowModal(false), MODAL_ANIMATION_TIMING);
     }
 
     function fetchNearbyStations(region) {
@@ -249,6 +268,15 @@ export default function Home() {
     function onMapRegionChangeComplete(region) {
         fetchNearbyStations(region);
     }
+
+    const animatedModalOpacity = useAnimatedStyle(() => {
+        return {
+            opacity: withTiming(modalOpacityReanimated.value, {
+                duration: MODAL_ANIMATION_TIMING,
+                easing: Easing.ease,
+            }),
+        };
+    });
 
     return (
         <View style={styles.container}>
@@ -298,6 +326,23 @@ export default function Home() {
             <View style={styles.bottomcard}>
                 <BottomCard nearbyStations={nearbyStations} loading={loading} />
             </View>
+
+            {showModal && (
+                <Animated.View
+                    style={[
+                        {
+                            position: "absolute",
+                            top: 0,
+                            left: 0,
+                            width: "100%",
+                            height: "100%",
+                        },
+                        animatedModalOpacity,
+                    ]}
+                >
+                    <ChangeOfServiceModal onDismiss={onModalDismiss} />
+                </Animated.View>
+            )}
         </View>
     );
 }
