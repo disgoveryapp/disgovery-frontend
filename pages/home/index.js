@@ -108,7 +108,6 @@ export default function Home() {
                 AsyncStorage.getItem("change-of-service-19-jun-2022", (err, result) => {
                     if (err) {
                     } else {
-                        console.log(result);
                         if (result == null) {
                             modalOpacityReanimated.value = 1;
                             setShowModal(true);
